@@ -2,4 +2,5 @@
 /.idea/dataSources.xml
 /.idea/dataSources/
 /.idea/workspace.xml
+/Client/Web_UI/Source/node_modules/
 /Server/Source/raceday/model/*
