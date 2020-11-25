@@ -18,6 +18,22 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 	encodeAndSend(events, w)
 }
 
+func StreamsGet(w http.ResponseWriter, r *http.Request) {
+	streams, err := store.Datastore.GetStreams(r.URL.Query().Get("event_id"))
+	if err != nil {
+		switch err.(type) {
+		case *store.EventNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		handleInternalServerError(w, err)
+		return
+	}
+
+	encodeAndSend(streams, w)
+}
+
 func encodeAndSend(obj interface{}, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

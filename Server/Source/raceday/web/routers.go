@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -13,6 +12,15 @@ type Route struct {
 	Method      string
 	Pattern     string
 	HandlerFunc http.HandlerFunc
+}
+
+func NewRoute(name, method, pattern string, handlerFunc http.HandlerFunc) Route {
+	return Route{
+		Name:        name,
+		Method:      method,
+		Pattern:     pattern,
+		HandlerFunc: handlerFunc,
+	}
 }
 
 type Routes []Route
@@ -34,22 +42,7 @@ func NewRouter() *mux.Router {
 	return router
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
-}
-
 var routes = Routes{
-	Route{
-		"Index",
-		"GET",
-		"/",
-		Index,
-	},
-
-	Route{
-		"EventsGet",
-		strings.ToUpper("Get"),
-		"/events",
-		EventsGet,
-	},
+	NewRoute("EventsGet", strings.ToUpper("Get"), "/events", EventsGet),
+	NewRoute("StreamsGet", strings.ToUpper("Get"), "/streams", StreamsGet),
 }
