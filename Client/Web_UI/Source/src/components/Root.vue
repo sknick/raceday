@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table>
+    <table class="table">
       <thead>
         <tr>
           <th>Event</th>
