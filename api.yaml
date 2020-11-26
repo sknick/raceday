@@ -64,8 +64,46 @@ components:
           format: uuid
         name:
           type: string
+        start:
+          type: string
+          format: date
         description:
           type: string
+        location:
+          $ref: "#/components/schemas/Location"
+        series:
+          $ref: "#/components/schemas/Series"
+      required:
+        - id
+        - name
+
+    Location:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
+
+    Series:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
 
     Stream:
       type: object
@@ -75,3 +113,6 @@ components:
           format: uuid
         url:
           type: string
+      required:
+        - id
+        - url
