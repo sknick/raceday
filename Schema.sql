@@ -2,6 +2,13 @@ DROP DATABASE IF EXISTS raceday;
 CREATE DATABASE raceday;
 \c raceday
 
+CREATE TYPE broadcast_type AS ENUM (
+    'Cable',
+    'Facebook',
+    'MotorTrend',
+    'YouTube'
+);
+
 CREATE TABLE series (
     id                          uuid                                NOT NULL,
     name                        varchar                             NOT NULL,
@@ -30,10 +37,11 @@ CREATE TABLE event (
     FOREIGN KEY (series_id) REFERENCES series(id)
 );
 
-CREATE TABLE stream (
+CREATE TABLE broadcast (
     id                          uuid                                NOT NULL,
-    url                         varchar                             NOT NULL,
+    type                        broadcast_type                      NOT NULL,
     event_id                    uuid                                NOT NULL,
+    url                         varchar,
 
     PRIMARY KEY (id),
     FOREIGN KEY (event_id) REFERENCES event(id)
@@ -74,11 +82,11 @@ INSERT INTO event VALUES (uuid_generate_v4(), 'Race 2', '11/22/2020', NULL, (SEL
 INSERT INTO event VALUES (uuid_generate_v4(), 'Main Race', '11/15/2020', NULL, (SELECT id FROM location WHERE name = 'Circuit Paul Ricard'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
 INSERT INTO event VALUES (uuid_generate_v4(), '2020 Formula Drift - Round 5', '10/31/2020', NULL, NULL);
 
-INSERT INTO stream VALUES (uuid_generate_v4(), 'https://www.youtube.com/watch?v=liIKAAXsJAk', (SELECT id FROM event WHERE name = 'Race 1' AND start = '11/14/2020'));
-INSERT INTO stream VALUES (uuid_generate_v4(), 'https://www.youtube.com/watch?v=3jE81xlebNs', (SELECT id FROM event WHERE name = 'Race 2' AND start = '11/15/2020'));
-INSERT INTO stream VALUES (uuid_generate_v4(), 'https://www.youtube.com/watch?v=DsDgOVi6ZQE', (SELECT id FROM event WHERE name = 'Race 1' AND start = '11/21/2020'));
-INSERT INTO stream VALUES (uuid_generate_v4(), 'https://www.youtube.com/watch?v=HJCOpyAI1TA', (SELECT id FROM event WHERE name = 'Race 2' AND start = '11/22/2020'));
-INSERT INTO stream VALUES (uuid_generate_v4(), 'https://www.youtube.com/watch?v=yuV2quOZVB4', (SELECT id FROM event WHERE name = 'Main Race' AND start = '11/15/2020'));
-INSERT INTO stream VALUES (uuid_generate_v4(), 'https://www.youtube.com/watch?v=kj6Azm-MBOs', (SELECT id FROM event WHERE name = '2020 Formula Drift - Round 5' AND start = '10/31/2020'));
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 1' AND start = '11/14/2020'), 'https://www.youtube.com/watch?v=liIKAAXsJAk');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 2' AND start = '11/15/2020'), 'https://www.youtube.com/watch?v=3jE81xlebNs');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 1' AND start = '11/21/2020'), 'https://www.youtube.com/watch?v=DsDgOVi6ZQE');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 2' AND start = '11/22/2020'), 'https://www.youtube.com/watch?v=HJCOpyAI1TA');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Main Race' AND start = '11/15/2020'), 'https://www.youtube.com/watch?v=yuV2quOZVB4');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = '2020 Formula Drift - Round 5' AND start = '10/31/2020'), 'https://www.youtube.com/watch?v=kj6Azm-MBOs');
 
 DROP EXTENSION "uuid-ossp";

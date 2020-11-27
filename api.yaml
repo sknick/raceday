@@ -7,6 +7,33 @@ info:
 
 paths:
 
+  /broadcasts:
+
+    get:
+      operationId: broadcastsGet
+
+      summary: Retrieves all broadcasts for the specified event.
+
+      parameters:
+        - name: event_id
+          in: query
+          description: The ID of the event for which to retrieve broadcasts.
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Broadcast"
+        "404":
+          description: Event not found.
+
   /events:
 
     get:
@@ -24,37 +51,25 @@ paths:
                 items:
                   $ref: "#/components/schemas/Event"
 
-  /streams:
-
-    get:
-      operationId: streamsGet
-
-      summary: Retrieves all streams for the specified event.
-
-      parameters:
-        - name: event_id
-          in: query
-          description: The ID of the event for which to retrieve events.
-          schema:
-            type: string
-            format: uuid
-
-      responses:
-        "200":
-          description: Successful response.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Stream"
-        "404":
-          description: Event not found.
-
 
 components:
 
   schemas:
+
+    Broadcast:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [ "Cable", "Facebook", "MotorTrend", "YouTube" ]
+        url:
+          type: string
+      required:
+        - id
+        - type
 
     Event:
       type: object
@@ -104,15 +119,3 @@ components:
       required:
         - id
         - name
-
-    Stream:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        url:
-          type: string
-      required:
-        - id
-        - url

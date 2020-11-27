@@ -29,6 +29,54 @@ func Initialize(settings raceday.DatabaseSettings) (err error) {
 	return
 }
 
+func (dh DatastoreHandle) GetBroadcasts(eventId string) ([]model.Broadcast, error) {
+	ret := make([]model.Broadcast, 0)
+
+	event, err := dh.GetEvent(eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	if event == nil {
+		return nil, &EventNotFoundError{}
+	}
+
+	rows, err := dh.db.Query(
+		`SELECT id,
+       			type,
+				url
+		   FROM broadcast
+		  WHERE event_id = $1
+		  ORDER BY id ASC`,
+		eventId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			idVal  string
+			urlVal string
+		)
+
+		err = rows.Scan(&idVal, &urlVal)
+		if err != nil {
+			return nil, err
+		}
+
+		thisStream := model.Broadcast{
+			Id:  idVal,
+			Url: urlVal,
+		}
+		ret = append(ret, thisStream)
+	}
+
+	return ret, nil
+}
+
 func (dh DatastoreHandle) GetEvent(id string) (*model.Event, error) {
 	rows, err := dh.db.Query(
 		`SELECT *
@@ -70,53 +118,6 @@ func (dh DatastoreHandle) GetEvents() ([]model.Event, error) {
 		}
 
 		ret = append(ret, *event)
-	}
-
-	return ret, nil
-}
-
-func (dh DatastoreHandle) GetStreams(eventId string) ([]model.Stream, error) {
-	ret := make([]model.Stream, 0)
-
-	event, err := dh.GetEvent(eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	if event == nil {
-		return nil, &EventNotFoundError{}
-	}
-
-	rows, err := dh.db.Query(
-		`SELECT id,
-				url
-		   FROM stream
-		  WHERE event_id = $1
-		  ORDER BY id ASC`,
-		eventId,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var (
-			idVal  string
-			urlVal string
-		)
-
-		err = rows.Scan(&idVal, &urlVal)
-		if err != nil {
-			return nil, err
-		}
-
-		thisStream := model.Stream{
-			Id:  idVal,
-			Url: urlVal,
-		}
-		ret = append(ret, thisStream)
 	}
 
 	return ret, nil
