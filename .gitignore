@@ -2,5 +2,6 @@
 /.idea/dataSources.xml
 /.idea/dataSources/
 /.idea/workspace.xml
+/Client/API/Python/Build/
 /Client/Web_UI/Source/node_modules/
 /Server/Source/raceday/model/*
