@@ -12,15 +12,21 @@ paths:
     get:
       operationId: broadcastsGet
 
-      summary: Retrieves all broadcasts for the specified event.
+      summary: Retrieves broadcasts per the specified criteria. All parameters are optional.
 
       parameters:
         - name: event_id
           in: query
-          description: The ID of the event for which to retrieve broadcasts.
+          description: An ID of an event for which to retrieve broadcasts.
           schema:
             type: string
             format: uuid
+        - name: event_start
+          in: query
+          description: A UNIX timestamp indicating the day for which event starts should begin to be returned.
+          schema:
+            type: number
+            format: int64
 
       responses:
         "200":

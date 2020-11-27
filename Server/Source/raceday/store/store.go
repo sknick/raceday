@@ -15,6 +15,11 @@ type DatastoreHandle struct {
 	db *sql.DB
 }
 
+type BroadcastRetrievalCriteria struct {
+	EventID    *string
+	EventStart *float64
+}
+
 func Initialize(settings raceday.DatabaseSettings) (err error) {
 	connStr := fmt.Sprintf(
 		"host=%s port=%d dbname=%s user=%s password=%s",
@@ -29,26 +34,50 @@ func Initialize(settings raceday.DatabaseSettings) (err error) {
 	return
 }
 
-func (dh DatastoreHandle) GetBroadcasts(eventId string) ([]model.Broadcast, error) {
+func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]model.Broadcast, error) {
 	ret := make([]model.Broadcast, 0)
 
-	event, err := dh.GetEvent(eventId)
-	if err != nil {
-		return nil, err
+	if criteria == (BroadcastRetrievalCriteria{}) {
+		return ret, nil
 	}
 
-	if event == nil {
-		return nil, &EventNotFoundError{}
+	if criteria.EventID != nil {
+		event, err := dh.GetEvent(*criteria.EventID)
+		if err != nil {
+			return nil, err
+		}
+
+		if event == nil {
+			return nil, &EventNotFoundError{}
+		}
+	}
+
+	sql := ""
+	params := make([]interface{}, 0)
+
+	if criteria.EventID != nil {
+		params = append(params, *criteria.EventID)
+		sql += fmt.Sprintf("event_id = $%d", len(params))
+	}
+	if criteria.EventStart != nil {
+		params = append(params, *criteria.EventStart)
+
+		if sql != "" {
+			sql += " AND "
+		}
+		sql += fmt.Sprintf("date_trunc(start, 'day') = date_trunc(to_timestamp($%d), 'day')", len(params))
 	}
 
 	rows, err := dh.db.Query(
-		`SELECT id,
-       			type,
-				url
-		   FROM broadcast
-		  WHERE event_id = $1
-		  ORDER BY id ASC`,
-		eventId,
+		fmt.Sprintf(
+			`SELECT id,
+					type,
+					url
+			   FROM broadcast
+			  WHERE %s
+			  ORDER BY id ASC`,
+			sql,
+		),
 	)
 	if err != nil {
 		return nil, err

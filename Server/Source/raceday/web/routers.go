@@ -43,6 +43,6 @@ func NewRouter() *mux.Router {
 }
 
 var routes = Routes{
+	NewRoute("BroadcastsGet", strings.ToUpper("Get"), "/broadcasts", BroadcastsGet),
 	NewRoute("EventsGet", strings.ToUpper("Get"), "/events", EventsGet),
-	NewRoute("StreamsGet", strings.ToUpper("Get"), "/streams", StreamsGet),
 }

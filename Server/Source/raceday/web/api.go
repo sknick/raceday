@@ -6,20 +6,29 @@ import (
 	"net/http"
 	"raceday/Server/Source/raceday/store"
 	"runtime"
+	"strconv"
 )
 
-func EventsGet(w http.ResponseWriter, r *http.Request) {
-	events, err := store.Datastore.GetEvents()
-	if err != nil {
-		handleInternalServerError(w, err)
-		return
+func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
+	eventIdParam := r.URL.Query().Get("event_id")
+	eventStartParam := r.URL.Query().Get("event_start")
+
+	criteria := store.BroadcastRetrievalCriteria{}
+
+	if eventIdParam != "" {
+		criteria.EventID = &eventIdParam
+	}
+	if eventStartParam != "" {
+		eventStart, err := strconv.ParseFloat(eventStartParam, 64)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.EventStart = &eventStart
 	}
 
-	encodeAndSend(events, w)
-}
-
-func StreamsGet(w http.ResponseWriter, r *http.Request) {
-	streams, err := store.Datastore.GetStreams(r.URL.Query().Get("event_id"))
+	streams, err := store.Datastore.GetBroadcasts(criteria)
 	if err != nil {
 		switch err.(type) {
 		case *store.EventNotFoundError:
@@ -32,6 +41,16 @@ func StreamsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodeAndSend(streams, w)
+}
+
+func EventsGet(w http.ResponseWriter, r *http.Request) {
+	events, err := store.Datastore.GetEvents()
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	encodeAndSend(events, w)
 }
 
 func encodeAndSend(obj interface{}, w http.ResponseWriter) {
