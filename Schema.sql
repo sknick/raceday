@@ -28,7 +28,7 @@ CREATE TABLE location (
 CREATE TABLE event (
     id                          uuid                                NOT NULL,
     name                        varchar                             NOT NULL,
-    start                       date                                NOT NULL,
+    start                       timestamp                           NOT NULL,
     description                 varchar,
     location_id                 uuid,
     series_id                   uuid,
@@ -50,7 +50,7 @@ CREATE TABLE broadcast (
 CREATE VIEW events AS
 SELECT event.id AS event_id,
        event.name AS event_name,
-       event.start AS event_start,
+       extract(epoch from event.start) AS event_start,
        event.description AS event_description,
        location.id AS location_id,
        location.name AS location_name,
@@ -75,18 +75,18 @@ INSERT INTO location VALUES (uuid_generate_v4(), 'Circuit Paul Ricard');
 INSERT INTO series VALUES (uuid_generate_v4(), '2020 Clio Cup');
 INSERT INTO series VALUES (uuid_generate_v4(), 'GTWC Europe 2020');
 
-INSERT INTO event VALUES (uuid_generate_v4(), 'Race 1', '11/14/2020', NULL, (SELECT id FROM location WHERE name = 'Circuit de Barcelona-Catalunya'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
-INSERT INTO event VALUES (uuid_generate_v4(), 'Race 2', '11/15/2020', NULL, (SELECT id FROM location WHERE name = 'Circuit de Barcelona-Catalunya'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
-INSERT INTO event VALUES (uuid_generate_v4(), 'Race 1', '11/21/2020', NULL, (SELECT id FROM location WHERE name = 'Circuit Paul Ricard'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
-INSERT INTO event VALUES (uuid_generate_v4(), 'Race 2', '11/22/2020', NULL, (SELECT id FROM location WHERE name = 'Circuit Paul Ricard'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
-INSERT INTO event VALUES (uuid_generate_v4(), 'Main Race', '11/15/2020', NULL, (SELECT id FROM location WHERE name = 'Circuit Paul Ricard'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
-INSERT INTO event VALUES (uuid_generate_v4(), '2020 Formula Drift - Round 5', '10/31/2020', NULL, NULL);
+INSERT INTO event VALUES (uuid_generate_v4(), 'Race 1', '11-14-2020 16:00:00 +1', NULL, (SELECT id FROM location WHERE name = 'Circuit de Barcelona-Catalunya'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
+INSERT INTO event VALUES (uuid_generate_v4(), 'Race 2', '11-15-2020 16:00:00 +1', NULL, (SELECT id FROM location WHERE name = 'Circuit de Barcelona-Catalunya'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
+INSERT INTO event VALUES (uuid_generate_v4(), 'Race 1', '11-21-2020 16:30:00 +1', NULL, (SELECT id FROM location WHERE name = 'Circuit Paul Ricard'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
+INSERT INTO event VALUES (uuid_generate_v4(), 'Race 2', '11-22-2020 16:30:00 +1', NULL, (SELECT id FROM location WHERE name = 'Circuit Paul Ricard'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
+INSERT INTO event VALUES (uuid_generate_v4(), 'Main Race', '11-15-2020 10:30:00 +1', NULL, (SELECT id FROM location WHERE name = 'Circuit Paul Ricard'), (SELECT id FROM series WHERE name = '2020 Clio Cup'));
+INSERT INTO event VALUES (uuid_generate_v4(), '2020 Formula Drift - Round 5', '10-31-2020 14:30:00 -6', NULL, NULL);
 
-INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 1' AND start = '11/14/2020'), 'https://www.youtube.com/watch?v=liIKAAXsJAk');
-INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 2' AND start = '11/15/2020'), 'https://www.youtube.com/watch?v=3jE81xlebNs');
-INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 1' AND start = '11/21/2020'), 'https://www.youtube.com/watch?v=DsDgOVi6ZQE');
-INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 2' AND start = '11/22/2020'), 'https://www.youtube.com/watch?v=HJCOpyAI1TA');
-INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Main Race' AND start = '11/15/2020'), 'https://www.youtube.com/watch?v=yuV2quOZVB4');
-INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = '2020 Formula Drift - Round 5' AND start = '10/31/2020'), 'https://www.youtube.com/watch?v=kj6Azm-MBOs');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 1' AND date_trunc('day', start) = '11-14-2020 00:00:00'), 'https://www.youtube.com/watch?v=liIKAAXsJAk');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 2' AND date_trunc('day', start) = '11-15-2020 00:00:00'), 'https://www.youtube.com/watch?v=3jE81xlebNs');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 1' AND date_trunc('day', start) = '11-21-2020 00:00:00'), 'https://www.youtube.com/watch?v=DsDgOVi6ZQE');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Race 2' AND date_trunc('day', start) = '11-22-2020 00:00:00'), 'https://www.youtube.com/watch?v=HJCOpyAI1TA');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = 'Main Race' AND date_trunc('day', start) = '11-15-2020 00:00:00'), 'https://www.youtube.com/watch?v=yuV2quOZVB4');
+INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', (SELECT id FROM event WHERE name = '2020 Formula Drift - Round 5' AND date_trunc('day', start) = '10-31-2020 00:00:00'), 'https://www.youtube.com/watch?v=kj6Azm-MBOs');
 
 DROP EXTENSION "uuid-ossp";

@@ -127,7 +127,7 @@ func newEventFromRow(rows *sql.Rows) (*model.Event, error) {
 	var (
 		eventIdVal             string
 		eventNameVal           string
-		eventStartVal          string
+		eventStartVal          float64
 		eventDescriptionVal    sql.NullString
 		locationIdVal          sql.NullString
 		locationNameVal        sql.NullString

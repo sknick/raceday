@@ -80,8 +80,8 @@ components:
         name:
           type: string
         start:
-          type: string
-          format: date
+          type: number
+          format: int64
         description:
           type: string
         location:
