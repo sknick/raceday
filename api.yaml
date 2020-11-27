@@ -23,7 +23,7 @@ paths:
             format: uuid
         - name: event_start
           in: query
-          description: A UNIX timestamp indicating the day for which event starts should begin to be returned.
+          description: A UNIX timestamp indicating the date of broadcasts to return.
           schema:
             type: number
             format: int64

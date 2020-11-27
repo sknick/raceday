@@ -47,6 +47,16 @@ CREATE TABLE broadcast (
     FOREIGN KEY (event_id) REFERENCES event(id)
 );
 
+CREATE VIEW broadcasts AS
+SELECT broadcast.id AS broadcast_id,
+       broadcast.type AS broadcast_type,
+       broadcast.url AS broadcast_url,
+       event.id AS event_id,
+       event.start AS event_start
+  FROM broadcast
+  JOIN event
+    ON broadcast.event_id = event.id;
+
 CREATE VIEW events AS
 SELECT event.id AS event_id,
        event.name AS event_name,

@@ -52,32 +52,32 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 		}
 	}
 
-	sql := ""
+	where := ""
 	params := make([]interface{}, 0)
 
 	if criteria.EventID != nil {
 		params = append(params, *criteria.EventID)
-		sql += fmt.Sprintf("event_id = $%d", len(params))
+		where += fmt.Sprintf("event_id = $%d", len(params))
 	}
 	if criteria.EventStart != nil {
 		params = append(params, *criteria.EventStart)
 
-		if sql != "" {
-			sql += " AND "
+		if where != "" {
+			where += " AND "
 		}
-		sql += fmt.Sprintf("date_trunc(start, 'day') = date_trunc(to_timestamp($%d), 'day')", len(params))
+		where += fmt.Sprintf("date_trunc('day', event_start) = date_trunc('day', to_timestamp($%d))", len(params))
 	}
 
 	rows, err := dh.db.Query(
 		fmt.Sprintf(
-			`SELECT id,
-					type,
-					url
-			   FROM broadcast
-			  WHERE %s
-			  ORDER BY id ASC`,
-			sql,
+			`SELECT broadcast_id,
+					broadcast_type,
+					broadcast_url
+			   FROM broadcasts
+			  WHERE %s`,
+			where,
 		),
+		params...,
 	)
 	if err != nil {
 		return nil, err
@@ -87,19 +87,24 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 
 	for rows.Next() {
 		var (
-			idVal  string
-			urlVal string
+			idVal   string
+			typeVal string
+			urlVal  sql.NullString
 		)
 
-		err = rows.Scan(&idVal, &urlVal)
+		err = rows.Scan(&idVal, &typeVal, &urlVal)
 		if err != nil {
 			return nil, err
 		}
 
 		thisStream := model.Broadcast{
-			Id:  idVal,
-			Url: urlVal,
+			Id:    idVal,
+			Type_: typeVal,
 		}
+		if urlVal.Valid {
+			thisStream.Url = urlVal.String
+		}
+
 		ret = append(ret, thisStream)
 	}
 
