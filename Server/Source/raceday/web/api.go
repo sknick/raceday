@@ -40,7 +40,37 @@ func BroadcastPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func BroadcastPut(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	type_ := r.URL.Query().Get("type")
 
+	var (
+		eventId *string
+		url     *string
+	)
+
+	eventIdParam := r.URL.Query().Get("event_id")
+	if eventIdParam != "" {
+		eventId = &eventIdParam
+	}
+
+	urlParam := r.URL.Query().Get("url")
+	if urlParam != "" {
+		url = &urlParam
+	}
+
+	err := store.Datastore.UpdateBroadcast(id, type_, eventId, url)
+	if err != nil {
+		switch err.(type) {
+		case *store.BroadcastNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func BroadcastsGet(w http.ResponseWriter, r *http.Request) {

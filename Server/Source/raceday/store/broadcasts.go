@@ -131,3 +131,40 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 
 	return ret, nil
 }
+
+func (dh DatastoreHandle) UpdateBroadcast(id, type_ string, eventId, url *string) error {
+	eventIdParam := "NULL"
+	if eventId != nil {
+		eventIdParam = *eventId
+	}
+
+	urlParam := "NULL"
+	if url != nil {
+		urlParam = *url
+	}
+
+	result, err := dh.db.Exec(
+		`UPDATE broadcast
+            SET type = $1,
+                event_id = $2,
+                url = $3
+          WHERE id = $4`,
+		type_,
+		eventIdParam,
+		urlParam,
+	)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return &BroadcastNotFoundError{}
+	}
+
+	return nil
+}

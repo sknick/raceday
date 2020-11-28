@@ -75,6 +75,7 @@ paths:
             format: uuid
         - name: type
           in: query
+          required: true
           schema:
             type: string
             enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
