@@ -62,7 +62,7 @@ export default {
       const self = this;
 
       axios.get(
-          "streams?event_id=" + eventId
+          "broadcasts?event_id=" + eventId
       ).then(
           function(response) {
             for (let i = 0; i < self.events.length; i++) {

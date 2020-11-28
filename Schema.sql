@@ -60,7 +60,7 @@ SELECT broadcast.id AS broadcast_id,
 CREATE VIEW events AS
 SELECT event.id AS event_id,
        event.name AS event_name,
-       extract(epoch from event.start) AS event_start,
+       event.start AS event_start,
        event.description AS event_description,
        location.id AS location_id,
        location.name AS location_name,

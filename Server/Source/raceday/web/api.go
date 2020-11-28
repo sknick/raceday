@@ -44,7 +44,32 @@ func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventsGet(w http.ResponseWriter, r *http.Request) {
-	events, err := store.Datastore.GetEvents()
+	windowStartParam := r.URL.Query().Get("window_start")
+	windowEndParam := r.URL.Query().Get("window_end")
+
+	criteria := store.EventRetrievalCriteria{}
+
+	if windowStartParam != "" {
+		windowStart, err := strconv.ParseFloat(windowStartParam, 64)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.WindowStart = windowStart
+	}
+
+	if windowEndParam != "" {
+		windowEnd, err := strconv.ParseFloat(windowEndParam, 64)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.WindowEnd = &windowEnd
+	}
+
+	events, err := store.Datastore.GetEvents(criteria)
 	if err != nil {
 		handleInternalServerError(w, err)
 		return

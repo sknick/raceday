@@ -23,7 +23,7 @@ paths:
             format: uuid
         - name: event_start
           in: query
-          description: A UNIX timestamp indicating the date of broadcasts to return.
+          description: A UNIX timestamp indicating a particular date on which returned broadcasts must start.
           schema:
             type: number
             format: int64
@@ -45,7 +45,23 @@ paths:
     get:
       operationId: eventsGet
 
-      summary: Retrieves all events in the database.
+      summary: Retrieves events in the database for the specified date or dates.
+
+      parameters:
+        - name: window_start
+          in: query
+          description: A UNIX timestamp indicating a particular date on which returned events must start.
+          schema:
+            type: number
+            format: int64
+        - name: window_end
+          in: query
+          description: An optional UNIX timestamp indicating the end of a window in which returned events must start,
+            where `window_start` indicates the beginning of the window. If not specified, only events that start on the
+            date indicated by `window_start` will be returned.
+          schema:
+            type: number
+            format: int64
 
       responses:
         "200":
