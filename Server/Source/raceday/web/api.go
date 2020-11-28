@@ -246,15 +246,64 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func LocationDelete(w http.ResponseWriter, r *http.Request) {
+	err := store.Datastore.DeleteLocation(r.URL.Query().Get("id"))
+	if err != nil {
+		switch err.(type) {
+		case *store.LocationNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func LocationPost(w http.ResponseWriter, r *http.Request) {
+	descriptionParam := r.URL.Query().Get("description")
 
+	var description *string
+	if descriptionParam != "" {
+		description = &descriptionParam
+	}
+
+	id, err := store.Datastore.CreateLocation(
+		r.URL.Query().Get("name"),
+		description,
+	)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	encodeAndSend(id, w)
 }
 
 func LocationPut(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	descriptionParam := r.URL.Query().Get("description")
 
+	var description *string
+	if descriptionParam != "" {
+		description = &descriptionParam
+	}
+
+	err := store.Datastore.UpdateLocation(id, name, description)
+	if err != nil {
+		switch err.(type) {
+		case *store.LocationNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func LocationsGet(w http.ResponseWriter, r *http.Request) {
