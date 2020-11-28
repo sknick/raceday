@@ -7,6 +7,94 @@ info:
 
 paths:
 
+  /broadcast:
+
+    delete:
+      operationId: broadcastDelete
+
+      summary: Deletes a broadcast.
+
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Broadcast not found.
+
+    post:
+      operationId: broadcastPost
+
+      summary: Creates a new broadcast.
+
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [ "Cable", "Facebook", "MotorTrend", "YouTube" ]
+        - name: event_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: url
+          in: query
+          schema:
+            type: string
+            format: uri
+
+      responses:
+        "200":
+          description: Successful response indicating the ID of the new broadcast.
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+
+    put:
+      operationId: broadcastPut
+
+      summary: Updates a broadcast.
+
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
+        - name: event_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: url
+          in: query
+          schema:
+            type: string
+            format: uri
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Broadcast not found.
+
   /broadcasts:
 
     get:
@@ -40,6 +128,106 @@ paths:
         "404":
           description: Event not found.
 
+  /event:
+
+    delete:
+      operationId: eventDelete
+
+      summary: Deletes an event.
+
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Event not found.
+
+    post:
+      operationId: eventPost
+
+      summary: Creates a new event.
+
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: description
+          in: query
+          schema:
+            type: string
+        - name: location_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: series_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Successful response indicating the ID of the new event.
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+
+    put:
+      operationId: eventPut
+
+      summary: Updates an event.
+
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: description
+          in: query
+          schema:
+            type: string
+        - name: location_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: series_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Event not found.
+
   /events:
 
     get:
@@ -51,6 +239,7 @@ paths:
         - name: window_start
           in: query
           description: A UNIX timestamp indicating a particular date on which returned events must start.
+          required: true
           schema:
             type: number
             format: int64
@@ -73,6 +262,186 @@ paths:
                 items:
                   $ref: "#/components/schemas/Event"
 
+  /location:
+
+    delete:
+      operationId: locationDelete
+
+      summary: Deletes a location.
+
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Location not found.
+
+    post:
+      operationId: locationPost
+
+      summary: Creates a new location.
+
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: description
+          in: query
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Successful response indicating the ID of the new location.
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+
+    put:
+      operationId: locationPut
+
+      summary: Updates a location.
+
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: description
+          in: query
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Location not found.
+
+  /locations:
+
+    get:
+      operationId: locationsGet
+
+      summary: Retrieves the locations currently defined in the system.
+
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Location"
+
+  /series:
+
+    delete:
+      operationId: seriesDelete
+
+      summary: Deletes a series.
+
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Series not found.
+
+    get:
+      operationId: seriesGet
+
+      summary: Retrieves the series currently defined in the system.
+
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Series"
+
+    post:
+      operationId: seriesPost
+
+      summary: Creates a new series.
+
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: description
+          in: query
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Successful response indicating the ID of the new series.
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+
+    put:
+      operationId: seriesPut
+
+      summary: Updates a series.
+
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: description
+          in: query
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Successful response.
+        "404":
+          description: Series not found.
+
 
 components:
 
@@ -86,7 +455,7 @@ components:
           format: uuid
         type:
           type: string
-          enum: [ "Cable", "Facebook", "MotorTrend", "YouTube" ]
+          enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
         url:
           type: string
       required:
