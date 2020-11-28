@@ -26,7 +26,17 @@ func BroadcastDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func BroadcastPost(w http.ResponseWriter, r *http.Request) {
+	id, err := store.Datastore.CreateBroadcast(
+		r.URL.Query().Get("type"),
+		r.URL.Query().Get("event_id"),
+		r.URL.Query().Get("url"),
+	)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
 
+	encodeAndSend(id, w)
 }
 
 func BroadcastPut(w http.ResponseWriter, r *http.Request) {

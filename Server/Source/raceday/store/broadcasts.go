@@ -3,12 +3,34 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
 )
 
 type BroadcastRetrievalCriteria struct {
 	EventID    *string
 	EventStart *float64
+}
+
+func (dh DatastoreHandle) CreateBroadcast(type_ string, eventId string, url string) (string, error) {
+	broadcastId, err := uuid.NewRandom()
+	if err != nil {
+		return "", nil
+	}
+
+	_, err = dh.db.Exec(
+		`INSERT INTO broadcast
+		 VALUES ($1, $2, $3, $4)`,
+		broadcastId,
+		type_,
+		eventId,
+		url,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return broadcastId.String(), nil
 }
 
 func (dh DatastoreHandle) DeleteBroadcast(id string) error {
