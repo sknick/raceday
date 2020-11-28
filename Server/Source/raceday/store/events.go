@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
 	"time"
 )
@@ -10,6 +11,51 @@ import (
 type EventRetrievalCriteria struct {
 	WindowStart float64
 	WindowEnd   *float64
+}
+
+func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description, locationId, seriesId *string) (string, error) {
+	eventId, err := uuid.NewRandom()
+	if err != nil {
+		return "", nil
+	}
+
+	_, err = dh.db.Exec(
+		`INSERT INTO event
+		 VALUES ($1, $2, $3, $4, $5, $6)`,
+		eventId,
+		name,
+		start,
+		description,
+		locationId,
+		seriesId,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return eventId.String(), nil
+}
+
+func (dh DatastoreHandle) DeleteEvent(id string) error {
+	result, err := dh.db.Exec(
+		`DELETE FROM event
+          WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return &EventNotFoundError{}
+	}
+
+	return nil
 }
 
 func (dh DatastoreHandle) GetEvent(id string) (*model.Event, error) {

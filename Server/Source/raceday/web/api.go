@@ -7,6 +7,7 @@ import (
 	"raceday/Server/Source/raceday/store"
 	"runtime"
 	"strconv"
+	"time"
 )
 
 func BroadcastDelete(w http.ResponseWriter, r *http.Request) {
@@ -108,11 +109,61 @@ func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventDelete(w http.ResponseWriter, r *http.Request) {
+	err := store.Datastore.DeleteEvent(r.URL.Query().Get("id"))
+	if err != nil {
+		switch err.(type) {
+		case *store.EventNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func EventPost(w http.ResponseWriter, r *http.Request) {
+	start, err := strconv.ParseInt(r.URL.Query().Get("start"), 10, 64)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
 
+	descriptionParam := r.URL.Query().Get("description")
+	locationIdParam := r.URL.Query().Get("location_id")
+	seriesIdParam := r.URL.Query().Get("series_id")
+
+	var (
+		description *string
+		locationId  *string
+		seriesId    *string
+	)
+
+	if descriptionParam != "" {
+		description = &descriptionParam
+	}
+	if locationIdParam != "" {
+		locationId = &locationIdParam
+	}
+	if seriesIdParam != "" {
+		seriesId = &seriesIdParam
+	}
+
+	id, err := store.Datastore.CreateEvent(
+		r.URL.Query().Get("name"),
+		time.Unix(start, 0),
+		description,
+		locationId,
+		seriesId,
+	)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	encodeAndSend(id, w)
 }
 
 func EventPut(w http.ResponseWriter, r *http.Request) {
