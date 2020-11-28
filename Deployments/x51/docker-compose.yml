@@ -1,0 +1,44 @@
+version: "3.2"
+
+
+volumes:
+  raceday_db_data:   {}
+
+
+services:
+
+  server:
+    image: raceday
+
+    build:
+      context: ../../
+      dockerfile: Shared/Deployment/Server/Dockerfile
+
+    entrypoint: ["raceday", "run", "/etc/raceday.conf"]
+
+    depends_on:
+      - postgres
+
+    ports:
+      - 80:80
+
+    restart: always
+
+
+  postgres:
+    image: raceday_db
+
+    build:
+      context: ../../
+      dockerfile: Shared/Deployment/PostgreSQL/Dockerfile
+      args:
+        db_user: postgres
+        db_password: raceday
+
+    volumes:
+      - raceday_db_data:/var/lib/postgresql/data
+
+    ports:
+      - 5432:5432
+
+    restart: always

@@ -3,6 +3,7 @@ package web
 import (
 	"github.com/gorilla/mux"
 	"net/http"
+	"path"
 )
 
 type Route struct {
@@ -16,7 +17,7 @@ func NewRoute(name, method, pattern string, handlerFunc http.HandlerFunc) Route 
 	return Route{
 		Name:        name,
 		Method:      method,
-		Pattern:     pattern,
+		Pattern:     path.Join("/api", pattern),
 		HandlerFunc: handlerFunc,
 	}
 }

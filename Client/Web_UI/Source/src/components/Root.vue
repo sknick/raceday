@@ -51,7 +51,7 @@ export default {
   
   mounted: function() {
     axios.get(
-      "events?window_start=" + (new Date(2020, 10, 15).getTime() / 1000)
+      "api/events?window_start=" + (new Date(2020, 10, 15).getTime() / 1000)
     ).then(
         response => (this.events = response.data)
     );
@@ -62,7 +62,7 @@ export default {
       const self = this;
 
       axios.get(
-          "broadcasts?event_id=" + eventId
+          "api/broadcasts?event_id=" + eventId
       ).then(
           function(response) {
             for (let i = 0; i < self.events.length; i++) {

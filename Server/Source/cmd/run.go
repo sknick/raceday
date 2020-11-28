@@ -34,12 +34,15 @@ var (
 			}
 
 			router := web.NewRouter()
+			router.PathPrefix("/").Handler(web.NewSPAHandler(settings.UIRoot, "index.html"))
 
 			server := http.Server{
 				Addr:    fmt.Sprintf(":%d", settings.ListenPort),
 				Handler: router,
 			}
 			defer server.Close()
+
+			log.Printf("Starting server, listening on port %d...", settings.ListenPort)
 
 			err = server.ListenAndServe()
 			if err != nil && err != http.ErrServerClosed {

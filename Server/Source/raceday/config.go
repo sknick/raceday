@@ -9,6 +9,9 @@ type Settings struct {
 	// The port on which the server should listen.
 	ListenPort int
 
+	// The location of the web UI files.
+	UIRoot string
+
 	// Database settings.
 	DatabaseSettings DatabaseSettings
 }
@@ -38,8 +41,14 @@ func NewConfig(configFile string) (Settings, error) {
 		return Settings{}, fmt.Errorf("unable to load the configuration file \"%v\": %v", configFile, err)
 	}
 
+	uiRoot := config.Section("").Key("ui_root").MustString("")
+	if uiRoot == "" {
+		return Settings{}, fmt.Errorf("ui_root not set in configuration file \"%v\"", configFile)
+	}
+
 	return Settings{
 		ListenPort: config.Section("").Key("listen_port").MustInt(8080),
+		UIRoot:     uiRoot,
 
 		DatabaseSettings: DatabaseSettings{
 			DatabaseHost:     config.Section("database").Key("host").MustString("localhost"),
