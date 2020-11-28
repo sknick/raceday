@@ -3,22 +3,22 @@
     <table class="table">
       <thead>
         <tr>
+          <th>Series</th>
           <th>Event</th>
-          <th>Description</th>
         </tr>
       </thead>
 
       <tbody>
         <template v-for="event in events" v-bind:key="event">
           <tr @click="toggleEvent(event.id)">
+            <td>{{event.series.name}}</td>
             <td>{{event.name}}</td>
-            <td>{{event.description}}</td>
           </tr>
 
           <template v-if="shownEvents.includes(event.id)">
-            <template v-if="event.streams.length > 0">
-              <tr v-for="stream in event.streams" v-bind:key="stream">
-                <td colspan="2"><a :href="stream.url" target="_blank">{{stream.url}}</a></td>
+            <template v-if="event.broadcasts.length > 0">
+              <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
+                <td colspan="2"><a :href="broadcast.url" target="_blank">{{broadcast.url}}</a></td>
               </tr>
             </template>
             <template v-else>
@@ -51,7 +51,7 @@ export default {
   
   mounted: function() {
     axios.get(
-      "events"
+      "events?window_start=" + (new Date(2020, 10, 15).getTime() / 1000)
     ).then(
         response => (this.events = response.data)
     );
@@ -67,9 +67,9 @@ export default {
           function(response) {
             for (let i = 0; i < self.events.length; i++) {
               if (self.events[i].id === eventId) {
-                self.events[i].streams = [];
+                self.events[i].broadcasts = [];
                 for (let j = 0; j < response.data.length; j++) {
-                  self.events[i].streams.push(response.data[j]);
+                  self.events[i].broadcasts.push(response.data[j]);
                 }
 
                 break;
