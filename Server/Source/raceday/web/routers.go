@@ -1,10 +1,8 @@
 package web
 
 import (
-	"net/http"
-	"strings"
-
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 type Route struct {
@@ -43,6 +41,20 @@ func NewRouter() *mux.Router {
 }
 
 var routes = Routes{
-	NewRoute("BroadcastsGet", strings.ToUpper("Get"), "/broadcasts", BroadcastsGet),
-	NewRoute("EventsGet", strings.ToUpper("Get"), "/events", EventsGet),
+	NewRoute("BroadcastDelete", "DELETE", "/broadcast", BroadcastDelete),
+	NewRoute("BroadcastPost", "POST", "/broadcast", BroadcastPost),
+	NewRoute("BroadcastPut", "PUT", "/broadcast", BroadcastPut),
+	NewRoute("BroadcastsGet", "GET", "/broadcasts", BroadcastsGet),
+	NewRoute("EventDelete", "DELETE", "/event", EventDelete),
+	NewRoute("EventPost", "POST", "/event", EventPost),
+	NewRoute("EventPut", "PUT", "/event", EventPut),
+	NewRoute("EventsGet", "GET", "/events", EventsGet),
+	NewRoute("LocationDelete", "DELETE", "/location", LocationDelete),
+	NewRoute("LocationPost", "POST", "/location", LocationPost),
+	NewRoute("LocationPut", "PUT", "/location", LocationPut),
+	NewRoute("LocationsGet", "GET", "/locations", LocationsGet),
+	NewRoute("SeriesDelete", "DELETE", "/series", SeriesDelete),
+	NewRoute("SeriesPost", "POST", "/series", SeriesPost),
+	NewRoute("SeriesPut", "PUT", "/series", SeriesPut),
+	NewRoute("SeriesGet", "GET", "/series", SeriesGet),
 }

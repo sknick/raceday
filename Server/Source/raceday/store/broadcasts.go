@@ -11,6 +11,28 @@ type BroadcastRetrievalCriteria struct {
 	EventStart *float64
 }
 
+func (dh DatastoreHandle) DeleteBroadcast(id string) error {
+	result, err := dh.db.Exec(
+		`DELETE FROM broadcast
+          WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return &BroadcastNotFoundError{}
+	}
+
+	return nil
+}
+
 func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]model.Broadcast, error) {
 	ret := make([]model.Broadcast, 0)
 

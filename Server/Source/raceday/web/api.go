@@ -9,6 +9,30 @@ import (
 	"strconv"
 )
 
+func BroadcastDelete(w http.ResponseWriter, r *http.Request) {
+	err := store.Datastore.DeleteBroadcast(r.URL.Query().Get("id"))
+	if err != nil {
+		switch err.(type) {
+		case *store.BroadcastNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func BroadcastPost(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func BroadcastPut(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
 	eventIdParam := r.URL.Query().Get("event_id")
 	eventStartParam := r.URL.Query().Get("event_start")
@@ -41,6 +65,18 @@ func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodeAndSend(streams, w)
+}
+
+func EventDelete(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func EventPost(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func EventPut(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func EventsGet(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +112,38 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodeAndSend(events, w)
+}
+
+func LocationDelete(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func LocationPost(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func LocationPut(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func LocationsGet(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func SeriesDelete(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func SeriesGet(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func SeriesPost(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func SeriesPut(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func encodeAndSend(obj interface{}, w http.ResponseWriter) {
