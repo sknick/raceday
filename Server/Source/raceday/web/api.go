@@ -167,7 +167,47 @@ func EventPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventPut(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	start, err := strconv.ParseInt(r.URL.Query().Get("start"), 10, 64)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
 
+	descriptionParam := r.URL.Query().Get("description")
+	locationIdParam := r.URL.Query().Get("location_id")
+	seriesIdParam := r.URL.Query().Get("series_id")
+
+	var (
+		description *string
+		locationId  *string
+		seriesId    *string
+	)
+
+	if descriptionParam != "" {
+		description = &descriptionParam
+	}
+	if locationIdParam != "" {
+		locationId = &locationIdParam
+	}
+	if seriesIdParam != "" {
+		seriesId = &seriesIdParam
+	}
+
+	err = store.Datastore.UpdateEvent(id, name, time.Unix(start, 0), description, locationId, seriesId)
+	if err != nil {
+		switch err.(type) {
+		case *store.EventNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func EventsGet(w http.ResponseWriter, r *http.Request) {

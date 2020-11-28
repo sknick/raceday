@@ -197,6 +197,12 @@ paths:
       summary: Updates an event.
 
       parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
         - name: name
           in: query
           required: true

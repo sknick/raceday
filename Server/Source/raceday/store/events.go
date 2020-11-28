@@ -128,6 +128,51 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 	return ret, nil
 }
 
+func (dh DatastoreHandle) UpdateEvent(id, name string, start time.Time, description, locationId, seriesId *string) error {
+	descriptionParam := "NULL"
+	if description != nil {
+		descriptionParam = *description
+	}
+	locationIdParam := "NULL"
+	if locationId != nil {
+		locationIdParam = *locationId
+	}
+	seriesIdParam := "NULL"
+	if seriesId != nil {
+		seriesIdParam = *seriesId
+	}
+
+	result, err := dh.db.Exec(
+		`UPDATE event
+            SET name = $1,
+                start = $2,
+                description = $3,
+                location_id = $4,
+                series_id = $5
+          WHERE id = $6`,
+		name,
+		start,
+		descriptionParam,
+		locationIdParam,
+		seriesIdParam,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return &EventNotFoundError{}
+	}
+
+	return nil
+}
+
 func newEventFromRow(rows *sql.Rows) (*model.Event, error) {
 	var (
 		eventIdVal             string
