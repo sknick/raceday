@@ -1,6 +1,10 @@
 package store
 
-import "github.com/google/uuid"
+import (
+	"database/sql"
+	"github.com/google/uuid"
+	"raceday/Server/Source/raceday/model"
+)
 
 func (dh DatastoreHandle) CreateLocation(name string, description *string) (string, error) {
 	locationId, err := uuid.NewRandom()
@@ -49,6 +53,32 @@ func (dh DatastoreHandle) DeleteLocation(id string) error {
 	return nil
 }
 
+func (dh DatastoreHandle) GetLocations() ([]model.Location, error) {
+	ret := make([]model.Location, 0)
+
+	rows, err := dh.db.Query(
+		`SELECT *
+		   FROM location
+		  ORDER BY name`,
+	)
+	if err != nil {
+		return ret, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		location, err := newLocationFromRow(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		ret = append(ret, *location)
+	}
+
+	return ret, nil
+}
+
 func (dh DatastoreHandle) UpdateLocation(id, name string, description *string) error {
 	descriptionParam := "NULL"
 	if description != nil {
@@ -78,4 +108,31 @@ func (dh DatastoreHandle) UpdateLocation(id, name string, description *string) e
 	}
 
 	return nil
+}
+
+func newLocationFromRow(rows *sql.Rows) (*model.Location, error) {
+	var (
+		idVal          string
+		nameVal        string
+		descriptionVal sql.NullString
+	)
+
+	err := rows.Scan(
+		&idVal,
+		&nameVal,
+		&descriptionVal,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := model.Location{
+		Id:   idVal,
+		Name: nameVal,
+	}
+	if descriptionVal.Valid {
+		ret.Description = descriptionVal.String
+	}
+
+	return &ret, nil
 }

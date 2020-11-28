@@ -307,7 +307,13 @@ func LocationPut(w http.ResponseWriter, r *http.Request) {
 }
 
 func LocationsGet(w http.ResponseWriter, r *http.Request) {
+	locations, err := store.Datastore.GetLocations()
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
 
+	encodeAndSend(locations, w)
 }
 
 func SeriesDelete(w http.ResponseWriter, r *http.Request) {
