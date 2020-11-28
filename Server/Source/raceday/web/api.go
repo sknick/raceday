@@ -317,19 +317,74 @@ func LocationsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func SeriesDelete(w http.ResponseWriter, r *http.Request) {
+	err := store.Datastore.DeleteSeries(r.URL.Query().Get("id"))
+	if err != nil {
+		switch err.(type) {
+		case *store.SeriesNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func SeriesGet(w http.ResponseWriter, r *http.Request) {
+	series, err := store.Datastore.GetSeries()
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
 
+	encodeAndSend(series, w)
 }
 
 func SeriesPost(w http.ResponseWriter, r *http.Request) {
+	descriptionParam := r.URL.Query().Get("description")
 
+	var description *string
+	if descriptionParam != "" {
+		description = &descriptionParam
+	}
+
+	id, err := store.Datastore.CreateSeries(
+		r.URL.Query().Get("name"),
+		description,
+	)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	encodeAndSend(id, w)
 }
 
 func SeriesPut(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	descriptionParam := r.URL.Query().Get("description")
 
+	var description *string
+	if descriptionParam != "" {
+		description = &descriptionParam
+	}
+
+	err := store.Datastore.UpdateSeries(id, name, description)
+	if err != nil {
+		switch err.(type) {
+		case *store.SeriesNotFoundError:
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		handleInternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func encodeAndSend(obj interface{}, w http.ResponseWriter) {
