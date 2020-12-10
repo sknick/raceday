@@ -1,8 +1,8 @@
 <template>
 
-  <div id="app">
-    <Root/>
-  </div>
+    <div id="app">
+        <Root/>
+    </div>
 
 </template>
 
@@ -11,11 +11,11 @@
 import Root from "./components/Root.vue"
 
 export default {
-  name: "App",
+    name: "App",
 
-  components: {
-    Root
-  }
+    components: {
+        Root
+    }
 }
 
 </script>
