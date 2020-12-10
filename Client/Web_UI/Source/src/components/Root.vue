@@ -3,29 +3,31 @@
         <table class="table">
             <thead>
             <tr>
+                <th>Time</th>
                 <th>Series</th>
                 <th>Event</th>
-                <th>Time</th>
+                <th>Location</th>
             </tr>
             </thead>
 
             <tbody>
             <template v-for="event in events" v-bind:key="event">
                 <tr class="event" @click="toggleEvent(event.id)">
+                    <td>{{ timestampToString(event.start) }}</td>
                     <td>{{ event.series.name }}</td>
                     <td>{{ event.name }}</td>
-                    <td>{{ timestampToString(event.start) }}</td>
+                    <td>{{ event.location.name }}</td>
                 </tr>
 
                 <template v-if="shownEvents.includes(event.id)">
                     <template v-if="event.broadcasts.length > 0">
                         <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
-                            <td colspan="3"><img :src="icon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
+                            <td colspan="4"><img :src="icon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
                         </tr>
                     </template>
                     <template v-else>
                         <tr>
-                            <td colspan="3">(No Streams)</td>
+                            <td colspan="4">(No Streams)</td>
                         </tr>
                     </template>
                 </template>
