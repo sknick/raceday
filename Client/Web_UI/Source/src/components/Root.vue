@@ -20,7 +20,7 @@
                 <template v-if="shownEvents.includes(event.id)">
                     <template v-if="event.broadcasts.length > 0">
                         <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
-                            <td colspan="3"><a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
+                            <td colspan="3"><img :src="icon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
                         </tr>
                     </template>
                     <template v-else>
@@ -60,6 +60,17 @@ export default {
     },
 
     methods: {
+        icon: function(broadcast) {
+            switch (broadcast.type) {
+                case "Facebook":
+                    return require("../assets/facebook.png");
+                case "YouTube":
+                    return require("../assets/youtube.png");
+                default:
+                    return require("../assets/other.png");
+            }
+        },
+
         timestampToString: function(timestamp) {
             let d = new Date(timestamp * 1000);
             let timezoneOffset = d.getTimezoneOffset() / 60;
