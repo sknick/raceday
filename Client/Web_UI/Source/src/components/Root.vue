@@ -2,12 +2,12 @@
     <div>
         <table class="table">
             <thead>
-            <tr>
-                <th>Time</th>
-                <th>Series</th>
-                <th>Event</th>
-                <th>Location</th>
-            </tr>
+                <tr>
+                    <th>Time</th>
+                    <th>Series</th>
+                    <th>Event</th>
+                    <th>Location</th>
+                </tr>
             </thead>
 
             <tbody>
@@ -51,14 +51,6 @@ export default {
             events: null,
             shownEvents: []
         };
-    },
-
-    mounted: function() {
-        axios.get(
-            "api/events?window_start=" + (new Date(2020, 10, 15).getTime() / 1000)
-        ).then(
-            response => (this.events = response.data)
-        );
     },
 
     methods: {
@@ -115,6 +107,14 @@ export default {
                 }
             );
         }
+    },
+
+    mounted: function() {
+        axios.get(
+            "api/events?window_start=" + (new Date(2020, 10, 15).getTime() / 1000)
+        ).then(
+            response => (this.events = response.data)
+        );
     }
 }
 
