@@ -172,6 +172,7 @@ export default {
 
 .logo {
     float:         right;
+    font-weight:   bold;
     padding-right: 10px;
     padding-top:   2px;
 }
