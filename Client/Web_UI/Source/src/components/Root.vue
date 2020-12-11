@@ -1,5 +1,10 @@
 <template>
     <div>
+        <span class="date_label">Date: <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite></span>
+        <span class="logo">Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon"></span>
+    </div>
+
+    <div>
         <table class="table">
             <thead>
                 <tr>
@@ -14,15 +19,15 @@
             <template v-for="event in events" v-bind:key="event">
                 <tr class="event" @click="toggleEvent(event.id)">
                     <td>{{ timestampToString(event.start) }}</td>
-                    <td>{{ event.series.name }}</td>
+                    <td>{{ event.series ? event.series.name : "" }}</td>
                     <td>{{ event.name }}</td>
-                    <td>{{ event.location.name }}</td>
+                    <td>{{ event.location ? event.location.name : "" }}</td>
                 </tr>
 
                 <template v-if="shownEvents.includes(event.id)">
                     <template v-if="event.broadcasts.length > 0">
                         <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
-                            <td colspan="4"><img :src="icon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
+                            <td colspan="4"><img :src="mediaIcon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
                         </tr>
                     </template>
                     <template v-else>
@@ -41,20 +46,50 @@
 <script>
 
 import axios from "axios";
+import DatepickerLite from "vue3-datepicker-lite";
 
 export default {
 
     name: "Root",
 
+    components: {
+        DatepickerLite
+    },
+
+    computed: {
+        today: function() {
+            let d = new Date();
+            return d.getFullYear() + "/" +
+                String(d.getMonth() + 1).padStart(2, "0") + "/" +
+                String(d.getDate()).padStart(2, "0");
+        }
+    },
+
     data: function() {
         return {
-            events: null,
+            events:      null,
             shownEvents: []
         };
     },
 
     methods: {
-        icon: function(broadcast) {
+        getEvents: function(dateStr) {
+            let d = new Date();
+            if (dateStr) {
+                let s = dateStr.split("/");
+                d.setFullYear(parseInt(s[0]));
+                d.setMonth(parseInt(s[1]) - 1);
+                d.setDate(parseInt(s[2]));
+            }
+
+            axios.get(
+                "api/events?window_start=" + (d.getTime() / 1000)
+            ).then(
+                response => (this.events = response.data)
+            );
+        },
+
+        mediaIcon: function(broadcast) {
             switch (broadcast.type) {
                 case "Facebook":
                     return require("../assets/facebook.png");
@@ -106,15 +141,15 @@ export default {
                     }
                 }
             );
+        },
+
+        onDateSelected: function(value) {
+            this.getEvents(value);
         }
     },
 
     mounted: function() {
-        axios.get(
-            "api/events?window_start=" + (new Date(2020, 10, 15).getTime() / 1000)
-        ).then(
-            response => (this.events = response.data)
-        );
+        this.getEvents();
     }
 }
 
@@ -123,8 +158,22 @@ export default {
 
 <style scoped>
 
+.date_label {
+    padding-left: 5px;
+}
+
+.datepicker {
+    display: inline;
+}
+
 .event {
     cursor: pointer;
+}
+
+.logo {
+    float:         right;
+    padding-right: 10px;
+    padding-top:   2px;
 }
 
 </style>
