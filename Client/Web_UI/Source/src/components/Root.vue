@@ -163,10 +163,6 @@ export default {
 
 <style scoped>
 
-.upper-left-info {
-    padding-left: 5px;
-}
-
 .datepicker {
     display: inline;
 }
@@ -180,6 +176,10 @@ export default {
     font-weight:   bold;
     padding-right: 10px;
     padding-top:   2px;
+}
+
+.upper-left-info {
+    padding-left: 5px;
 }
 
 </style>
