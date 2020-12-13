@@ -1,0 +1,14 @@
+{
+  "name": "raceday",
+  "version": "0.9.0",
+  "description": "Race Day Administrative Web Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Scott Knick",
+  "license": "",
+  "devDependencies": {
+    "@qooxdoo/compiler": "^1.0.0-beta-20201106-1652"
+  }
+}

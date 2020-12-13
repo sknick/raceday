@@ -53,7 +53,7 @@ func NewConfig(configFile string) (Settings, error) {
 		DatabaseSettings: DatabaseSettings{
 			DatabaseHost:     config.Section("database").Key("host").MustString("localhost"),
 			DatabasePort:     config.Section("database").Key("port").MustInt(5432),
-			DatabaseName:     config.Section("database").Key("name").MustString("apas"),
+			DatabaseName:     config.Section("database").Key("name").MustString("raceday"),
 			DatabaseUser:     config.Section("database").Key("user").MustString("postgres"),
 			DatabasePassword: config.Section("database").Key("password").MustString(""),
 		},

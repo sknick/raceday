@@ -1,0 +1,19 @@
+qx.Class.define("raceday.api.model.{{classname}}", {
+    extend: qx.core.Object,
+
+    construct: function(data) {
+        this.base(arguments);
+
+{{#vars}}        if (data.hasOwnProperty("{{baseName}}")) {
+{{#isPrimitiveType}}            this.{{name}} = data["{{baseName}}"];
+{{/isPrimitiveType}}
+{{^isPrimitiveType}}
+{{#vendorExtensions.x-is-object}}            this.{{name}} = new raceday.api.model.{{datatype}}(data["{{baseName}}"]);
+{{/vendorExtensions.x-is-object}}
+{{^vendorExtensions.x-is-object}}            this.{{name}} = data["{{baseName}}"];
+{{/vendorExtensions.x-is-object}}
+{{/isPrimitiveType}}
+        }
+{{/vars}}
+    }
+});

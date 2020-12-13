@@ -1,7 +1,6 @@
 FROM ubuntu:18.04 AS builder
 
 WORKDIR /
-# Note that gsfonts is required by apas-xpdf, but alien can't install it as a dependency automatically
 RUN apt --assume-yes update && \
     apt --assume-yes install nodejs         \
                              npm            \
@@ -20,7 +19,7 @@ RUN ln -s /usr/go/bin/go /usr/bin/go
 WORKDIR /RaceDay
 COPY ./ .
 RUN make server
-RUN make web_ui
+RUN make web
 
 
 FROM ubuntu:18.04
@@ -34,4 +33,4 @@ WORKDIR /etc
 COPY Shared/Deployment/raceday.conf .
 
 WORKDIR /var/www/raceday
-COPY --from=builder /RaceDay/Client/Web_UI/Source/dist .
+COPY --from=builder /RaceDay/Client/Web/Source/dist .

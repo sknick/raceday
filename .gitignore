@@ -4,5 +4,7 @@
 /.idea/workspace.xml
 /Build/
 /Client/API/Python/Build/
-/Client/Web_UI/Source/node_modules/
+/Client/Admin/Source/compiled/
+/Client/Admin/Source/source/class/raceday/api/model/
+/Client/Web/Source/node_modules/
 /Server/Source/raceday/model/*

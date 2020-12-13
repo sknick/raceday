@@ -1,0 +1,12 @@
+qx.Class.define("raceday.api.model.{{classname}}", {
+    extend: qx.core.Object,
+
+    statics: {
+{{#allowableValues}}{{#enumVars}}        {{name}}: {{{value}}},
+{{/enumVars}}{{/allowableValues}}
+    },
+
+    construct: function() {
+        this.base(arguments);
+    }
+});
