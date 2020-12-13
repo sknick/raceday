@@ -3,11 +3,7 @@ qx.Class.define("raceday.Application", {
 
     statics: {
         APP_TITLE:                 "Race Day",
-        UNSPECIFIED_ERROR_MESSAGE: "An unspecified error occurred.",
-
-        getDocURLPrefix: function() {
-            return "https://" + window.location.host + "/docs/";
-        }
+        UNSPECIFIED_ERROR_MESSAGE: "An unspecified error occurred."
     },
 
     members: {

@@ -8,10 +8,6 @@ qx.Class.define("raceday.ui.MainWindow", {
 
     statics: {
         __ACCESS_TOKEN_KEY: "access_token",
-        __IS_SUPERUSER_KEY: "is_superuser",
-        __LAST_SHOWN_VIEW:  "last_shown_view",
-        __DOCUMENTS_VIEW:   "documents",
-        __ADMIN_VIEW:       "admin",
         __instance:         null,
 
         /**
@@ -56,17 +52,10 @@ qx.Class.define("raceday.ui.MainWindow", {
         this.__unauthorizedHandled = false;
         this.__loadingDlg = new raceday.ui.LoadingDialog();
         this.__sessionStorage = qx.bom.storage.Web.getSession();
-        this.__adminButton = new qx.ui.toolbar.Button("Administration", "icon/16/categories/system.png");
-        this.__documentsView = null;
-        this.__adminView = null;
 
         let accessToken = this.__sessionStorage.getItem(raceday.ui.MainWindow.__ACCESS_TOKEN_KEY);
         if (accessToken) {
-            let val = {
-                value: accessToken,
-                superuser: this.__sessionStorage.getItem(raceday.ui.MainWindow.__IS_SUPERUSER_KEY)
-            };
-            this.__onLoginContinued(val);
+            this.__onLoginContinued(accessToken);
         } else {
             this.__loginDlg = new raceday.ui.LoginScreen();
             this.__loginDlg.addListener("login", this.__onLogin, this);
@@ -74,8 +63,6 @@ qx.Class.define("raceday.ui.MainWindow", {
         }
 
         raceday.RequestManager.getInstance().setNotifier(this);
-
-        this.__adminButton.addListener("execute", this.__onAdmin, this);
     },
 
     members: {
@@ -93,7 +80,6 @@ qx.Class.define("raceday.ui.MainWindow", {
             // attempted a request.
             if (!this.__unauthorizedHandled) {
                 this.__sessionStorage.removeItem(raceday.ui.MainWindow.__ACCESS_TOKEN_KEY);
-                this.__sessionStorage.removeItem(raceday.ui.MainWindow.__IS_SUPERUSER_KEY);
 
                 let dlg = new raceday.ui.MessageDialog(raceday.Application.APP_TITLE,
                     "Your login session has expired. Press OK to login again.");
@@ -101,37 +87,6 @@ qx.Class.define("raceday.ui.MainWindow", {
                 dlg.open();
             }
             return false;
-        },
-
-        __showView: function(view) {
-            if (qx.ui.core.Widget.contains(this.__root, this.__documentsView)) {
-                this.__root.remove(this.__documentsView);
-            } else if (qx.ui.core.Widget.contains(this.__root, this.__adminView)) {
-                this.__root.remove(this.__adminView);
-            }
-
-            this.__root.add(view, {
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%"
-            });
-
-            if (view instanceof raceday.ui.documents.View) {
-                this.__sessionStorage.setItem(raceday.ui.MainWindow.__LAST_SHOWN_VIEW, raceday.ui.MainWindow.__DOCUMENTS_VIEW);
-            } else if (view instanceof raceday.ui.admin.View) {
-                this.__sessionStorage.setItem(raceday.ui.MainWindow.__LAST_SHOWN_VIEW, raceday.ui.MainWindow.__ADMIN_VIEW);
-            } else {
-                this.__sessionStorage.removeItem(raceday.ui.MainWindow.__LAST_SHOWN_VIEW);
-            }
-        },
-
-        __onAdmin: function(e) {
-            this.__showView(this.__adminView);
-        },
-
-        __onExitAdminSelected: function(e) {
-            this.__showView(this.__documentsView);
         },
 
         __onUnauthorizedContinue: function(context) {
@@ -156,44 +111,14 @@ qx.Class.define("raceday.ui.MainWindow", {
         },
 
         __onLoginContinued: function(accessToken) {
-            raceday.RequestManager.getInstance().setAccessToken(accessToken.value);
-            this.__sessionStorage.setItem(raceday.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken.value);
-            this.__sessionStorage.setItem(raceday.ui.MainWindow.__IS_SUPERUSER_KEY, accessToken.superuser);
-
-            let additionalButton = null;
-            if (this.__sessionStorage.getItem(raceday.ui.MainWindow.__IS_SUPERUSER_KEY)) {
-                additionalButton = this.__adminButton;
-            }
-
-            this.__documentsView = new raceday.ui.documents.View(additionalButton);
-
-            this.__adminView = new raceday.ui.admin.View();
-            this.__adminView.addListener("exitSelected", this.__onExitAdminSelected, this);
+            raceday.RequestManager.getInstance().setAccessToken(accessToken);
+            this.__sessionStorage.setItem(raceday.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
 
             if (this.__loginDlg) {
                 this.__root.remove(this.__loginDlg);
             }
 
-            let lastShownView = this.__sessionStorage.getItem(raceday.ui.MainWindow.__LAST_SHOWN_VIEW);
-            if (lastShownView) {
-                switch (lastShownView) {
-                    case raceday.ui.MainWindow.__DOCUMENTS_VIEW:
-                        this.__showView(this.__documentsView);
-                        break;
-
-                    case raceday.ui.MainWindow.__ADMIN_VIEW:
-                        this.__showView(this.__adminView);
-                        break;
-                }
-            } else {
-                this.__showView(this.__documentsView);
-            }
-
-            this.__notificationWebSocket = raceday.RequestManager.getInstance().getNotificationSocket();
-            this.__notificationWebSocket.onmessage = function(event) {
-                // TODO: Handle notification
-                console.log(event.data);
-            };
+            // TODO
         },
 
         __loadingDlg: null

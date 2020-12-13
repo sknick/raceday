@@ -1,7 +1,5 @@
 /**
  * This the login screen shown when the application first loads.
- *
- * @asset(images/logo-130x130.png)
  */
 qx.Class.define("raceday.ui.LoginScreen", {
     extend: qx.ui.container.Composite,
@@ -32,11 +30,10 @@ qx.Class.define("raceday.ui.LoginScreen", {
         gridLayout.setColumnWidth(0, 300);
 
         this.__fieldContainer = new qx.ui.container.Composite(gridLayout);
-        this.__fieldContainer.add(new qx.ui.basic.Image("images/logo-130x130.png"), { row: 0, column: 0, colSpan: 2 });
-        this.__fieldContainer.add(this.__usernameField,                             { row: 1, column: 0 });
-        this.__fieldContainer.add(this.__passwordField,                             { row: 2, column: 0 });
-        this.__fieldContainer.add(this.__messageLabel,                              { row: 3, column: 0 });
-        this.__fieldContainer.add(loginButton,                                      { row: 4, column: 0 });
+        this.__fieldContainer.add(this.__usernameField, { row: 0, column: 0 });
+        this.__fieldContainer.add(this.__passwordField, { row: 1, column: 0 });
+        this.__fieldContainer.add(this.__messageLabel,  { row: 2, column: 0 });
+        this.__fieldContainer.add(loginButton,          { row: 3, column: 0 });
 
         let innerContainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(0, "middle"));
         innerContainer.setAllowGrowY(false);

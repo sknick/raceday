@@ -7,14 +7,48 @@ info:
 
 paths:
 
+  /access_token:
+
+    get:
+      operationId: accessTokenGet
+
+      summary: Provides a new access token. Access tokens expire after a configurable amount of time (24 hours by
+        default). Note also that access tokens are tied to your IP address, so you will need to acquire a new access
+        token if you use a different host or connect via a different means.
+
+      parameters:
+        - name: Username
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: Password
+          in: header
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        "401":
+          description: Invalid credentials.
+
   /broadcast:
 
     delete:
+
       operationId: broadcastDelete
 
       summary: Deletes a broadcast.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -25,6 +59,8 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Broadcast not found.
 
@@ -34,6 +70,7 @@ paths:
       summary: Creates a new broadcast.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: type
           in: query
           required: true
@@ -60,6 +97,8 @@ paths:
               schema:
                 type: string
                 format: uuid
+        "403":
+          description: Unauthorized.
 
     put:
       operationId: broadcastPut
@@ -67,6 +106,7 @@ paths:
       summary: Updates a broadcast.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -93,6 +133,8 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Broadcast not found.
 
@@ -137,6 +179,7 @@ paths:
       summary: Deletes an event.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -147,6 +190,8 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Event not found.
 
@@ -156,6 +201,7 @@ paths:
       summary: Creates a new event.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: name
           in: query
           required: true
@@ -190,6 +236,8 @@ paths:
               schema:
                 type: string
                 format: uuid
+        "403":
+          description: Unauthorized.
 
     put:
       operationId: eventPut
@@ -197,6 +245,7 @@ paths:
       summary: Updates an event.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -232,6 +281,8 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Event not found.
 
@@ -277,6 +328,7 @@ paths:
       summary: Deletes a location.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -287,6 +339,8 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Location not found.
 
@@ -296,6 +350,7 @@ paths:
       summary: Creates a new location.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: name
           in: query
           required: true
@@ -314,6 +369,8 @@ paths:
               schema:
                 type: string
                 format: uuid
+        "403":
+          description: Unauthorized.
 
     put:
       operationId: locationPut
@@ -321,6 +378,7 @@ paths:
       summary: Updates a location.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -340,6 +398,8 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Location not found.
 
@@ -368,6 +428,7 @@ paths:
       summary: Deletes a series.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -378,6 +439,8 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Series not found.
 
@@ -402,6 +465,7 @@ paths:
       summary: Creates a new series.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: name
           in: query
           required: true
@@ -420,6 +484,8 @@ paths:
               schema:
                 type: string
                 format: uuid
+        "403":
+          description: Unauthorized.
 
     put:
       operationId: seriesPut
@@ -427,6 +493,7 @@ paths:
       summary: Updates a series.
 
       parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
           required: true
@@ -446,11 +513,23 @@ paths:
       responses:
         "200":
           description: Successful response.
+        "403":
+          description: Unauthorized.
         "404":
           description: Series not found.
 
 
 components:
+
+  parameters:
+
+    AccessTokenParam:
+      in: header
+      name: AccessToken
+      schema:
+        type: string
+      required: true
+
 
   schemas:
 
