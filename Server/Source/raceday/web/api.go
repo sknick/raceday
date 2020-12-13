@@ -7,6 +7,7 @@ import (
 	"raceday/Server/Source/raceday/store"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -397,6 +398,16 @@ func encodeAndSend(obj interface{}, w http.ResponseWriter) {
 	}
 }
 
+func getIpFromRemoteAddr(remoteAddr string) string {
+	lastIndexOfColon := strings.LastIndex(remoteAddr, ":")
+	if lastIndexOfColon == -1 {
+		return remoteAddr
+	}
+
+	// In case the remote address is [::1] (IPv6 localhost), trim off the surrounding []
+	return strings.Trim(remoteAddr[:lastIndexOfColon], "[]")
+}
+
 func handleInternalServerError(w http.ResponseWriter, err error) {
 	_, file, line, ok := runtime.Caller(1)
 	if ok {
@@ -406,4 +417,25 @@ func handleInternalServerError(w http.ResponseWriter, err error) {
 	}
 
 	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func isAuthorized(accessToken string, remoteAddress string, db *store.DatastoreHandle) (bool, error) {
+	if accessToken != "" {
+		accessTokenObj, err := db.GetAccessToken(accessToken)
+		if err != nil {
+			return false, err
+		}
+
+		if accessTokenObj == nil {
+			return false, nil
+		} else if time.Now().Unix()-int64(accessTokenObj.WhenCreated) > 84600 { // TODO: Pull expiration from config
+			return false, nil
+		} else if accessTokenObj.IPAddress != getIpFromRemoteAddr(remoteAddress) {
+			return false, nil
+		}
+
+		return true, nil
+	} else {
+		return false, nil
+	}
 }

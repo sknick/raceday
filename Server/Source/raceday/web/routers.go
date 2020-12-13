@@ -2,39 +2,84 @@ package web
 
 import (
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
-	"path"
+	"raceday/Server/Source/raceday/logging"
+	"raceday/Server/Source/raceday/store"
+	"strings"
 )
 
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+// Checks for a valid access token.
+func guard(inner http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if authorized, err := isAuthorized(r.Header.Get("AccessToken"), r.RemoteAddr, &store.Datastore); err == nil {
+			if !authorized {
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+		} else {
+			log.Printf("unable to determine if access token is valid: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		inner.ServeHTTP(w, r)
+	})
 }
 
-func NewRoute(name, method, pattern string, handlerFunc http.HandlerFunc) Route {
-	return Route{
-		Name:        name,
-		Method:      method,
-		Pattern:     path.Join("/api", pattern),
-		HandlerFunc: handlerFunc,
+type route struct {
+	name           string
+	method         string
+	pattern        string
+	handler        http.HandlerFunc
+	authRequired   bool
+	disableLogging bool
+}
+
+func newGuardedRoute(name string, method string, pattern string, handlerFunc http.HandlerFunc) route {
+	return route{
+		name:         name,
+		method:       strings.ToUpper(method),
+		pattern:      pattern,
+		handler:      handlerFunc,
+		authRequired: true,
 	}
 }
 
-type Routes []Route
+func newUnguardedRoute(name string, method string, pattern string, handlerFunc http.HandlerFunc) route {
+	return route{
+		name:         name,
+		method:       strings.ToUpper(method),
+		pattern:      pattern,
+		handler:      handlerFunc,
+		authRequired: false,
+	}
+}
+
+type Routes []route
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
 		var handler http.Handler
-		handler = route.HandlerFunc
-		handler = Logger(handler, route.Name)
+		if route.authRequired {
+			if !route.disableLogging {
+				handler = guard(logging.HTTPLogger(route.handler))
+			} else {
+				handler = guard(route.handler)
+			}
+		} else {
+			if !route.disableLogging {
+				handler = logging.HTTPLogger(route.handler)
+			} else {
+				handler = route.handler
+			}
+		}
 
 		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
+			Methods(route.method).
+			Path(route.pattern).
+			Name(route.name).
 			Handler(handler)
 	}
 
@@ -42,20 +87,20 @@ func NewRouter() *mux.Router {
 }
 
 var routes = Routes{
-	NewRoute("BroadcastDelete", "DELETE", "/broadcast", BroadcastDelete),
-	NewRoute("BroadcastPost", "POST", "/broadcast", BroadcastPost),
-	NewRoute("BroadcastPut", "PUT", "/broadcast", BroadcastPut),
-	NewRoute("BroadcastsGet", "GET", "/broadcasts", BroadcastsGet),
-	NewRoute("EventDelete", "DELETE", "/event", EventDelete),
-	NewRoute("EventPost", "POST", "/event", EventPost),
-	NewRoute("EventPut", "PUT", "/event", EventPut),
-	NewRoute("EventsGet", "GET", "/events", EventsGet),
-	NewRoute("LocationDelete", "DELETE", "/location", LocationDelete),
-	NewRoute("LocationPost", "POST", "/location", LocationPost),
-	NewRoute("LocationPut", "PUT", "/location", LocationPut),
-	NewRoute("LocationsGet", "GET", "/locations", LocationsGet),
-	NewRoute("SeriesDelete", "DELETE", "/series", SeriesDelete),
-	NewRoute("SeriesPost", "POST", "/series", SeriesPost),
-	NewRoute("SeriesPut", "PUT", "/series", SeriesPut),
-	NewRoute("SeriesGet", "GET", "/series", SeriesGet),
+	newGuardedRoute("BroadcastDelete", "DELETE", "/broadcast", BroadcastDelete),
+	newGuardedRoute("BroadcastPost", "POST", "/broadcast", BroadcastPost),
+	newGuardedRoute("BroadcastPut", "PUT", "/broadcast", BroadcastPut),
+	newUnguardedRoute("BroadcastsGet", "GET", "/broadcasts", BroadcastsGet),
+	newGuardedRoute("EventDelete", "DELETE", "/event", EventDelete),
+	newGuardedRoute("EventPost", "POST", "/event", EventPost),
+	newGuardedRoute("EventPut", "PUT", "/event", EventPut),
+	newUnguardedRoute("EventsGet", "GET", "/events", EventsGet),
+	newGuardedRoute("LocationDelete", "DELETE", "/location", LocationDelete),
+	newGuardedRoute("LocationPost", "POST", "/location", LocationPost),
+	newGuardedRoute("LocationPut", "PUT", "/location", LocationPut),
+	newUnguardedRoute("LocationsGet", "GET", "/locations", LocationsGet),
+	newGuardedRoute("SeriesDelete", "DELETE", "/series", SeriesDelete),
+	newGuardedRoute("SeriesPost", "POST", "/series", SeriesPost),
+	newGuardedRoute("SeriesPut", "PUT", "/series", SeriesPut),
+	newUnguardedRoute("SeriesGet", "GET", "/series", SeriesGet),
 }

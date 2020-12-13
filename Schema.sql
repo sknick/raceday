@@ -47,6 +47,32 @@ CREATE TABLE broadcast (
     FOREIGN KEY (event_id) REFERENCES event(id)
 );
 
+CREATE TABLE system_user (
+    id                          varchar                             NOT NULL,
+    password_hash               varchar                             NOT NULL,
+    salt                        varchar                             NOT NULL,
+    first_name                  varchar,
+    last_name                   varchar,
+    email                       varchar,
+    when_created                timestamptz                         NOT NULL,
+    who_created                 varchar,
+    when_updated                timestamptz,
+    who_updated                 varchar,
+    enabled                     boolean                             NOT NULL DEFAULT TRUE,
+
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE access_token (
+    id                          uuid                                NOT NULL,
+    when_created                timestamptz                         NOT NULL,
+    user_id                     varchar                             NOT NULL,
+    ip_address                  inet                                NOT NULL,
+
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES system_user(id)
+);
+
 CREATE VIEW broadcasts AS
 SELECT broadcast.id AS broadcast_id,
        broadcast.type AS broadcast_type,
