@@ -6,6 +6,10 @@
       "outputPath": "compiled/source",
       "bundle": {
         "include": "qx.*"
+      },
+      "environment": {
+        "username": "admin",
+        "password": "admin"
       }
     },
     {

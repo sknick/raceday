@@ -46,7 +46,7 @@ qx.Class.define("admin.RequestManager", {
 
             let notifier = quiet ? null : this.getNotifier();
 
-            let req = new admin.Request("https://" + window.location.host, resource, notifier);
+            let req = new admin.Request("http://" + window.location.host, resource, notifier);
             if (!accessTokenNotNecessary) {
                 req.setRequestHeader("AccessToken", this.getAccessToken());
             }
