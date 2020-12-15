@@ -34,6 +34,7 @@ var (
 			}
 
 			router := web.NewRouter("/api/")
+			router.PathPrefix("/admin/").Handler(web.NewSPAHandler(settings.AdminUIRoot, "index.html"))
 			router.PathPrefix("/").Handler(web.NewSPAHandler(settings.UIRoot, "index.html"))
 
 			server := http.Server{
