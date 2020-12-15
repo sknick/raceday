@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	_ "golang.org/x/crypto/blake2s"
 	"log"
 	"net/http"
 	"raceday/Server/Source/raceday/store"
@@ -10,6 +11,26 @@ import (
 	"strings"
 	"time"
 )
+
+func AccessTokenGet(w http.ResponseWriter, r *http.Request) {
+	valid, err := store.Datastore.IsUserValid(r.Header.Get("Username"), r.Header.Get("Password"))
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	if valid {
+		accessToken, err := store.Datastore.CreateAccessToken(r.Header.Get("Username"), getIpFromRemoteAddr(r.RemoteAddr))
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		encodeAndSend(*accessToken, w)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+	}
+}
 
 func BroadcastDelete(w http.ResponseWriter, r *http.Request) {
 	err := store.Datastore.DeleteBroadcast(r.URL.Query().Get("id"))

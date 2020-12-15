@@ -225,7 +225,7 @@ func newEventFromRow(rows *sql.Rows) (*model.Event, error) {
 	}
 
 	if location != (model.Location{}) {
-		ret.Location = &location
+		ret.Location = location
 	}
 
 	series := model.Series{}
@@ -241,7 +241,7 @@ func newEventFromRow(rows *sql.Rows) (*model.Event, error) {
 	}
 
 	if series != (model.Series{}) {
-		ret.Series = &series
+		ret.Series = series
 	}
 
 	return &ret, nil

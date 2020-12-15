@@ -19,6 +19,7 @@ type route struct {
 }
 
 var routes = []route{
+	newUnguardedRoute("AccessTokenGet", "GET", "/access_token", AccessTokenGet),
 	newGuardedRoute("BroadcastDelete", "DELETE", "/broadcast", BroadcastDelete),
 	newGuardedRoute("BroadcastPost", "POST", "/broadcast", BroadcastPost),
 	newGuardedRoute("BroadcastPut", "PUT", "/broadcast", BroadcastPut),

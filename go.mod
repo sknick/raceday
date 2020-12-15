@@ -9,5 +9,6 @@ require (
 	github.com/juju/testing v0.0.0-20201030020617-7189b3728523 // indirect
 	github.com/lib/pq v1.8.0
 	github.com/spf13/cobra v1.1.1
+	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	gopkg.in/ini.v1 v1.62.0
 )

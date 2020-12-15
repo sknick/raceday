@@ -5,7 +5,7 @@ python-api:
 	cp Client/API/Python/Source/requirements.txt Client/API/Python/Build/requirements.txt
 
 go-model:
-	java -jar Third_Party/Swagger_Codegen/swagger-codegen-cli-3.0.23.jar generate -l go-server -c Server/api.conf -o Server/Source/raceday -i api.yaml
+	java -jar Third_Party/Swagger_Codegen/swagger-codegen-cli-3.0.23.jar generate -l go-server -t Third_Party/Swagger_Codegen/go-server -c Server/api.conf -o Server/Source/raceday -i api.yaml
 	mv Server/Source/raceday/go/* Server/Source/raceday/model
 	rm -rf Server/Source/raceday/go
 	rm -rf Server/Source/raceday/api

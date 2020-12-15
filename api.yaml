@@ -539,7 +539,7 @@ components:
         id:
           type: string
           format: uuid
-        type:
+        type_:
           type: string
           enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
         url:
@@ -596,3 +596,29 @@ components:
       required:
         - id
         - name
+
+    SystemUser:
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        when_created:
+          type: integer
+        who_created:
+          type: string
+        when_updated:
+          type: integer
+        who_updated:
+          type: string
+        enabled:
+          type: boolean
+      required:
+        - id
+        - when_created
+        - enabled

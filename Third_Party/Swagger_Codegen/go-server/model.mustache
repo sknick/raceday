@@ -1,0 +1,47 @@
+{{>partial_header}}
+package {{packageName}}
+{{#models}}{{#imports}}
+import ({{/imports}}{{#imports}}
+	"{{import}}"{{/imports}}{{#imports}}
+)
+{{/imports}}{{#model}}{{#isEnum}}{{#description}}// {{{classname}}} : {{{description}}}{{/description}}
+type {{{name}}} {{^format}}{{dataType}}{{/format}}{{#format}}{{{format}}}{{/format}}
+
+// List of {{{name}}}
+const (
+	{{#allowableValues}}
+	{{#enumVars}}
+	{{name}} {{{classname}}} = "{{{value}}}"
+	{{/enumVars}}
+	{{/allowableValues}}
+){{/isEnum}}{{^isEnum}}{{#description}}
+// {{{description}}}{{/description}}
+type {{classname}} struct { {{#vars}}
+	{{name}} {{{datatype}}} `json:"{{baseName}}{{^required}},omitempty{{/required}}"`{{/vars}}
+}{{/isEnum}}
+{{^isEnum}}
+
+func New{{classname}}({{#vars}}{{baseName}} {{{datatype}}}{{#hasMore}}, {{/hasMore}}{{/vars}}) {{classname}} {
+    return {{classname}}{
+{{#vars}}
+        {{name}}: {{baseName}},
+{{/vars}}
+    }
+}
+{{/isEnum}}
+{{#isEnum}}
+
+// Returns an empty string if str does not map to an enum value.
+func {{{name}}}FromString(str string) {{{name}}} {
+    switch str {
+    {{#allowableValues}}
+    {{#enumVars}}
+    case "{{{value}}}":
+        return {{name}}
+    {{/enumVars}}
+    {{/allowableValues}}
+    }
+    return ""
+}
+{{/isEnum}}
+{{/model}}{{/models}}

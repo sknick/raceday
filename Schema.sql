@@ -152,6 +152,8 @@ BEGIN
     INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', event_gwtc_europe_2020_circuit_paul_ricard_main_race, 'https://www.youtube.com/watch?v=yuV2quOZVB4');
     INSERT INTO broadcast VALUES (uuid_generate_v4(), 'YouTube', event_2020_formula_drift_round5, 'https://www.youtube.com/watch?v=kj6Azm-MBOs');
 
+    INSERT INTO system_user VALUES ('admin', '6ac5de10d9e10a05404bcf8d33e2a13477326197d0b29d9d93761a7428d63148', '8b3d9c7ac27542eada38781d8132f6', 'Admin', 'User', '', CURRENT_TIMESTAMP, NULL, NULL, NULL, TRUE);
+
     RETURN 0;
 END;
 $$ LANGUAGE plpgsql;
