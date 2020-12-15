@@ -1,4 +1,4 @@
-qx.Class.define("raceday.Application", {
+qx.Class.define("admin.Application", {
     extend: qx.application.Standalone,
 
     statics: {
@@ -14,7 +14,7 @@ qx.Class.define("raceday.Application", {
                 qx.log.appender.Native;
             }
 
-            new raceday.ui.MainWindow(this.getRoot());
+            new admin.ui.MainWindow(this.getRoot());
         }
     }
 });

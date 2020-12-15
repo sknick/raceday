@@ -1,7 +1,7 @@
 /**
  * Instances of this class are used by the various methods of the RequestManager class.
  */
-qx.Class.define("raceday.Request", {
+qx.Class.define("admin.Request", {
     extend: qx.io.request.Xhr,
 
     construct: function(baseUrl, resource, notifier) {

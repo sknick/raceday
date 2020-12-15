@@ -1,7 +1,7 @@
 /**
  * The base class for most dialogs in the application.
  */
-qx.Class.define("raceday.ui.DialogBase", {
+qx.Class.define("admin.ui.DialogBase", {
     extend: qx.ui.window.Window,
 
     type: "abstract",

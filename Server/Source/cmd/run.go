@@ -35,6 +35,14 @@ var (
 
 			router := web.NewRouter("/api/")
 			router.PathPrefix("/admin/").Handler(web.NewSPAHandler(settings.AdminUIRoot, "index.html"))
+			router.PathPrefix("/resource/").Handler(http.FileServer(http.Dir(settings.AdminUIRoot)))
+
+			// If the dev flag is set, then we need to add the transpiled directory as the admin UI will be built in a
+			// development mode that includes it
+			if devFlag {
+				router.PathPrefix("/transpiled/").Handler(http.FileServer(http.Dir(settings.AdminUIRoot)))
+			}
+
 			router.PathPrefix("/").Handler(web.NewSPAHandler(settings.UIRoot, "index.html"))
 
 			server := http.Server{

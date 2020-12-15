@@ -1,7 +1,7 @@
 /**
  * This the login screen shown when the application first loads.
  */
-qx.Class.define("raceday.ui.LoginScreen", {
+qx.Class.define("admin.ui.LoginScreen", {
     extend: qx.ui.container.Composite,
 
     /**

@@ -27,9 +27,9 @@
   },
   "applications": [
     {
-      "class": "raceday.Application",
-      "theme": "raceday.theme.Theme",
-      "name": "raceday",
+      "class": "admin.Application",
+      "theme": "admin.theme.Theme",
+      "name": "admin",
       "bootPath": "source/boot"
     }
   ]

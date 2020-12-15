@@ -1,4 +1,4 @@
-qx.Theme.define("raceday.theme.Color",
+qx.Theme.define("admin.theme.Color",
 {
     extend: qx.theme.indigo.Color,
 

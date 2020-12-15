@@ -3,7 +3,7 @@
  *
  * @asset(images/loader-40x40.gif)
  */
-qx.Class.define("raceday.ui.LoadingDialog", {
+qx.Class.define("admin.ui.LoadingDialog", {
     extend: qx.ui.window.Window,
 
     include: qx.core.MEvent,

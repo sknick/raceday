@@ -1,4 +1,4 @@
-qx.Class.define("raceday.RequestManager", {
+qx.Class.define("admin.RequestManager", {
     extend: qx.core.Object,
 
     type: "singleton",
@@ -46,7 +46,7 @@ qx.Class.define("raceday.RequestManager", {
 
             let notifier = quiet ? null : this.getNotifier();
 
-            let req = new raceday.Request("https://" + window.location.host, resource, notifier);
+            let req = new admin.Request("https://" + window.location.host, resource, notifier);
             if (!accessTokenNotNecessary) {
                 req.setRequestHeader("AccessToken", this.getAccessToken());
             }

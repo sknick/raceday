@@ -1,4 +1,4 @@
-qx.Theme.define("raceday.theme.Font",
+qx.Theme.define("admin.theme.Font",
 {
     extend: qx.theme.indigo.Font,
 

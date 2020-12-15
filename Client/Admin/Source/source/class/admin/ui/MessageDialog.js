@@ -1,8 +1,8 @@
 /**
  * This dialog displays a message.
  */
-qx.Class.define("raceday.ui.MessageDialog", {
-    extend: raceday.ui.DialogBase,
+qx.Class.define("admin.ui.MessageDialog", {
+    extend: admin.ui.DialogBase,
 
     /**
      * @param {string} title

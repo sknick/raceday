@@ -1,8 +1,8 @@
 /**
  * This dialog prompts the user to enter text into a field.
  */
-qx.Class.define("raceday.ui.PromptDialog", {
-    extend: raceday.ui.DialogBase,
+qx.Class.define("admin.ui.PromptDialog", {
+    extend: admin.ui.DialogBase,
 
     /**
      * Constructor.
