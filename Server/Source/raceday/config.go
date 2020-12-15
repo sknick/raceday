@@ -12,6 +12,9 @@ type Settings struct {
 	// The location of the web UI files.
 	UIRoot string
 
+	// The location of the administrative UI files.
+	AdminUIRoot string
+
 	// Database settings.
 	DatabaseSettings DatabaseSettings
 }
@@ -46,9 +49,15 @@ func NewConfig(configFile string) (Settings, error) {
 		return Settings{}, fmt.Errorf("ui_root not set in configuration file \"%v\"", configFile)
 	}
 
+	adminUiRoot := config.Section("").Key("admin_ui_root").MustString("")
+	if adminUiRoot == "" {
+		return Settings{}, fmt.Errorf("admin_ui_root not set in configuration file \"%v\"", configFile)
+	}
+
 	return Settings{
-		ListenPort: config.Section("").Key("listen_port").MustInt(8080),
-		UIRoot:     uiRoot,
+		ListenPort:  config.Section("").Key("listen_port").MustInt(8080),
+		UIRoot:      uiRoot,
+		AdminUIRoot: adminUiRoot,
 
 		DatabaseSettings: DatabaseSettings{
 			DatabaseHost:     config.Section("database").Key("host").MustString("localhost"),

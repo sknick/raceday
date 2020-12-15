@@ -33,7 +33,7 @@ var (
 				log.Fatal(err)
 			}
 
-			router := web.NewRouter()
+			router := web.NewRouter("/api/")
 			router.PathPrefix("/").Handler(web.NewSPAHandler(settings.UIRoot, "index.html"))
 
 			server := http.Server{
