@@ -120,6 +120,7 @@ qx.Class.define("admin.ui.MainWindow", {
             tabView.setContentPadding(0, 0, 0, 0);
 
             tabView.add(new admin.ui.series.Page());
+            tabView.add(new admin.ui.locations.Page());
 
             this.__root.add(tabView, {
                 top: 0,

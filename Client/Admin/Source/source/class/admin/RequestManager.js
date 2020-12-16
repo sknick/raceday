@@ -25,6 +25,16 @@ qx.Class.define("admin.RequestManager", {
     },
 
     members: {
+        deleteLocation: function(context, id, quiet) {
+            let params = {
+                id: id
+            };
+
+            let req = this.__prepareRequestWithParams("location", params, quiet);
+            req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         deleteSeries: function(context, id, quiet) {
             let params = {
                 id: id
@@ -32,6 +42,11 @@ qx.Class.define("admin.RequestManager", {
 
             let req = this.__prepareRequestWithParams("series", params, quiet);
             req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        getLocations: function(context, quiet) {
+            let req = this.__prepareRequest("locations", quiet, true);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
@@ -44,6 +59,29 @@ qx.Class.define("admin.RequestManager", {
 
         getSeries: function(context, quiet) {
             let req = this.__prepareRequest("series", quiet, true);
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        postLocation: function(context, name, description, quiet) {
+            let params = {
+                name:        name,
+                description: description
+            };
+
+            let req = this.__prepareRequestWithParams("location", params, quiet);
+            req.setMethod("POST");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        putLocation: function(context, id, name, description, quiet) {
+            let params = {
+                id:          id,
+                name:        name,
+                description: description
+            };
+
+            let req = this.__prepareRequestWithParams("location", params, quiet);
+            req.setMethod("PUT");
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
