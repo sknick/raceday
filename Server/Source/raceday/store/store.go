@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
-	"net"
 	"raceday/Server/Source/raceday"
 	"raceday/Server/Source/raceday/model"
 )
@@ -74,9 +73,9 @@ func (dh DatastoreHandle) CreateAccessToken(username string, host string) (*stri
 
 // Retrieves the access token with the specified ID or nil if no such token exists.
 func (dh DatastoreHandle) GetAccessToken(id string) (*AccessToken, error) {
-	var whenCreated int
+	var whenCreated float64
 	var userId string
-	var inet net.IPNet
+	var inet string
 
 	rows, err := dh.db.Query(
 		`SELECT id,
@@ -97,7 +96,7 @@ func (dh DatastoreHandle) GetAccessToken(id string) (*AccessToken, error) {
 		return nil, nil
 	}
 
-	ret := NewAccessToken(id, whenCreated, userId, inet.IP.String())
+	ret := NewAccessToken(id, int(whenCreated), userId, inet)
 	return &ret, nil
 }
 

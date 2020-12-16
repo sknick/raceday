@@ -25,7 +25,9 @@ qx.Class.define("admin.ui.series.TableModel", {
 
         _loadRowCount: function() {
             if (this.getReady()) {
-                admin.RequestManager.getInstance().getSeries(this).then(
+                admin.RequestManager.getInstance().getSeries(
+                    this
+                ).then(
                     function(e) {
                         let response = e.getResponse();
 

@@ -64,7 +64,19 @@ qx.Class.define("admin.ui.series.Page", {
 
         __onAddConfirmed: function(e) {
             let series = e.getData();
-            console.log(series);
+            admin.RequestManager.getInstance().postSeries(
+                this,
+                series.name,
+                series.description
+            ).then(
+                function(e) {
+                    this.context.__table.getTableModel().reloadData();
+                },
+
+                function(e) {
+                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                }
+            );
         },
 
         __onEdit: function(e) {
