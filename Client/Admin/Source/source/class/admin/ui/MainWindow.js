@@ -50,9 +50,8 @@ qx.Class.define("admin.ui.MainWindow", {
         this.__root = root;
         this.__unauthorizedHandled = false;
         this.__loadingDlg = new admin.ui.LoadingDialog();
-        this.__sessionStorage = qx.bom.storage.Web.getSession();
 
-        let accessToken = this.__sessionStorage.getItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY);
+        let accessToken = qx.bom.storage.Web.getSession().getItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY);
         if (accessToken) {
             this.__onLoginContinued(accessToken);
         } else {
@@ -78,7 +77,7 @@ qx.Class.define("admin.ui.MainWindow", {
             // sure this call to onUnauthorized() isn't a redundant one from another part of the application having
             // attempted a request.
             if (!this.__unauthorizedHandled) {
-                this.__sessionStorage.removeItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY);
+                qx.bom.storage.Web.getSession().removeItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY);
 
                 let dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE,
                     "Your login session has expired. Press OK to login again.");
@@ -111,13 +110,23 @@ qx.Class.define("admin.ui.MainWindow", {
 
         __onLoginContinued: function(accessToken) {
             admin.RequestManager.getInstance().setAccessToken(accessToken);
-            this.__sessionStorage.setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
+            qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
 
             if (this.__loginDlg) {
                 this.__root.remove(this.__loginDlg);
             }
 
-            // TODO
+            let tabView = new qx.ui.tabview.TabView("top");
+            tabView.setContentPadding(0, 0, 0, 0);
+
+            tabView.add(new admin.ui.series.Page());
+
+            this.__root.add(tabView, {
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%"
+            });
         },
 
         __loadingDlg: null

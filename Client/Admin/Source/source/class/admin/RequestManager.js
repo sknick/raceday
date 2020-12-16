@@ -32,6 +32,11 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
+        getSeries: function(context, quiet) {
+            let req = this.__prepareRequest("series", quiet, true);
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         __createContext: function(context, request) {
             return {
                 context: context,
