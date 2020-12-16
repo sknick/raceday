@@ -91,7 +91,20 @@ qx.Class.define("admin.ui.series.Page", {
 
         __onEditConfirmed: function(e) {
             let series = e.getData();
-            console.log(series);
+            admin.RequestManager.getInstance().putSeries(
+                this,
+                series.id,
+                series.name,
+                series.description
+            ).then(
+                function(e) {
+                    this.context.__table.getTableModel().reloadData();
+                },
+
+                function(e) {
+                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                }
+            );
         },
 
         __onDelete: function(e) {
