@@ -4,8 +4,7 @@ qx.Class.define("admin.ui.series.TableModel", {
     statics: {
         NAME_COLUMN:        0,
         DESCRIPTION_COLUMN: 1,
-        HIDDEN_ID_COLUMN:   2,
-        NUM_COLUMNS:        3
+        NUM_COLUMNS:        2
     },
 
     construct: function() {
@@ -20,6 +19,10 @@ qx.Class.define("admin.ui.series.TableModel", {
     },
 
     members: {
+        getSeries: function(rowIndex) {
+            return this.getRowData(rowIndex).series;
+        },
+
         _loadRowCount: function() {
             if (this.getReady()) {
                 admin.RequestManager.getInstance().getSeries(this).then(
@@ -47,7 +50,7 @@ qx.Class.define("admin.ui.series.TableModel", {
                 newRows.push({
                     name:        this.__data[i].name,
                     description: this.__data[i].description,
-                    id:          this.__data[i].id
+                    series:      this.__data[i]
                 });
             }
 

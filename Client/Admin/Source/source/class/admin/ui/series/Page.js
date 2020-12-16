@@ -21,26 +21,24 @@ qx.Class.define("admin.ui.series.Page", {
         toolbar.add(editButton);
         toolbar.add(deleteButton);
 
-        this.__tableModel = new admin.ui.series.TableModel();
-
-        let table = new qx.ui.table.Table(
-            this.__tableModel,
+        this.__table = new qx.ui.table.Table(
+            new admin.ui.series.TableModel(),
             {
                 tableColumnModel: function(obj) {
                     return new qx.ui.table.columnmodel.Resize(obj);
                 }
             }
         );
-        table.setColumnVisibilityButtonVisible(false);
-        table.setShowCellFocusIndicator(false);
+        this.__table.setColumnVisibilityButtonVisible(false);
+        this.__table.setShowCellFocusIndicator(false);
 
-        let resizeBehavior = table.getTableColumnModel().getBehavior();
+        let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
         resizeBehavior.setWidth(admin.ui.series.TableModel.NAME_COLUMN,        400);
         resizeBehavior.setWidth(admin.ui.series.TableModel.DESCRIPTION_COLUMN, "1*");
 
         let content = new qx.ui.container.Composite(new qx.ui.layout.Dock());
-        content.add(toolbar, { edge: "north" });
-        content.add(table,   { edge: "center" });
+        content.add(toolbar,      { edge: "north" });
+        content.add(this.__table, { edge: "center" });
 
         this.add(content, {
             top: 0,
@@ -49,6 +47,43 @@ qx.Class.define("admin.ui.series.Page", {
             height: "100%"
         });
 
-        this.__tableModel.setReady(true);
+        addButton.addListener("execute", this.__onAdd, this);
+        editButton.addListener("execute", this.__onEdit, this);
+        deleteButton.addListener("execute", this.__onDelete, this);
+
+        this.__table.getTableModel().setReady(true);
+    },
+
+    members: {
+        __onAdd: function(e) {
+            let dlg = new admin.ui.series.EditDialog();
+            dlg.addListener("confirmed", this.__onAddConfirmed, this);
+
+            dlg.show();
+        },
+
+        __onAddConfirmed: function(e) {
+            let series = e.getData();
+            console.log(series);
+        },
+
+        __onEdit: function(e) {
+            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            if (selectedRows.length > 0) {
+                let dlg = new admin.ui.series.EditDialog(this.__table.getTableModel().getSeries(selectedRows[0].minIndex));
+                dlg.addListener("confirmed", this.__onEditConfirmed, this);
+
+                dlg.show();
+            }
+        },
+
+        __onEditConfirmed: function(e) {
+            let series = e.getData();
+            console.log(series);
+        },
+
+        __onDelete: function(e) {
+
+        }
     }
 });
