@@ -108,7 +108,33 @@ qx.Class.define("admin.ui.series.Page", {
         },
 
         __onDelete: function(e) {
+            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            if (selectedRows.length > 0) {
+                let dlg = new admin.ui.ConfirmationDialog(
+                    admin.Application.APP_TITLE,
+                    "Are you sure you want to delete this series?",
+                    this.__table.getTableModel().getSeries(selectedRows[0].minIndex)
+                );
+                dlg.addListener("confirmed", this.__onDeleteContinue, this);
 
+                dlg.show();
+            }
+        },
+
+        __onDeleteContinue: function(e) {
+            let series = e.getData();
+            admin.RequestManager.getInstance().deleteSeries(
+                this,
+                series.id
+            ).then(
+                function(e) {
+                    this.context.__table.getTableModel().reloadData();
+                },
+
+                function(e) {
+                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                }
+            );
         }
     }
 });

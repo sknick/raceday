@@ -25,6 +25,16 @@ qx.Class.define("admin.RequestManager", {
     },
 
     members: {
+        deleteSeries: function(context, id, quiet) {
+            let params = {
+                id: id
+            };
+
+            let req = this.__prepareRequestWithParams("series", params, quiet);
+            req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         getNewAccessToken: function(context, username, password, quiet) {
             let req = this.__prepareRequest("access_token", quiet, true);
             req.setRequestHeader("Username", username);
