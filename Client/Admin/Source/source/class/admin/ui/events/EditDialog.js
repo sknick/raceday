@@ -1,7 +1,7 @@
 qx.Class.define("admin.ui.events.EditDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(event) {
+    construct: function(locations, series, event) {
         this.__event = event;
 
         let nameLabel = new qx.ui.basic.Label("Name:");
@@ -13,6 +13,49 @@ qx.Class.define("admin.ui.events.EditDialog", {
         startLabel.setAlignY("middle");
 
         this.__startField = new admin.ui.DateTimeField();
+
+        let locationLabel = new qx.ui.basic.Label("Location:");
+        locationLabel.setAlignY("middle");
+
+
+        let noLocationItem = new qx.ui.form.ListItem("(None)");
+
+        this.__locationField = new qx.ui.form.SelectBox();
+        this.__locationField.add(noLocationItem);
+
+        let selectedLocationItem = noLocationItem;
+        for (let i = 0; i < locations.length; i++) {
+            let newItem = new qx.ui.form.ListItem(locations[i].name, null, locations[i]);
+            this.__locationField.add(newItem);
+
+            if (this.__event && this.__event.location && (this.__event.location.id === locations[i].id)) {
+                selectedLocationItem = newItem;
+            }
+        }
+
+        this.__locationField.setSelection([selectedLocationItem]);
+
+
+        let noSeriesItem = new qx.ui.form.ListItem("(None)");
+
+        let seriesLabel = new qx.ui.basic.Label("Series:");
+        seriesLabel.setAlignY("middle");
+
+        this.__seriesField = new qx.ui.form.SelectBox();
+        this.__seriesField.add(noSeriesItem);
+
+        let selectedSeriesItem = noSeriesItem;
+        for (let i = 0; i < series.length; i++) {
+            let newItem = new qx.ui.form.ListItem(series[i].name, null, series[i]);
+            this.__seriesField.add(newItem);
+
+            if (this.__event && this.__event.series && (this.__event.series.id === series[i].id)) {
+                selectedSeriesItem = newItem;
+            }
+        }
+
+        this.__seriesField.setSelection([selectedSeriesItem]);
+
 
         let descriptionLabel = new qx.ui.basic.Label("Description:");
         descriptionLabel.setPaddingTop(5);
@@ -26,8 +69,12 @@ qx.Class.define("admin.ui.events.EditDialog", {
         content.add(this.__nameField,        { row: 0, column: 1 });
         content.add(startLabel,              { row: 1, column: 0 });
         content.add(this.__startField,       { row: 1, column: 1 });
-        content.add(descriptionLabel,        { row: 2, column: 0 });
-        content.add(this.__descriptionField, { row: 2, column: 1 });
+        content.add(locationLabel,           { row: 2, column: 0 });
+        content.add(this.__locationField,    { row: 2, column: 1 });
+        content.add(seriesLabel,             { row: 3, column: 0 });
+        content.add(this.__seriesField,      { row: 3, column: 1 });
+        content.add(descriptionLabel,        { row: 4, column: 0 });
+        content.add(this.__descriptionField, { row: 4, column: 1 });
 
         let okButton = new qx.ui.form.Button(this.__event ? "OK" : "Add");
         okButton.setWidth(100);

@@ -58,10 +58,44 @@ qx.Class.define("admin.ui.events.Page", {
 
     members: {
         __onAdd: function(e) {
-            let dlg = new admin.ui.events.EditDialog();
-            dlg.addListener("confirmed", this.__onAddConfirmed, this);
+            admin.RequestManager.getInstance().getLocations(
+                this
+            ).then(
+                function(e) {
+                    let response = e.getResponse();
 
-            dlg.show();
+                    let locations = [];
+                    for (let i = 0; i < response.length; i++) {
+                        locations.push(new raceday.api.model.Location(response[i]));
+                    }
+
+                    admin.RequestManager.getInstance().getSeries(
+                        this.context
+                    ).then(
+                        function(e) {
+                            let response = e.getResponse();
+
+                            let series = [];
+                            for (let i = 0; i < response.length; i++) {
+                                series.push(new raceday.api.model.Series(response[i]));
+                            }
+
+                            let dlg = new admin.ui.events.EditDialog(locations, series);
+                            dlg.addListener("confirmed", this.context.__onAddConfirmed, this);
+
+                            dlg.show();
+                        },
+
+                        function(e) {
+                            admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                        }
+                    );
+                },
+
+                function(e) {
+                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                }
+            )
         },
 
         __onAddConfirmed: function(e) {
@@ -84,10 +118,48 @@ qx.Class.define("admin.ui.events.Page", {
         __onEdit: function(e) {
             let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
-                let dlg = new admin.ui.events.EditDialog(this.__table.getTableModel().getEvent(selectedRows[0].minIndex));
-                dlg.addListener("confirmed", this.__onEditConfirmed, this);
+                admin.RequestManager.getInstance().getLocations(
+                    this
+                ).then(
+                    function(e) {
+                        let response = e.getResponse();
 
-                dlg.show();
+                        let locations = [];
+                        for (let i = 0; i < response.length; i++) {
+                            locations.push(new raceday.api.model.Location(response[i]));
+                        }
+
+                        admin.RequestManager.getInstance().getSeries(
+                            this
+                        ).then(
+                            function(e) {
+                                response = e.getResponse();
+
+                                let series = [];
+                                for (let i = 0; i < response.length; i++) {
+                                    series.push(new raceday.api.model.Series(response[i]));
+                                }
+
+                                let dlg = new admin.ui.events.EditDialog(
+                                    locations,
+                                    series,
+                                    this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex)
+                                );
+                                dlg.addListener("confirmed", this.context.__onAddConfirmed, this);
+
+                                dlg.show();
+                            },
+
+                            function(e) {
+                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                            }
+                        )
+                    },
+
+                    function(e) {
+                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                    }
+                );
             }
         },
 
