@@ -1,40 +1,43 @@
-qx.Class.define("admin.ui.series.TableModel", {
+qx.Class.define("admin.ui.events.TableModel", {
     extend: admin.ui.RemoteTableModel,
 
     statics: {
         NAME_COLUMN:        0,
-        DESCRIPTION_COLUMN: 1,
-        NUM_COLUMNS:        2
+        START_COLUMN:       1,
+        LOCATION_COLUMN:    2,
+        SERIES_COLUMN:      3,
+        NUM_COLUMNS:        4
     },
 
     construct: function() {
-        this.base(arguments, admin.ui.series.TableModel.NAME_COLUMN, true);
+        this.base(arguments, admin.ui.events.TableModel.NAME_COLUMN, true);
 
-        for (let i = 0; i < admin.ui.series.TableModel.NUM_COLUMNS; i++) {
+        for (let i = 0; i < admin.ui.events.TableModel.NUM_COLUMNS; i++) {
             this.setColumnSortable(i, false);
         }
 
-        this.setColumns(["Name", "Description"], ["name", "description"]);
+        this.setColumns(["Name", "Start", "Location", "Series"], ["name", "start", "location", "series"]);
 
         this.__data = null;
     },
 
     members: {
-        getSeries: function(rowIndex) {
-            return this.getRowData(rowIndex).series;
+        getEvent: function(rowIndex) {
+            return this.getRowData(rowIndex).event;
         },
 
         _loadRowCount: function() {
             if (this.getReady()) {
-                admin.RequestManager.getInstance().getSeries(
-                    this
+                admin.RequestManager.getInstance().getEvents(
+                    this,
+                    Math.round((Date.now() - 86400) / 1000)
                 ).then(
                     function(e) {
                         let response = e.getResponse();
 
                         this.context.__data = [];
                         for (let i = 0; i < response.length; i++) {
-                            this.context.__data.push(new raceday.api.model.Series(response[i]));
+                            this.context.__data.push(new raceday.api.model.Event(response[i]));
                         }
 
                         this.context._onRowCountLoaded(this.context.__data.length);
@@ -51,9 +54,11 @@ qx.Class.define("admin.ui.series.TableModel", {
             let newRows = [];
             for (let i = 0; i < this.__data.length; i++) {
                 newRows.push({
-                    name:        this.__data[i].name,
-                    description: this.__data[i].description,
-                    series:      this.__data[i]
+                    name:     this.__data[i].name,
+                    start:    new Date(this.__data[i].start * 1000),
+                    location: this.__data[i].location ? this.__data[i].location.name : "",
+                    series:   this.__data[i].series ? this.__data[i].series.name : "",
+                    event:    this.__data[i]
                 });
             }
 

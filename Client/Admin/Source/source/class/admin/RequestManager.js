@@ -25,9 +25,19 @@ qx.Class.define("admin.RequestManager", {
     },
 
     members: {
+        deleteEvent: function(context, id, quiet) {
+            let params = {
+                "id": id
+            };
+
+            let req = this.__prepareRequestWithParams("event", params, quiet);
+            req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         deleteLocation: function(context, id, quiet) {
             let params = {
-                id: id
+                "id": id
             };
 
             let req = this.__prepareRequestWithParams("location", params, quiet);
@@ -37,11 +47,23 @@ qx.Class.define("admin.RequestManager", {
 
         deleteSeries: function(context, id, quiet) {
             let params = {
-                id: id
+                "id": id
             };
 
             let req = this.__prepareRequestWithParams("series", params, quiet);
             req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        getEvents: function(context, windowStart, windowEnd, quiet) {
+            let params = {
+                "window_start": windowStart
+            };
+            if (windowEnd) {
+                params["window_end"] = windowEnd;
+            }
+
+            let req = this.__prepareRequestWithParams("events", params, quiet, true);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
@@ -62,10 +84,30 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
+        postEvent: function(context, name, start, description, locationId, seriesId, quiet) {
+            let params = {
+                "name":  name,
+                "start": start
+            };
+            if (description) {
+                params["description"] = description;
+            }
+            if (locationId) {
+                params["location_id"] = locationId;
+            }
+            if (seriesId) {
+                params["series_id"] = seriesId;
+            }
+
+            let req = this.__prepareRequestWithParams("event", params, quiet);
+            req.setMethod("POST");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         postLocation: function(context, name, description, quiet) {
             let params = {
-                name:        name,
-                description: description
+                "name":        name,
+                "description": description
             };
 
             let req = this.__prepareRequestWithParams("location", params, quiet);
@@ -73,11 +115,32 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
+        putEvent: function(context, id, name, start, description, locationId, seriesId, quiet) {
+            let params = {
+                "id":    id,
+                "name":  name,
+                "start": start
+            };
+            if (description) {
+                params["description"] = description;
+            }
+            if (locationId) {
+                params["location_id"] = locationId;
+            }
+            if (seriesId) {
+                params["series_id"] = seriesId;
+            }
+
+            let req = this.__prepareRequestWithParams("event", params, quiet);
+            req.setMethod("PUT");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         putLocation: function(context, id, name, description, quiet) {
             let params = {
-                id:          id,
-                name:        name,
-                description: description
+                "id":          id,
+                "name":        name,
+                "description": description
             };
 
             let req = this.__prepareRequestWithParams("location", params, quiet);
@@ -87,8 +150,8 @@ qx.Class.define("admin.RequestManager", {
 
         postSeries: function(context, name, description, quiet) {
             let params = {
-                name:        name,
-                description: description
+                "name":        name,
+                "description": description
             };
 
             let req = this.__prepareRequestWithParams("series", params, quiet);
@@ -98,9 +161,9 @@ qx.Class.define("admin.RequestManager", {
 
         putSeries: function(context, id, name, description, quiet) {
             let params = {
-                id:          id,
-                name:        name,
-                description: description
+                "id":          id,
+                "name":        name,
+                "description": description
             };
 
             let req = this.__prepareRequestWithParams("series", params, quiet);
