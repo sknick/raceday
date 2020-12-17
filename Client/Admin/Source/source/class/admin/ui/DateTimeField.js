@@ -8,22 +8,22 @@ qx.Class.define("admin.ui.DateTimeField", {
 
         this.__yearField = new qx.ui.form.SelectBox();
         for (let i = this.__now.getFullYear(); i < this.__now.getFullYear() + 10; i++) {
-            this.__yearField.add(new qx.ui.form.ListItem(String(i)));
+            this.__yearField.add(new qx.ui.form.ListItem(String(i), null, i));
         }
         
         this.__monthItems = [];
-        this.__monthItems.push(new qx.ui.form.ListItem("January"));
-        this.__monthItems.push(new qx.ui.form.ListItem("February"));
-        this.__monthItems.push(new qx.ui.form.ListItem("March"));
-        this.__monthItems.push(new qx.ui.form.ListItem("April"));
-        this.__monthItems.push(new qx.ui.form.ListItem("May"));
-        this.__monthItems.push(new qx.ui.form.ListItem("June"));
-        this.__monthItems.push(new qx.ui.form.ListItem("July"));
-        this.__monthItems.push(new qx.ui.form.ListItem("August"));
-        this.__monthItems.push(new qx.ui.form.ListItem("September"));
-        this.__monthItems.push(new qx.ui.form.ListItem("October"));
-        this.__monthItems.push(new qx.ui.form.ListItem("November"));
-        this.__monthItems.push(new qx.ui.form.ListItem("December"));
+        this.__monthItems.push(new qx.ui.form.ListItem("January", null, 0));
+        this.__monthItems.push(new qx.ui.form.ListItem("February", null, 1));
+        this.__monthItems.push(new qx.ui.form.ListItem("March", null, 2));
+        this.__monthItems.push(new qx.ui.form.ListItem("April", null, 3));
+        this.__monthItems.push(new qx.ui.form.ListItem("May", null, 4));
+        this.__monthItems.push(new qx.ui.form.ListItem("June", null, 5));
+        this.__monthItems.push(new qx.ui.form.ListItem("July", null, 6));
+        this.__monthItems.push(new qx.ui.form.ListItem("August", null, 7));
+        this.__monthItems.push(new qx.ui.form.ListItem("September", null, 8));
+        this.__monthItems.push(new qx.ui.form.ListItem("October", null, 9));
+        this.__monthItems.push(new qx.ui.form.ListItem("November", null, 10));
+        this.__monthItems.push(new qx.ui.form.ListItem("December", null, 11));
 
         this.__monthField = new qx.ui.form.SelectBox();
 
@@ -73,6 +73,17 @@ qx.Class.define("admin.ui.DateTimeField", {
     },
 
     members: {
+        getTime: function() {
+            let d = new Date(
+                this.__yearField.getSelection().getModel(),
+                this.__monthField.getSelection().getModel(),
+                this.__dayField.getSelection().getModel(),
+                this.__hoursField.getValue(),
+                this.__minutesField.getValue()
+            );
+            return Math.round(d.getTime() / 1000);
+        },
+
         __initializeDayField: function() {
             let daysInMonth = new Date(
                 this.__now.getFullYear() + this.__yearField.indexOf(
@@ -86,7 +97,7 @@ qx.Class.define("admin.ui.DateTimeField", {
 
             this.__dayField.removeAll();
             for (let i = 1; i < daysInMonth + 1; i++) {
-                this.__dayField.add(new qx.ui.form.ListItem(String(i)));
+                this.__dayField.add(new qx.ui.form.ListItem(String(i), null, i));
             }
         },
 

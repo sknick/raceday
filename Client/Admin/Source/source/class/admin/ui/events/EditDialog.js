@@ -103,7 +103,9 @@ qx.Class.define("admin.ui.events.EditDialog", {
             }
 
             this.__event.name = name;
+            this.__event.start = this.__startField.getTime();
             this.__event.description = this.__descriptionField.getValue().trim();
+            // TODO
 
             this.fireDataEvent("confirmed", this.__event);
         },
