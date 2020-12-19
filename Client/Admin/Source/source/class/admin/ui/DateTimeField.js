@@ -1,54 +1,117 @@
 qx.Class.define("admin.ui.DateTimeField", {
     extend: qx.ui.container.Composite,
 
-    construct: function() {
+    statics: {
+        __MONTHS: [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ]
+    },
+
+    /**
+     * Constructor.
+     *
+     * @param {number} [timestamp] UNIX timestamp in seconds.
+     */
+    construct: function(timestamp) {
         this.base(arguments, new qx.ui.layout.HBox(10));
 
-        this.__now = new Date();
+        this.__baseDate = timestamp ? new Date(timestamp * 1000) : new Date();
+
 
         this.__yearField = new qx.ui.form.SelectBox();
-        for (let i = this.__now.getFullYear(); i < this.__now.getFullYear() + 10; i++) {
-            this.__yearField.add(new qx.ui.form.ListItem(String(i), null, i));
-        }
-        
-        this.__monthItems = [];
-        this.__monthItems.push(new qx.ui.form.ListItem("January", null, 0));
-        this.__monthItems.push(new qx.ui.form.ListItem("February", null, 1));
-        this.__monthItems.push(new qx.ui.form.ListItem("March", null, 2));
-        this.__monthItems.push(new qx.ui.form.ListItem("April", null, 3));
-        this.__monthItems.push(new qx.ui.form.ListItem("May", null, 4));
-        this.__monthItems.push(new qx.ui.form.ListItem("June", null, 5));
-        this.__monthItems.push(new qx.ui.form.ListItem("July", null, 6));
-        this.__monthItems.push(new qx.ui.form.ListItem("August", null, 7));
-        this.__monthItems.push(new qx.ui.form.ListItem("September", null, 8));
-        this.__monthItems.push(new qx.ui.form.ListItem("October", null, 9));
-        this.__monthItems.push(new qx.ui.form.ListItem("November", null, 10));
-        this.__monthItems.push(new qx.ui.form.ListItem("December", null, 11));
+        this.__yearField.setWidth(70);
 
-        this.__monthField = new qx.ui.form.SelectBox();
+        let selectedItem = null;
+        for (let i = this.__baseDate.getFullYear() - 10; i < this.__baseDate.getFullYear() + 50; i++) {
+            let thisItem = new qx.ui.form.ListItem(String(i), null, i);
+            this.__yearField.add(thisItem);
 
-        let selectedMonthIndex = 0;
-        for (let i = 0; i < this.__monthItems.length; i++) {
-            this.__monthField.add(this.__monthItems[i]);
-
-            if (this.__now.getMonth() === i) {
-                selectedMonthIndex = i;
+            if (!selectedItem && (i === this.__baseDate.getFullYear())) {
+                selectedItem = thisItem;
             }
         }
 
-        this.__monthField.setSelection([this.__monthItems[selectedMonthIndex]]);
+        if (selectedItem) {
+            this.__yearField.setSelection([selectedItem]);
+        } else {
+            this.__yearField.setSelection([this.__yearField.getChildren()[0]]);
+        }
+
+
+        this.__monthField = new qx.ui.form.SelectBox();
+
+        selectedItem = null;
+        for (let i = 0; i < admin.ui.DateTimeField.__MONTHS.length; i++) {
+            let thisItem = new qx.ui.form.ListItem(admin.ui.DateTimeField.__MONTHS[i], null, i);
+            this.__monthField.add(thisItem);
+
+            if (!selectedItem && (this.__baseDate.getMonth() === i)) {
+                selectedItem = thisItem;
+            }
+        }
+
+        if (selectedItem) {
+            this.__monthField.setSelection([selectedItem]);
+        } else {
+            this.__monthField.setSelection([this.__monthField.getChildren()[0]]);
+        }
+
 
         this.__dayField = new qx.ui.form.SelectBox();
         this.__dayField.setWidth(50);
-        this.__initializeDayField();
+        this.__initializeDayField(this.__baseDate.getDate());
 
-        this.__hoursField = new qx.ui.form.TextField();
-        this.__hoursField.setMaxLength(2);
-        this.__hoursField.setWidth(30);
 
-        this.__minutesField = new qx.ui.form.TextField();
-        this.__minutesField.setMaxLength(2);
-        this.__minutesField.setWidth(30);
+        this.__hoursField = new qx.ui.form.SelectBox();
+        this.__hoursField.setWidth(50);
+
+        selectedItem = null;
+        for (let i = 0; i < 24; i++) {
+            let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
+            this.__hoursField.add(thisItem);
+
+            if (!selectedItem && (this.__baseDate.getHours() === i)) {
+                selectedItem = thisItem;
+            }
+        }
+
+        if (selectedItem) {
+            this.__hoursField.setSelection([selectedItem]);
+        } else {
+            this.__hoursField.setSelection([this.__hoursField.getChildren()[0]]);
+        }
+
+
+        this.__minutesField = new qx.ui.form.SelectBox();
+        this.__minutesField.setWidth(50);
+
+        selectedItem = null;
+        for (let i = 0; i < 60; i++) {
+            let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
+            this.__minutesField.add(thisItem);
+
+            if (!selectedItem && (this.__baseDate.getMinutes() === i)) {
+                selectedItem = thisItem;
+            }
+        }
+
+        if (selectedItem) {
+            this.__minutesField.setSelection([selectedItem]);
+        } else {
+            this.__minutesField.setSelection([this.__minutesField.getChildren()[0]]);
+        }
+
 
         let commaLabel = new qx.ui.basic.Label(",");
         commaLabel.setAlignY("bottom");
@@ -75,18 +138,18 @@ qx.Class.define("admin.ui.DateTimeField", {
     members: {
         getTime: function() {
             let d = new Date(
-                this.__yearField.getSelection().getModel(),
-                this.__monthField.getSelection().getModel(),
-                this.__dayField.getSelection().getModel(),
-                this.__hoursField.getValue(),
-                this.__minutesField.getValue()
+                this.__yearField.getSelection()[0].getModel(),
+                this.__monthField.getSelection()[0].getModel(),
+                this.__dayField.getSelection()[0].getModel(),
+                this.__hoursField.getSelection()[0].getModel(),
+                this.__minutesField.getSelection()[0].getModel()
             );
             return Math.round(d.getTime() / 1000);
         },
 
-        __initializeDayField: function() {
+        __initializeDayField: function(dayToSelect) {
             let daysInMonth = new Date(
-                this.__now.getFullYear() + this.__yearField.indexOf(
+                this.__baseDate.getFullYear() + this.__yearField.indexOf(
                     this.__yearField.getSelection()[0]
                 ),
                 this.__monthField.indexOf(
@@ -96,8 +159,21 @@ qx.Class.define("admin.ui.DateTimeField", {
             ).getDate();
 
             this.__dayField.removeAll();
+
+            let selectedItem = null;
             for (let i = 1; i < daysInMonth + 1; i++) {
-                this.__dayField.add(new qx.ui.form.ListItem(String(i), null, i));
+                let thisItem = new qx.ui.form.ListItem(String(i), null, i);
+                this.__dayField.add(thisItem);
+
+                if (dayToSelect && !selectedItem && (i === dayToSelect)) {
+                    selectedItem = thisItem;
+                }
+            }
+
+            if (selectedItem) {
+                this.__dayField.setSelection([selectedItem]);
+            } else {
+                this.__dayField.setSelection([this.__dayField.getChildren()[0]]);
             }
         },
 

@@ -129,19 +129,6 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 }
 
 func (dh DatastoreHandle) UpdateEvent(id, name string, start time.Time, description, locationId, seriesId *string) error {
-	descriptionParam := "NULL"
-	if description != nil {
-		descriptionParam = *description
-	}
-	locationIdParam := "NULL"
-	if locationId != nil {
-		locationIdParam = *locationId
-	}
-	seriesIdParam := "NULL"
-	if seriesId != nil {
-		seriesIdParam = *seriesId
-	}
-
 	result, err := dh.db.Exec(
 		`UPDATE event
             SET name = $1,
@@ -152,9 +139,9 @@ func (dh DatastoreHandle) UpdateEvent(id, name string, start time.Time, descript
           WHERE id = $6`,
 		name,
 		start,
-		descriptionParam,
-		locationIdParam,
-		seriesIdParam,
+		description,
+		locationId,
+		seriesId,
 		id,
 	)
 	if err != nil {

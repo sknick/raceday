@@ -103,7 +103,10 @@ qx.Class.define("admin.ui.events.Page", {
             admin.RequestManager.getInstance().postEvent(
                 this,
                 event.name,
-                event.description
+                event.start,
+                event.description,
+                event.location ? event.location.id : null,
+                event.series ? event.series.id : null
             ).then(
                 function(e) {
                     this.context.__table.getTableModel().reloadData();
@@ -130,7 +133,7 @@ qx.Class.define("admin.ui.events.Page", {
                         }
 
                         admin.RequestManager.getInstance().getSeries(
-                            this
+                            this.context
                         ).then(
                             function(e) {
                                 response = e.getResponse();
@@ -145,7 +148,7 @@ qx.Class.define("admin.ui.events.Page", {
                                     series,
                                     this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex)
                                 );
-                                dlg.addListener("confirmed", this.context.__onAddConfirmed, this);
+                                dlg.addListener("confirmed", this.context.__onEditConfirmed, this.context);
 
                                 dlg.show();
                             },
@@ -169,7 +172,10 @@ qx.Class.define("admin.ui.events.Page", {
                 this,
                 event.id,
                 event.name,
-                event.description
+                event.start,
+                event.description,
+                event.location ? event.location.id : null,
+                event.series ? event.series.id : null
             ).then(
                 function(e) {
                     this.context.__table.getTableModel().reloadData();

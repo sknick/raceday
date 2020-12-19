@@ -12,7 +12,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
         let startLabel = new qx.ui.basic.Label("Start:");
         startLabel.setAlignY("middle");
 
-        this.__startField = new admin.ui.DateTimeField();
+        this.__startField = new admin.ui.DateTimeField(this.__event ? this.__event.start : null);
 
         let locationLabel = new qx.ui.basic.Label("Location:");
         locationLabel.setAlignY("middle");
@@ -105,7 +105,8 @@ qx.Class.define("admin.ui.events.EditDialog", {
             this.__event.name = name;
             this.__event.start = this.__startField.getTime();
             this.__event.description = this.__descriptionField.getValue().trim();
-            // TODO
+            this.__event.location = this.__locationField.getSelection()[0].getModel();
+            this.__event.series = this.__seriesField.getSelection()[0].getModel();
 
             this.fireDataEvent("confirmed", this.__event);
         },

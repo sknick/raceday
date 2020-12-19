@@ -28,9 +28,12 @@ qx.Class.define("admin.ui.events.TableModel", {
 
         _loadRowCount: function() {
             if (this.getReady()) {
+                let nowTimestamp = Math.round(Date.now() / 1000);
+
                 admin.RequestManager.getInstance().getEvents(
                     this,
-                    Math.round((Date.now() - 86400) / 1000)
+                    nowTimestamp - 86400,
+                    nowTimestamp + 86400 * 365 * 10
                 ).then(
                     function(e) {
                         let response = e.getResponse();
