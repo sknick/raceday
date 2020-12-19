@@ -33,8 +33,8 @@ qx.Class.define("admin.ui.events.Page", {
         this.__table.setShowCellFocusIndicator(false);
 
         let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
-        resizeBehavior.setWidth(admin.ui.events.TableModel.NAME_COLUMN,     "1*");
         resizeBehavior.setWidth(admin.ui.events.TableModel.START_COLUMN,    300);
+        resizeBehavior.setWidth(admin.ui.events.TableModel.NAME_COLUMN,     "1*");
         resizeBehavior.setWidth(admin.ui.events.TableModel.LOCATION_COLUMN, 400);
         resizeBehavior.setWidth(admin.ui.events.TableModel.SERIES_COLUMN,   400);
 
@@ -81,7 +81,7 @@ qx.Class.define("admin.ui.events.Page", {
                             }
 
                             let dlg = new admin.ui.events.EditDialog(locations, series);
-                            dlg.addListener("confirmed", this.context.__onAddConfirmed, this);
+                            dlg.addListener("confirmed", this.context.__onAddConfirmed, this.context);
 
                             dlg.show();
                         },

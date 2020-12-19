@@ -2,8 +2,8 @@ qx.Class.define("admin.ui.events.TableModel", {
     extend: admin.ui.RemoteTableModel,
 
     statics: {
-        NAME_COLUMN:        0,
-        START_COLUMN:       1,
+        START_COLUMN:       0,
+        NAME_COLUMN:        1,
         LOCATION_COLUMN:    2,
         SERIES_COLUMN:      3,
         NUM_COLUMNS:        4
@@ -16,7 +16,8 @@ qx.Class.define("admin.ui.events.TableModel", {
             this.setColumnSortable(i, false);
         }
 
-        this.setColumns(["Name", "Start", "Location", "Series"], ["name", "start", "location", "series"]);
+        this.setColumns(["Start", "Name", "Location", "Series"], ["start", "name", "location", "series"]);
+        this.sortByColumn(admin.ui.events.TableModel.START_COLUMN, true);
 
         this.__data = null;
     },
@@ -57,8 +58,8 @@ qx.Class.define("admin.ui.events.TableModel", {
             let newRows = [];
             for (let i = 0; i < this.__data.length; i++) {
                 newRows.push({
-                    name:     this.__data[i].name,
                     start:    this.__startToString(this.__data[i].start),
+                    name:     this.__data[i].name,
                     location: this.__data[i].location ? this.__data[i].location.name : "",
                     series:   this.__data[i].series ? this.__data[i].series.name : "",
                     event:    this.__data[i]

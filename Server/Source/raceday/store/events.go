@@ -105,7 +105,7 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 			`SELECT *
 			   FROM events
 			  WHERE %s
-			  ORDER BY event_name`,
+			  ORDER BY event_start`,
 			where,
 		),
 		params...,
