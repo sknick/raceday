@@ -61,7 +61,8 @@ qx.Class.define("admin.ui.events.EditDialog", {
         descriptionLabel.setPaddingTop(5);
 
         this.__descriptionField = new qx.ui.form.TextArea(this.__event ? this.__event.description : "");
-        this.__descriptionField.setHeight(200);
+        this.__descriptionField.setHeight(120);
+
 
         let content = new qx.ui.container.Composite(new qx.ui.layout.Grid(10, 10));
 
