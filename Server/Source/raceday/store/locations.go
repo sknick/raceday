@@ -12,17 +12,12 @@ func (dh DatastoreHandle) CreateLocation(name string, description *string) (stri
 		return "", nil
 	}
 
-	descriptionParam := "NULL"
-	if description != nil {
-		descriptionParam = *description
-	}
-
 	_, err = dh.db.Exec(
 		`INSERT INTO location
 		 VALUES ($1, $2, $3)`,
 		locationId,
 		name,
-		descriptionParam,
+		description,
 	)
 	if err != nil {
 		return "", err
@@ -80,18 +75,13 @@ func (dh DatastoreHandle) GetLocations() ([]model.Location, error) {
 }
 
 func (dh DatastoreHandle) UpdateLocation(id, name string, description *string) error {
-	descriptionParam := "NULL"
-	if description != nil {
-		descriptionParam = *description
-	}
-
 	result, err := dh.db.Exec(
 		`UPDATE location
             SET name = $1,
                 description = $2
           WHERE id = $3`,
 		name,
-		descriptionParam,
+		description,
 		id,
 	)
 	if err != nil {

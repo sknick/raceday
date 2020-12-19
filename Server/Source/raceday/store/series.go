@@ -12,17 +12,12 @@ func (dh DatastoreHandle) CreateSeries(name string, description *string) (string
 		return "", nil
 	}
 
-	descriptionParam := "NULL"
-	if description != nil {
-		descriptionParam = *description
-	}
-
 	_, err = dh.db.Exec(
 		`INSERT INTO series
 		 VALUES ($1, $2, $3)`,
 		seriesId,
 		name,
-		descriptionParam,
+		description,
 	)
 	if err != nil {
 		return "", err
@@ -80,18 +75,13 @@ func (dh DatastoreHandle) GetSeries() ([]model.Series, error) {
 }
 
 func (dh DatastoreHandle) UpdateSeries(id, name string, description *string) error {
-	descriptionParam := "NULL"
-	if description != nil {
-		descriptionParam = *description
-	}
-
 	result, err := dh.db.Exec(
 		`UPDATE series
             SET name = $1,
                 description = $2
           WHERE id = $3`,
 		name,
-		descriptionParam,
+		description,
 		id,
 	)
 	if err != nil {
