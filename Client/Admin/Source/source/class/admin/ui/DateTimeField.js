@@ -81,7 +81,7 @@ qx.Class.define("admin.ui.DateTimeField", {
             let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
             this.__hoursField.add(thisItem);
 
-            if (!selectedItem && (this.__baseDate.getHours() === i)) {
+            if (timestamp && !selectedItem && (this.__baseDate.getHours() === i)) {
                 selectedItem = thisItem;
             }
         }
@@ -101,7 +101,7 @@ qx.Class.define("admin.ui.DateTimeField", {
             let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
             this.__minutesField.add(thisItem);
 
-            if (!selectedItem && (this.__baseDate.getMinutes() === i)) {
+            if (timestamp && !selectedItem && (this.__baseDate.getMinutes() === i)) {
                 selectedItem = thisItem;
             }
         }
