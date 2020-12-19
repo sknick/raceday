@@ -10,14 +10,13 @@ qx.Class.define("admin.ui.events.TableModel", {
     },
 
     construct: function() {
-        this.base(arguments, admin.ui.events.TableModel.NAME_COLUMN, true);
+        this.base(arguments, admin.ui.events.TableModel.START_COLUMN, true);
 
         for (let i = 0; i < admin.ui.events.TableModel.NUM_COLUMNS; i++) {
             this.setColumnSortable(i, false);
         }
 
         this.setColumns(["Start", "Name", "Location", "Series"], ["start", "name", "location", "series"]);
-        this.sortByColumn(admin.ui.events.TableModel.START_COLUMN, true);
 
         this.__data = null;
     },
