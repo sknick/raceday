@@ -32,7 +32,8 @@
                 <template v-if="shownEvents.includes(event.id)">
                     <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
                         <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
-                            <td colspan="4"><img :src="mediaIcon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
+                            <td colspan="4" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
+                            <td colspan="4" v-else><img :src="mediaIcon(broadcast)" alt="Media icon"> (No URL)</td>
                         </tr>
                     </template>
                     <template v-else>
