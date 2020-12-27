@@ -217,6 +217,7 @@ func (dh DatastoreHandle) UpdateBroadcast(id, type_, eventId string, url *string
 		type_,
 		eventId,
 		url,
+		id,
 	)
 	if err != nil {
 		return err

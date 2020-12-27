@@ -99,17 +99,37 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onAddConfirmed: function(e) {
-            let event = e.getData();
+            let data = e.getData();
             admin.RequestManager.getInstance().postEvent(
                 this,
-                event.name,
-                event.start,
-                event.description,
-                event.location ? event.location.id : null,
-                event.series ? event.series.id : null
+                data.event.name,
+                data.event.start,
+                data.event.description,
+                data.event.location ? data.event.location.id : null,
+                data.event.series ? data.event.series.id : null
             ).then(
                 function(e) {
-                    this.context.__table.getTableModel().reloadData();
+                    let eventId = e.getResponse();
+
+                    // TODO: This sucks. Make a single API that we can call, or at least wait on each before moving on.
+                    for (let i = 0; i < data.broadcasts.length; i++) {
+                        admin.RequestManager.getInstance().postBroadcast(
+                            this.context,
+                            data.broadcasts[i].type_,
+                            eventId,
+                            data.broadcasts[i].url
+                        ).then(
+                            function (e) {
+                                if (i === (data.broadcasts.length - 1)) {
+                                    this.context.__table.getTableModel().reloadData();
+                                }
+                            },
+
+                            function (e) {
+                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                            }
+                        );
+                    }
                 },
 
                 function(e) {
@@ -186,18 +206,72 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onEditConfirmed: function(e) {
-            let event = e.getData();
+            let data = e.getData();
+
             admin.RequestManager.getInstance().putEvent(
                 this,
-                event.id,
-                event.name,
-                event.start,
-                event.description,
-                event.location ? event.location.id : null,
-                event.series ? event.series.id : null
+                data.event.id,
+                data.event.name,
+                data.event.start,
+                data.event.description,
+                data.event.location ? data.event.location.id : null,
+                data.event.series ? data.event.series.id : null
             ).then(
                 function(e) {
-                    this.context.__table.getTableModel().reloadData();
+                    // TODO: This sucks. Make a single API that we can call, or at least wait on each before moving on.
+                    for (let i = 0; i < data.broadcasts.length; i++) {
+                        if (data.broadcasts[i].id) {
+                            admin.RequestManager.getInstance().putBroadcast(
+                                this.context,
+                                data.broadcasts[i].id,
+                                data.broadcasts[i].type_,
+                                data.event.id,
+                                data.broadcasts[i].url
+                            ).then(
+                                function (e) {
+                                    if (i === (data.broadcasts.length - 1)) {
+                                        this.context.__table.getTableModel().reloadData();
+                                    }
+                                },
+
+                                function (e) {
+                                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                                }
+                            );
+                        } else {
+                            admin.RequestManager.getInstance().postBroadcast(
+                                this.context,
+                                data.broadcasts[i].type_,
+                                data.event.id,
+                                data.broadcasts[i].url
+                            ).then(
+                                function (e) {
+                                    if (i === (data.broadcasts.length - 1)) {
+                                        this.context.__table.getTableModel().reloadData();
+                                    }
+                                },
+
+                                function (e) {
+                                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                                }
+                            );
+                        }
+                    }
+
+                    for (let i = 0; i < data.deletedBroadcasts.length; i++) {
+                        admin.RequestManager.getInstance().deleteBroadcast(
+                            this.context,
+                            data.deletedBroadcasts[i].id
+                        ).then(
+                            function(e) {
+                                // Do nothing
+                            },
+
+                            function (e) {
+                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                            }
+                        )
+                    }
                 },
 
                 function(e) {
