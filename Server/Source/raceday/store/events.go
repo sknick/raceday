@@ -10,7 +10,9 @@ import (
 
 type EventRetrievalCriteria struct {
 	WindowStart float64
-	WindowEnd   *float64
+
+	// If -1, all events that start on or after WindowStart are retrieved.
+	WindowEnd *float64
 }
 
 func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description, locationId, seriesId *string) (string, error) {
@@ -95,7 +97,7 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 	params = append(params, criteria.WindowStart)
 	where := fmt.Sprintf("date_trunc('day', event_start) %s date_trunc('day', to_timestamp($%d))", comparison, len(params))
 
-	if criteria.WindowEnd != nil {
+	if (criteria.WindowEnd != nil) && (*criteria.WindowEnd >= 0) {
 		params = append(params, *criteria.WindowEnd)
 		where += fmt.Sprintf(" AND date_trunc('day', event_start) <= date_trunc('day', to_timestamp($%d))", len(params))
 	}

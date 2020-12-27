@@ -37,7 +37,7 @@
                     </template>
                     <template v-else>
                         <tr>
-                            <td colspan="4">(No Streams)</td>
+                            <td colspan="4">(No Broadcasts)</td>
                         </tr>
                     </template>
                 </template>

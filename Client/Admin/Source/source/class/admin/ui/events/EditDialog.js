@@ -1,7 +1,7 @@
 qx.Class.define("admin.ui.events.EditDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(locations, series, event) {
+    construct: function(locations, series, event, eventBroadcasts) {
         this.__event = event;
 
         let nameLabel = new qx.ui.basic.Label("Name:");

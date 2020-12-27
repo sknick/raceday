@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
+	"time"
 )
 
 type BroadcastRetrievalCriteria struct {
-	EventID    *string
-	EventStart *float64
+	EventID         *string
+	EventStart      *float64
+	IncludeAllAfter bool
 }
 
 func (dh DatastoreHandle) CreateBroadcast(type_ string, eventId string, url string) (string, error) {
@@ -81,19 +83,34 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 		where += fmt.Sprintf("event_id = $%d", len(params))
 	}
 	if criteria.EventStart != nil {
+		operator := "="
+		if criteria.IncludeAllAfter {
+			operator = ">="
+		}
+
 		params = append(params, *criteria.EventStart)
 
 		if where != "" {
 			where += " AND "
 		}
-		where += fmt.Sprintf("date_trunc('day', event_start) = date_trunc('day', to_timestamp($%d))", len(params))
+		where += fmt.Sprintf("date_trunc('day', event_start) %s date_trunc('day', to_timestamp($%d))", operator, len(params))
 	}
 
 	rows, err := dh.db.Query(
 		fmt.Sprintf(
 			`SELECT broadcast_id,
 					broadcast_type,
-					broadcast_url
+					broadcast_url,
+					event_id,
+					event_name,
+					event_start,
+					event_description,
+					location_id,
+					location_name,
+					location_description,
+					series_id,
+					series_name,
+					series_description
 			   FROM broadcasts
 			  WHERE %s`,
 			where,
@@ -108,31 +125,89 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 
 	for rows.Next() {
 		var (
-			idVal   string
-			typeVal string
-			urlVal  sql.NullString
+			broadcastIdVal         string
+			broadcastTypeVal       string
+			broadcastUrlVal        sql.NullString
+			eventIdVal             string
+			eventNameVal           string
+			eventStartVal          time.Time
+			eventDescriptionVal    sql.NullString
+			locationIdVal          sql.NullString
+			locationNameVal        sql.NullString
+			locationDescriptionVal sql.NullString
+			seriesIdVal            sql.NullString
+			seriesNameVal          sql.NullString
+			seriesDescriptionVal   sql.NullString
 		)
 
-		err = rows.Scan(&idVal, &typeVal, &urlVal)
+		err = rows.Scan(
+			&broadcastIdVal,
+			&broadcastTypeVal,
+			&broadcastUrlVal,
+			&eventIdVal,
+			&eventNameVal,
+			&eventStartVal,
+			&eventDescriptionVal,
+			&locationIdVal,
+			&locationNameVal,
+			&locationDescriptionVal,
+			&seriesIdVal,
+			&seriesNameVal,
+			&seriesDescriptionVal,
+		)
 		if err != nil {
 			return nil, err
 		}
 
-		thisStream := model.Broadcast{
-			Id:    idVal,
-			Type_: typeVal,
-		}
-		if urlVal.Valid {
-			thisStream.Url = urlVal.String
+		thisLocation := model.Location{}
+		if locationIdVal.Valid {
+			thisLocation = model.Location{
+				Id:   locationIdVal.String,
+				Name: locationNameVal.String,
+			}
+			if locationDescriptionVal.Valid {
+				thisLocation.Description = locationDescriptionVal.String
+			}
 		}
 
-		ret = append(ret, thisStream)
+		thisSeries := model.Series{}
+		if seriesIdVal.Valid {
+			thisSeries = model.Series{
+				Id:   seriesIdVal.String,
+				Name: seriesNameVal.String,
+			}
+			if seriesDescriptionVal.Valid {
+				thisSeries.Description = seriesDescriptionVal.String
+			}
+		}
+
+		thisEvent := model.Event{
+			Id:       eventIdVal,
+			Name:     eventNameVal,
+			Start:    float64(eventStartVal.Unix()),
+			Location: thisLocation,
+			Series:   thisSeries,
+		}
+		if eventDescriptionVal.Valid {
+			thisEvent.Description = eventDescriptionVal.String
+		}
+
+		thisBroadcast := model.Broadcast{
+			Id:    broadcastIdVal,
+			Type_: broadcastTypeVal,
+			Event: thisEvent,
+		}
+		if broadcastUrlVal.Valid {
+			thisBroadcast.Url = broadcastUrlVal.String
+		}
+
+		ret = append(ret, thisBroadcast)
 	}
 
 	return ret, nil
 }
 
-func (dh DatastoreHandle) UpdateBroadcast(id, type_ string, eventId, url *string) error {
+func (dh DatastoreHandle) UpdateBroadcast(id, type_, eventId string, url *string) error {
 	result, err := dh.db.Exec(
 		`UPDATE broadcast
             SET type = $1,

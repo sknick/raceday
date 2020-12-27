@@ -65,16 +65,9 @@ func BroadcastPost(w http.ResponseWriter, r *http.Request) {
 func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	type_ := r.URL.Query().Get("type")
+	eventId := r.URL.Query().Get("event_id")
 
-	var (
-		eventId *string
-		url     *string
-	)
-
-	eventIdParam := r.URL.Query().Get("event_id")
-	if eventIdParam != "" {
-		eventId = &eventIdParam
-	}
+	var url *string
 
 	urlParam := r.URL.Query().Get("url")
 	if urlParam != "" {
@@ -99,6 +92,7 @@ func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
 	eventIdParam := r.URL.Query().Get("event_id")
 	eventStartParam := r.URL.Query().Get("event_start")
+	includeAllAfterParam := r.URL.Query().Get("include_all_after")
 
 	criteria := store.BroadcastRetrievalCriteria{}
 
@@ -113,6 +107,15 @@ func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
 		}
 
 		criteria.EventStart = &eventStart
+	}
+	if includeAllAfterParam != "" {
+		includeAllAfter, err := strconv.ParseBool(includeAllAfterParam)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.IncludeAllAfter = includeAllAfter
 	}
 
 	streams, err := store.Datastore.GetBroadcasts(criteria)

@@ -77,11 +77,19 @@ CREATE VIEW broadcasts AS
 SELECT broadcast.id AS broadcast_id,
        broadcast.type AS broadcast_type,
        broadcast.url AS broadcast_url,
-       event.id AS event_id,
-       event.start AS event_start
+       events.event_id AS event_id,
+       events.event_name AS event_name,
+       events.event_start AS event_start,
+       events.event_description AS event_description,
+       events.location_id AS location_id,
+       events.location_name AS location_name,
+       events.location_description AS location_description,
+       events.series_id AS series_id,
+       events.series_name AS series_name,
+       events.series_description AS series_description
   FROM broadcast
-  JOIN event
-    ON broadcast.event_id = event.id;
+  JOIN events
+    ON broadcast.event_id = events.event_id;
 
 CREATE VIEW events AS
 SELECT event.id AS event_id,

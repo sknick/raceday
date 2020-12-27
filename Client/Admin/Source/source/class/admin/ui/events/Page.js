@@ -143,14 +143,33 @@ qx.Class.define("admin.ui.events.Page", {
                                     series.push(new raceday.api.model.Series(response[i]));
                                 }
 
-                                let dlg = new admin.ui.events.EditDialog(
-                                    locations,
-                                    series,
-                                    this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex)
-                                );
-                                dlg.addListener("confirmed", this.context.__onEditConfirmed, this.context);
+                                let event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
 
-                                dlg.show();
+                                admin.RequestManager.getInstance().getBroadcasts(
+                                    this.context,
+                                    event.id,
+                                    null,
+                                    null,
+                                    false
+                                ).then(
+                                    function(e) {
+                                        response = e.getResponse();
+
+                                        let broadcasts = [];
+                                        for (let i = 0; i < response.length; i++) {
+                                            broadcasts.push(new raceday.api.model.Broadcast(response[i]));
+                                        }
+
+                                        let dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts);
+                                        dlg.addListener("confirmed", this.context.__onEditConfirmed, this.context);
+
+                                        dlg.show();
+                                    },
+
+                                    function(e) {
+                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                                    }
+                                );
                             },
 
                             function(e) {

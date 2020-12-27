@@ -32,8 +32,9 @@ qx.Class.define("admin.ui.events.TableModel", {
 
                 admin.RequestManager.getInstance().getEvents(
                     this,
-                    nowTimestamp - 86400,
-                    nowTimestamp + 86400 * 365 * 10
+                    // TODO: Revert when ready
+                    nowTimestamp - (86400 * 30), // nowTimestamp - 86400,
+                    -1
                 ).then(
                     function(e) {
                         let response = e.getResponse();

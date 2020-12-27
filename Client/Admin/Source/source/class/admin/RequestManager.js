@@ -25,6 +25,16 @@ qx.Class.define("admin.RequestManager", {
     },
 
     members: {
+        deleteBroadcast: function(context, id, quiet) {
+            let params = {
+                "id": id
+            };
+
+            let req = this.__prepareRequestWithParams("broadcast", params, quiet);
+            req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         deleteEvent: function(context, id, quiet) {
             let params = {
                 "id": id
@@ -52,6 +62,22 @@ qx.Class.define("admin.RequestManager", {
 
             let req = this.__prepareRequestWithParams("series", params, quiet);
             req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        getBroadcasts: function(context, eventId, eventStart, includeAllAfter, quiet) {
+            let params = {};
+            if (eventId) {
+                params["event_id"] = eventId;
+            }
+            if (eventStart) {
+                params["event_start"] = eventStart;
+            }
+            if ( (includeAllAfter !== undefined) && (includeAllAfter !== null) ) {
+                params["include_all_after"] = includeAllAfter;
+            }
+
+            let req = this.__prepareRequestWithParams("broadcasts", params, quiet, true);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
@@ -84,6 +110,20 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
+        postBroadcast: function(context, type, eventId, url, quiet) {
+            let params = {
+                "type":     type,
+                "event_id": eventId
+            };
+            if (url) {
+                params["url"] = url;
+            }
+
+            let req = this.__prepareRequestWithParams("broadcast", params, quiet);
+            req.setMethod("POST");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         postEvent: function(context, name, start, description, locationId, seriesId, quiet) {
             let params = {
                 "name":  name,
@@ -112,6 +152,21 @@ qx.Class.define("admin.RequestManager", {
 
             let req = this.__prepareRequestWithParams("location", params, quiet);
             req.setMethod("POST");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        putBroadcast: function(context, id, type, eventId, url, quiet) {
+            let params = {
+                "id":       id,
+                "type":     type,
+                "event_id": eventId
+            };
+            if (url) {
+                params["url"] = url;
+            }
+
+            let req = this.__prepareRequestWithParams("broadcast", params, quiet);
+            req.setMethod("PUT");
             return req.sendWithPromise(this.__createContext(context, req));
         },
 

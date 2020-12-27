@@ -121,6 +121,7 @@ paths:
             enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
         - name: event_id
           in: query
+          required: true
           schema:
             type: string
             format: uuid
@@ -158,6 +159,13 @@ paths:
           schema:
             type: number
             format: int64
+        - name: include_all_after
+          in: query
+          description: Indicates that the event_start parameter should be the earliest that returned broadcast must
+            start, but any broadcast that airs after that time will also be included.
+          schema:
+            type: boolean
+            default: false
 
       responses:
         "200":
@@ -305,7 +313,8 @@ paths:
           in: query
           description: An optional UNIX timestamp indicating the end of a window in which returned events must start,
             where `window_start` indicates the beginning of the window. If not specified, only events that start on the
-            date indicated by `window_start` will be returned.
+            date indicated by `window_start` will be returned. If -1 is specified, all events that occur on or after the
+            date indicated by `window_start` are returned.
           schema:
             type: number
             format: int64
@@ -542,11 +551,14 @@ components:
         type_:
           type: string
           enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
+        event:
+          $ref: "#/components/schemas/Event"
         url:
           type: string
       required:
         - id
         - type
+        - event
 
     Event:
       type: object
