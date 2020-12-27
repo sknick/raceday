@@ -95,7 +95,7 @@ export default {
         },
 
         mediaIcon: function(broadcast) {
-            switch (broadcast.type) {
+            switch (broadcast.type_) {
                 case "Facebook":
                     return require("../assets/facebook.png");
                 case "YouTube":
