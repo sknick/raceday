@@ -39,7 +39,23 @@ func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description,
 }
 
 func (dh DatastoreHandle) DeleteEvent(id string) error {
-	result, err := dh.db.Exec(
+	tx, err := dh.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	result, err := tx.Exec(
+		`DELETE FROM broadcast
+          WHERE event_id = $1`,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	result, err = tx.Exec(
 		`DELETE FROM event
           WHERE id = $1`,
 		id,
@@ -49,6 +65,11 @@ func (dh DatastoreHandle) DeleteEvent(id string) error {
 	}
 
 	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
 	if err != nil {
 		return err
 	}
