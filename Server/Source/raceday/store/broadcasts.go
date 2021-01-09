@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
@@ -15,6 +16,33 @@ type BroadcastRetrievalCriteria struct {
 }
 
 func (dh DatastoreHandle) CreateBroadcast(type_ string, eventId string, url string) (string, error) {
+	rows, err := dh.db.Query(
+		`SELECT COUNT(id) AS num
+           FROM event
+          WHERE id = $1`,
+		eventId,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	defer rows.Close()
+
+	if rows.Next() {
+		var num int
+
+		err = rows.Scan(&num)
+		if err != nil {
+			return "", err
+		}
+
+		if num == 0 {
+			return "", &EventNotFoundError{}
+		}
+	} else {
+		return "", errors.New("unable to advance row set")
+	}
+
 	broadcastId, err := uuid.NewRandom()
 	if err != nil {
 		return "", nil
@@ -208,6 +236,33 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 }
 
 func (dh DatastoreHandle) UpdateBroadcast(id, type_, eventId string, url *string) error {
+	rows, err := dh.db.Query(
+		`SELECT COUNT(id) AS num
+           FROM event
+          WHERE id = $1`,
+		eventId,
+	)
+	if err != nil {
+		return nil
+	}
+
+	defer rows.Close()
+
+	if rows.Next() {
+		var num int
+
+		err = rows.Scan(&num)
+		if err != nil {
+			return err
+		}
+
+		if num == 0 {
+			return &EventNotFoundError{}
+		}
+	} else {
+		return errors.New("unable to advance row set")
+	}
+
 	result, err := dh.db.Exec(
 		`UPDATE broadcast
             SET type = $1,

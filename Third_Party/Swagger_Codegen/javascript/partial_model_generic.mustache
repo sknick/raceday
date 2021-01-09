@@ -15,5 +15,22 @@ qx.Class.define("raceday.api.model.{{classname}}", {
 {{/isPrimitiveType}}
         }
 {{/vars}}
+    },
+
+    members: {
+        toSimpleObject: function() {
+            return {
+{{#vars}}
+{{#isPrimitiveType}}                "{{baseName}}": this.{{name}},
+{{/isPrimitiveType}}
+{{^isPrimitiveType}}
+{{#vendorExtensions.x-is-object}}                "{{baseName}}": this.{{name}}.toSimpleObject(),
+{{/vendorExtensions.x-is-object}}
+{{^vendorExtensions.x-is-object}}                "{{baseName}}": this.{{name}},
+{{/vendorExtensions.x-is-object}}
+{{/isPrimitiveType}}
+{{/vars}}
+            };
+        }
     }
 });

@@ -35,6 +35,16 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
+        deleteBroadcasts: function(context, ids, quiet) {
+            let params = {
+                "ids": ids
+            };
+
+            let req = this.__prepareRequestWithParams("broadcasts", params, quiet);
+            req.setMethod("DELETE");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         deleteEvent: function(context, id, quiet) {
             let params = {
                 "id": id
@@ -121,6 +131,32 @@ qx.Class.define("admin.RequestManager", {
 
             let req = this.__prepareRequestWithParams("broadcast", params, quiet);
             req.setMethod("POST");
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        postBroadcasts: function(context, unsavedBroadcasts, quiet) {
+            let data = [];
+            for (let i = 0; i < unsavedBroadcasts.length; i++) {
+                data.push(unsavedBroadcasts[i].toSimpleObject());
+            }
+
+            let req = this.__prepareRequest("broadcasts", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(data);
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
+        putBroadcasts: function(context, broadcasts, quiet) {
+            let data = [];
+            for (let i = 0; i < broadcasts.length; i++) {
+                data.push(broadcasts[i].toSimpleObject());
+            }
+
+            let req = this.__prepareRequest("broadcasts", quiet);
+            req.setMethod("PUT");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(data);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 

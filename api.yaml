@@ -42,7 +42,6 @@ paths:
   /broadcast:
 
     delete:
-
       operationId: broadcastDelete
 
       summary: Deletes a broadcast.
@@ -137,9 +136,33 @@ paths:
         "403":
           description: Unauthorized.
         "404":
-          description: Broadcast not found.
+          description: Broadcast or referenced event not found.
 
   /broadcasts:
+
+    delete:
+      operationId: broadcastsDelete
+
+      summary: Deletes broadcasts.
+
+      parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
+        - name: ids
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+
+      responses:
+        "200":
+          description: Successful response.
+        "403":
+          description: Unauthorized.
+        "404":
+          description: One or more broadcasts not found.
 
     get:
       operationId: broadcastsGet
@@ -178,6 +201,28 @@ paths:
                   $ref: "#/components/schemas/Broadcast"
         "404":
           description: Event not found.
+
+    put:
+      operationId: broadcastsput
+
+      summary: Updates broadcasts.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Broadcast"
+
+      responses:
+        "200":
+          description: Successful response.
+        "403":
+          description: Unauthorized.
+        "404":
+          description: One or more referenced events not found.
 
   /event:
 
@@ -634,3 +679,18 @@ components:
         - id
         - when_created
         - enabled
+
+    UnsavedBroadcast:
+      type: object
+      properties:
+        type_:
+          type: string
+          enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
+        event_id:
+          type: string
+          format: uuid
+        url:
+          type: string
+      required:
+        - type_
+        - event_id

@@ -2,7 +2,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
     extend: admin.ui.DialogBase,
 
     construct: function(broadcast) {
-        this.__broadcast = broadcast ? broadcast : new raceday.api.model.Broadcast({});
+        this.__broadcast = broadcast ? broadcast : new raceday.api.model.UnsavedBroadcast({});
 
         let typeLabel = new qx.ui.basic.Label("Type:");
         typeLabel.setAlignY("middle");

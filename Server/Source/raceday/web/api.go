@@ -5,6 +5,7 @@ import (
 	_ "golang.org/x/crypto/blake2s"
 	"log"
 	"net/http"
+	"raceday/Server/Source/raceday/model"
 	"raceday/Server/Source/raceday/store"
 	"runtime"
 	"strconv"
@@ -78,6 +79,7 @@ func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err.(type) {
 		case *store.BroadcastNotFoundError:
+		case *store.EventNotFoundError:
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -87,6 +89,33 @@ func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func BroadcastsDelete(w http.ResponseWriter, r *http.Request) {
+	ids := make([]string, 0)
+
+	idsParam := r.URL.Query().Get("ids")
+	if idsParam != "" {
+		for _, s := range strings.Split(idsParam, ",") {
+			ids = append(ids, s)
+		}
+	}
+
+	for _, id := range ids {
+		err := store.Datastore.DeleteBroadcast(id)
+		if err != nil {
+			switch err.(type) {
+			case *store.BroadcastNotFoundError:
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+
+			handleInternalServerError(w, err)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
@@ -131,6 +160,74 @@ func BroadcastsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodeAndSend(streams, w)
+}
+
+func BroadcastsPost(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var broadcasts []model.UnsavedBroadcast
+
+	err := decoder.Decode(&broadcasts)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	ids := make([]string, 0)
+
+	for _, broadcast := range broadcasts {
+		id, err := store.Datastore.CreateBroadcast(
+			broadcast.Type_,
+			broadcast.EventId,
+			broadcast.Url,
+		)
+		if err != nil {
+			switch err.(type) {
+			case *store.EventNotFoundError:
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+
+			handleInternalServerError(w, err)
+			return
+		}
+
+		ids = append(ids, id)
+	}
+
+	encodeAndSend(ids, w)
+}
+
+func BroadcastsPut(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var broadcasts []model.Broadcast
+
+	err := decoder.Decode(&broadcasts)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	for _, broadcast := range broadcasts {
+		var url string
+		if broadcast.Url != "" {
+			url = broadcast.Url
+		}
+
+		err := store.Datastore.UpdateBroadcast(broadcast.Id, broadcast.Type_, broadcast.Event.Id, &url)
+		if err != nil {
+			switch err.(type) {
+			case *store.BroadcastNotFoundError:
+			case *store.EventNotFoundError:
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+
+			handleInternalServerError(w, err)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func EventDelete(w http.ResponseWriter, r *http.Request) {

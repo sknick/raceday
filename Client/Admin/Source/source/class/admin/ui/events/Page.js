@@ -109,20 +109,17 @@ qx.Class.define("admin.ui.events.Page", {
                 data.event.series ? data.event.series.id : null
             ).then(
                 function(e) {
-                    let eventId = e.getResponse();
+                    if (data.broadcasts.length > 0) {
+                        for (let i = 0; i < data.broadcasts.length; i++) {
+                            data.broadcasts[i].eventId = e.getResponse();
+                        }
 
-                    // TODO: This sucks. Make a single API that we can call, or at least wait on each before moving on.
-                    for (let i = 0; i < data.broadcasts.length; i++) {
-                        admin.RequestManager.getInstance().postBroadcast(
+                        admin.RequestManager.getInstance().postBroadcasts(
                             this.context,
-                            data.broadcasts[i].type_,
-                            eventId,
-                            data.broadcasts[i].url
+                            data.broadcasts
                         ).then(
                             function (e) {
-                                if (i === (data.broadcasts.length - 1)) {
-                                    this.context.__table.getTableModel().reloadData();
-                                }
+                                this.context.__table.getTableModel().reloadData();
                             },
 
                             function (e) {
@@ -218,50 +215,76 @@ qx.Class.define("admin.ui.events.Page", {
                 data.event.series ? data.event.series.id : null
             ).then(
                 function(e) {
-                    // TODO: This sucks. Make a single API that we can call, or at least wait on each before moving on.
-                    for (let i = 0; i < data.broadcasts.length; i++) {
-                        if (data.broadcasts[i].id) {
-                            admin.RequestManager.getInstance().putBroadcast(
+                    if (data.broadcasts.length > 0) {
+                        let broadcasts = [];
+                        let unsavedBroadcasts = [];
+
+                        for (let i = 0; i < data.broadcasts.length; i++) {
+                            if (data.broadcasts[i] instanceof raceday.api.model.Broadcast) {
+                                broadcasts.push(data.broadcasts[i]);
+                            } else {
+                                data.broadcasts[i].eventId = data.event.id;
+                                unsavedBroadcasts.push(data.broadcasts[i]);
+                            }
+                        }
+
+                        if (broadcasts.length > 0) {
+                            admin.RequestManager.getInstance().putBroadcasts(
                                 this.context,
-                                data.broadcasts[i].id,
-                                data.broadcasts[i].type_,
-                                data.event.id,
-                                data.broadcasts[i].url
+                                broadcasts
                             ).then(
-                                function (e) {
-                                    if (i === (data.broadcasts.length - 1)) {
+                                function(e) {
+                                    if (unsavedBroadcasts.length > 0) {
+                                        admin.RequestManager.getInstance().postBroadcasts(
+                                            this.context,
+                                            unsavedBroadcasts
+                                        ).then(
+                                            function (e) {
+                                                this.context.__table.getTableModel().reloadData();
+                                            },
+
+                                            function (e) {
+                                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                                            }
+                                        );
+                                    } else {
                                         this.context.__table.getTableModel().reloadData();
                                     }
                                 },
 
-                                function (e) {
+                                function(e) {
                                     admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
                                 }
                             );
                         } else {
-                            admin.RequestManager.getInstance().postBroadcast(
-                                this.context,
-                                data.broadcasts[i].type_,
-                                data.event.id,
-                                data.broadcasts[i].url
-                            ).then(
-                                function (e) {
-                                    if (i === (data.broadcasts.length - 1)) {
+                            if (unsavedBroadcasts.length > 0) {
+                                admin.RequestManager.getInstance().postBroadcasts(
+                                    this.context,
+                                    unsavedBroadcasts
+                                ).then(
+                                    function (e) {
                                         this.context.__table.getTableModel().reloadData();
-                                    }
-                                },
+                                    },
 
-                                function (e) {
-                                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                                }
-                            );
+                                    function (e) {
+                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                                    }
+                                );
+                            } else {
+                                this.context.__table.getTableModel().reloadData();
+                            }
                         }
                     }
 
-                    for (let i = 0; i < data.deletedBroadcasts.length; i++) {
-                        admin.RequestManager.getInstance().deleteBroadcast(
+                    if (data.deletedBroadcasts.length > 0) {
+                        let ids = [];
+                        for (let i = 0; i < data.deletedBroadcasts.length; i++) {
+                            ids.push(data.deletedBroadcasts[i].id);
+                        }
+
+                        admin.RequestManager.getInstance().deleteBroadcasts(
                             this.context,
-                            data.deletedBroadcasts[i].id
+                            ids
                         ).then(
                             function(e) {
                                 // Do nothing
