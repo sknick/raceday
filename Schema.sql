@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS raceday;
-CREATE DATABASE raceday;
-\c raceday
+-- DROP DATABASE IF EXISTS raceday;
+-- CREATE DATABASE raceday;
+-- \c raceday
 
 CREATE TYPE broadcast_type AS ENUM (
     'Cable',
