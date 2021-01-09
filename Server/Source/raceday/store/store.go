@@ -36,7 +36,7 @@ func NewAccessToken(id string, whenCreated int, userId string, ipAddress string)
 
 func Initialize(settings raceday.DatabaseSettings) (err error) {
 	connStr := fmt.Sprintf(
-		"host=%s port=%d dbname=%s user=%s password=%s",
+		"host=%s port=%d dbname=%s user=%s password=%s sslmode=disable",
 		settings.DatabaseHost,
 		settings.DatabasePort,
 		settings.DatabaseName,
