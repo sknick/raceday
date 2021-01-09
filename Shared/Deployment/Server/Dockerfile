@@ -7,8 +7,8 @@ RUN apt --assume-yes update && \
                              openjdk-11-jre \
                              wget
 
-#WORKDIR /
-#RUN npm install -g @qooxdoo/compiler
+WORKDIR /
+RUN npm install -g @qooxdoo/compiler
 
 WORKDIR /usr
 RUN wget -q --no-check-certificate https://golang.org/dl/go1.14.6.linux-amd64.tar.gz
@@ -20,6 +20,7 @@ WORKDIR /RaceDay
 COPY ./ .
 RUN make server
 RUN make web
+RUN make admin
 
 
 FROM ubuntu:18.04
@@ -32,5 +33,8 @@ COPY --from=builder /RaceDay/Build/raceday .
 WORKDIR /etc
 COPY Shared/Deployment/raceday.conf .
 
-WORKDIR /var/www/raceday
+WORKDIR /var/www/ui_root
 COPY --from=builder /RaceDay/Client/Web/Source/dist .
+
+WORKDIR /var/www/admin_ui_root
+COPY --from=builder /RaceDay/Client/Admin/Source/compiled/deploy .

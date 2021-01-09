@@ -24,4 +24,4 @@ admin:
 	cd Client/Admin/Source && qx deploy --target build --clean
 
 deployment:
-	cd Deployments/x51 && docker-compose build
+	cd Deployments/raceday.watch && docker-compose build
