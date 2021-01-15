@@ -23,5 +23,8 @@ web:
 admin:
 	cd Client/Admin/Source && qx deploy --target build --clean
 
+usrmgr:
+	cd Misc/UserManager/Source && go build -o ../../../Build/usrmgr && chmod 755 ../../../Build/usrmgr
+
 deployment:
 	cd Deployments/raceday.watch && docker-compose build
