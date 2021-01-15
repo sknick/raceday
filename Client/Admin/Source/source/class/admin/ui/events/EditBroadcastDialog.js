@@ -13,6 +13,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         this.__typeField.add(new qx.ui.form.ListItem("Cable"));
         this.__typeField.add(new qx.ui.form.ListItem("Facebook"));
         this.__typeField.add(new qx.ui.form.ListItem("MotorTrend"));
+        this.__typeField.add(new qx.ui.form.ListItem("Other"));
         this.__typeField.add(new qx.ui.form.ListItem("YouTube"));
 
         let typeItems = this.__typeField.getChildren();

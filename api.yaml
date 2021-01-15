@@ -75,7 +75,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: [ "Cable", "Facebook", "MotorTrend", "YouTube" ]
+            enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
         - name: event_id
           in: query
           required: true
@@ -117,7 +117,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
+            enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
         - name: event_id
           in: query
           required: true
@@ -595,7 +595,7 @@ components:
           format: uuid
         type_:
           type: string
-          enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
+          enum: [ "Cable", "Facebook", "MotorTrend", "Other", "YouTube" ]
         event:
           $ref: "#/components/schemas/Event"
         url:
@@ -685,7 +685,7 @@ components:
       properties:
         type_:
           type: string
-          enum: ["Cable", "Facebook", "MotorTrend", "YouTube"]
+          enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
         event_id:
           type: string
           format: uuid
