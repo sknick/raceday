@@ -8,12 +8,13 @@ qx.Class.define("admin.ui.events.EditDialog", {
         let nameLabel = new qx.ui.basic.Label("Name:");
         nameLabel.setAlignY("middle");
 
-        this.__nameField = new qx.ui.form.TextField(this.__event ? this.__event.name : "");
+        this.__nameField = new qx.ui.form.TextField((this.__event && this.__event.name) ? this.__event.name : "");
 
         let startLabel = new qx.ui.basic.Label("Start (GMT):");
         startLabel.setAlignY("middle");
 
-        this.__startField = new admin.ui.DateTimeField(this.__event ? this.__event.start : null);
+        this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ?
+            this.__event.start : null);
 
         let locationLabel = new qx.ui.basic.Label("Location:");
         locationLabel.setAlignY("middle");
@@ -61,7 +62,8 @@ qx.Class.define("admin.ui.events.EditDialog", {
         let descriptionLabel = new qx.ui.basic.Label("Description:");
         descriptionLabel.setPaddingTop(5);
 
-        this.__descriptionField = new qx.ui.form.TextArea(this.__event && this.__event.description ? this.__event.description : "");
+        this.__descriptionField = new qx.ui.form.TextArea((this.__event && this.__event.description) ?
+            this.__event.description : "");
         this.__descriptionField.setHeight(100);
 
 

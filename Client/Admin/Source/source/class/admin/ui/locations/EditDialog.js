@@ -7,12 +7,14 @@ qx.Class.define("admin.ui.locations.EditDialog", {
         let nameLabel = new qx.ui.basic.Label("Name:");
         nameLabel.setAlignY("middle");
 
-        this.__nameField = new qx.ui.form.TextField(this.__location ? this.__location.name : "");
+        this.__nameField = new qx.ui.form.TextField((this.__location && this.__location.name) ?
+            this.__location.name : "");
 
         let descriptionLabel = new qx.ui.basic.Label("Description:");
         descriptionLabel.setPaddingTop(5);
 
-        this.__descriptionField = new qx.ui.form.TextArea(this.__location ? this.__location.description : "");
+        this.__descriptionField = new qx.ui.form.TextArea((this.__location && this.__location.description) ?
+            this.__location.description : "");
         this.__descriptionField.setHeight(200);
         this.__descriptionField.setWidth(400);
 
