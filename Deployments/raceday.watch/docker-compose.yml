@@ -8,7 +8,7 @@ volumes:
 services:
 
   server:
-    image: raceday
+    image: sknick/raceday_server
 
     build:
       context: ../../
@@ -26,7 +26,7 @@ services:
 
 
   postgres:
-    image: raceday_db
+    image: sknick/raceday_db
 
     build:
       context: ../../
