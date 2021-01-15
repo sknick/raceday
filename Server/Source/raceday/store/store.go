@@ -90,6 +90,8 @@ func (dh DatastoreHandle) GetAccessToken(id string) (*AccessToken, error) {
 		return nil, err
 	}
 
+	defer rows.Close()
+
 	if rows.Next() {
 		err = rows.Scan(&id, &whenCreated, &userId, &inet)
 	} else {
@@ -126,6 +128,8 @@ func (dh DatastoreHandle) GetSystemUser(id string) (*model.SystemUser, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	defer rows.Close()
 
 	if rows.Next() {
 		err = rows.Scan(&firstNameVal, &lastNameVal, &emailVal, &whenCreatedVal, &whoCreatedVal, &whenUpdatedVal, &whoUpdatedVal, &enabledVal)
@@ -181,6 +185,8 @@ func (dh DatastoreHandle) IsUserValid(username string, password string) (bool, e
 	if err != nil {
 		return false, err
 	}
+
+	defer rows.Close()
 
 	if rows.Next() {
 		err = rows.Scan(&salt)
