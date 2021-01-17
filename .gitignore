@@ -1,10 +1,7 @@
-/.idea/dataSources.local.xml
-/.idea/dataSources.xml
-/.idea/dataSources/
-/.idea/workspace.xml
 /Build/
 /Client/API/Python/Build/
 /Client/Admin/Source/compiled/
+/Client/Admin/Source/node_modules/
 /Client/Admin/Source/source/class/raceday/api/model/
 /Client/Web/Source/node_modules/
 /Server/Source/raceday/model/*

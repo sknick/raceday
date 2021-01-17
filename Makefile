@@ -1,4 +1,4 @@
-all: javascript-model python-api server
+all: javascript-model python-api server usrmgr
 
 python-api:
 	java -jar Third_Party/Swagger_Codegen/swagger-codegen-cli-3.0.23.jar generate -l python -c Client/API/Python/api.conf -o Client/API/Python/Build -i api.yaml
