@@ -4,4 +4,5 @@
 /Client/Admin/Source/node_modules/
 /Client/Admin/Source/source/class/raceday/api/model/
 /Client/Web/Source/node_modules/
+/Server/Source/__debug_bin
 /Server/Source/raceday/model/*

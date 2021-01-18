@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         { 
-            "args": ["run", "${env:HOME}/Configuration/raceday.conf"],
+            "args": ["run", "${env:HOME}/Configuration/raceday.conf", "--dev"],
             "name": "Server",
             "type": "go",
             "request": "launch",
