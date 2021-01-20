@@ -111,9 +111,9 @@ export default {
             let timezoneOffset = d.getTimezoneOffset() / 60;
             let timezoneOffsetStr = "";
             if (timezoneOffset < 0) {
-                timezoneOffsetStr = "GMT-" + String(timezoneOffset).padStart(2, "0") + "00";
-            } else {
                 timezoneOffsetStr = "GMT+" + String(timezoneOffset).padStart(2, "0") + "00";
+            } else {
+                timezoneOffsetStr = "GMT-" + String(timezoneOffset).padStart(2, "0") + "00";
             }
 
             return String(d.getHours()).padStart(2, "0") + ":" +

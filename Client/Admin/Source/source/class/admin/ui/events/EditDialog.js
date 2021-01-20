@@ -104,9 +104,9 @@ qx.Class.define("admin.ui.events.EditDialog", {
 
             let timezoneOffset = new Date().getTimezoneOffset() / 60;
             if (timezoneOffset < 0) {
-                ret = "GMT-" + String(timezoneOffset).padStart(2, "0") + "00";
-            } else {
                 ret = "GMT+" + String(timezoneOffset).padStart(2, "0") + "00";
+            } else {
+                ret = "GMT-" + String(timezoneOffset).padStart(2, "0") + "00";
             }
 
             return ret;

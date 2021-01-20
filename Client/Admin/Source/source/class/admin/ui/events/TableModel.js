@@ -81,8 +81,10 @@ qx.Class.define("admin.ui.events.TableModel", {
             let minutesStr = String(d.getMinutes()).padStart(2, "0");
             let timezoneOffset = d.getTimezoneOffset() / 60;
             let timezoneOffsetStr = String(timezoneOffset).padStart(2, "0") + "00";
-            if (timezoneOffset >= 0) {
+            if (timezoneOffset < 0) {
                 timezoneOffsetStr = "+" + timezoneOffsetStr;
+            } else {
+                timezoneOffsetStr = "-" + timezoneOffsetStr;
             }
 
             return monthStr + "/" + dayStr + "/" + yearStr + " @ " + hoursStr + ":" + minutesStr + " GMT" +
