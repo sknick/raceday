@@ -1,50 +1,52 @@
 <template>
     <div>
-        <span class="upper-left-info">
-            Date: <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
-            <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
-        </span>
-        <span class="logo">
-            Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
-        </span>
-    </div>
+        <div>
+            <span class="upper-left-info">
+                Date: <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
+                <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
+            </span>
+            <span class="logo">
+                Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+            </span>
+        </div>
 
-    <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Series</th>
-                    <th>Event</th>
-                    <th>Location</th>
-                </tr>
-            </thead>
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Series</th>
+                        <th>Event</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-            <template v-for="event in events" v-bind:key="event">
-                <tr class="event" @click="toggleEvent(event.id)">
-                    <td>{{ timestampToString(event.start) }}</td>
-                    <td>{{ event.series ? event.series.name : "" }}</td>
-                    <td>{{ event.name }}</td>
-                    <td>{{ event.location ? event.location.name : "" }}</td>
-                </tr>
+                <tbody>
+                <template v-for="event in events" v-bind:key="event">
+                    <tr class="event" @click="toggleEvent(event.id)">
+                        <td>{{ timestampToString(event.start) }}</td>
+                        <td>{{ event.series ? event.series.name : "" }}</td>
+                        <td>{{ event.name }}</td>
+                        <td>{{ event.location ? event.location.name : "" }}</td>
+                    </tr>
 
-                <template v-if="shownEvents.includes(event.id)">
-                    <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
-                        <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
-                            <td colspan="4" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
-                            <td colspan="4" v-else><img :src="mediaIcon(broadcast)" alt="Media icon"> {{ broadcast.type_ }}</td>
-                        </tr>
-                    </template>
-                    <template v-else>
-                        <tr>
-                            <td colspan="4">(No Broadcasts)</td>
-                        </tr>
+                    <template v-if="shownEvents.includes(event.id)">
+                        <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
+                            <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
+                                <td colspan="4" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank">{{ broadcast.url }}</a></td>
+                                <td colspan="4" v-else><img :src="mediaIcon(broadcast)" alt="Media icon"> {{ broadcast.type_ }}</td>
+                            </tr>
+                        </template>
+                        <template v-else>
+                            <tr>
+                                <td colspan="4">(No Broadcasts)</td>
+                            </tr>
+                        </template>
                     </template>
                 </template>
-            </template>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
