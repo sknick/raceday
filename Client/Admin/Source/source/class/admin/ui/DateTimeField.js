@@ -33,11 +33,11 @@ qx.Class.define("admin.ui.DateTimeField", {
         this.__yearField.setWidth(70);
 
         let selectedItem = null;
-        for (let i = this.__baseDate.getUTCFullYear() - 10; i < this.__baseDate.getUTCFullYear() + 50; i++) {
+        for (let i = this.__baseDate.getFullYear() - 10; i < this.__baseDate.getFullYear() + 50; i++) {
             let thisItem = new qx.ui.form.ListItem(String(i), null, i);
             this.__yearField.add(thisItem);
 
-            if (!selectedItem && (i === this.__baseDate.getUTCFullYear())) {
+            if (!selectedItem && (i === this.__baseDate.getFullYear())) {
                 selectedItem = thisItem;
             }
         }
@@ -56,7 +56,7 @@ qx.Class.define("admin.ui.DateTimeField", {
             let thisItem = new qx.ui.form.ListItem(admin.ui.DateTimeField.__MONTHS[i], null, i);
             this.__monthField.add(thisItem);
 
-            if (!selectedItem && (this.__baseDate.getUTCMonth() === i)) {
+            if (!selectedItem && (this.__baseDate.getMonth() === i)) {
                 selectedItem = thisItem;
             }
         }
@@ -70,7 +70,7 @@ qx.Class.define("admin.ui.DateTimeField", {
 
         this.__dayField = new qx.ui.form.SelectBox();
         this.__dayField.setWidth(50);
-        this.__initializeDayField(this.__baseDate.getUTCDate());
+        this.__initializeDayField(this.__baseDate.getDate());
 
 
         this.__hoursField = new qx.ui.form.SelectBox();
@@ -81,7 +81,7 @@ qx.Class.define("admin.ui.DateTimeField", {
             let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
             this.__hoursField.add(thisItem);
 
-            if (timestamp && !selectedItem && (this.__baseDate.getUTCHours() === i)) {
+            if (timestamp && !selectedItem && (this.__baseDate.getHours() === i)) {
                 selectedItem = thisItem;
             }
         }
@@ -101,7 +101,7 @@ qx.Class.define("admin.ui.DateTimeField", {
             let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
             this.__minutesField.add(thisItem);
 
-            if (timestamp && !selectedItem && (this.__baseDate.getUTCMinutes() === i)) {
+            if (timestamp && !selectedItem && (this.__baseDate.getMinutes() === i)) {
                 selectedItem = thisItem;
             }
         }
@@ -144,12 +144,18 @@ qx.Class.define("admin.ui.DateTimeField", {
                 this.__hoursField.getSelection()[0].getModel(),
                 this.__minutesField.getSelection()[0].getModel()
             );
-            return Math.round(d.getTime() / 1000);
+
+            // Since the fields are displaying in local time, adjust by the time zone offset before returning the UNIX
+            // timestamp
+            let ret = Math.round(d.getTime() / 1000);
+            ret += d.getTimezoneOffset() * 60;
+
+            return ret;
         },
 
         __initializeDayField: function(dayToSelect) {
             let daysInMonth = new Date(
-                this.__baseDate.getUTCFullYear() + this.__yearField.indexOf(
+                this.__baseDate.getFullYear() + this.__yearField.indexOf(
                     this.__yearField.getSelection()[0]
                 ),
                 this.__monthField.indexOf(
