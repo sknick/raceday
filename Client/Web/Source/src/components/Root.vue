@@ -109,8 +109,6 @@ export default {
                 d.setDate(parseInt(s[2]));
             }
 
-            console.log("Getting events for " + d.toString());
-
             axios.get(
                 "api/events?window_start=" + Math.round(d.getTime() / 1000)
             ).then(
