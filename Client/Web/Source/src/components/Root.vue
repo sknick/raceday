@@ -109,10 +109,14 @@ export default {
                 d.setDate(parseInt(s[2]));
             }
 
+            let self = this;
             axios.get(
                 "api/events?window_start=" + Math.round(d.getTime() / 1000)
             ).then(
-                response => (this.events = response.data)
+                function(response) {
+                    self.events = response.data;
+                    self.shownEvents = [];
+                }
             );
         },
 
