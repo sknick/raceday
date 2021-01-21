@@ -17,17 +17,17 @@ Race Day was developed on Linux, but all of the development tools should be inst
 
 A Makefile in the root of the project provides several targets, and running `make` will generate several artifacts needed by the various components of the system. Note that Go executables are output to the `Build` directory in the project.
 
-## Server
+### Server
 
 The server is a Go executable which can be built via the `server` Makefile target. In addition, if using Visual Studio Code, there is a run configuration available for compiling and debugging it.
 
 The schema for the PostgreSQL database used by the server is defined in `Schema.sql`.
 
-## User Manager
+### User Manager
 
 At the moment, administrative user management is very limited and is handled by a Go executable which can be built with the `usrmgr` Makefile target. Run the executable with the `-h` argument to see command line help.
 
-## Web Application
+### Web Application
 
 1. Install NVM from https://github.com/nvm-sh/nvm.
 
@@ -50,7 +50,7 @@ npm install
 ./serve.sh
 ```
 
-## Administrative User Interface
+### Administrative User Interface
 
 1. Install NVM from https://github.com/nvm-sh/nvm.
 
