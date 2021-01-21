@@ -109,7 +109,9 @@ qx.Class.define("admin.ui.events.Page", {
                 data.event.series ? data.event.series.id : null
             ).then(
                 function(e) {
-                    if (data.broadcasts.length > 0) {
+                    if (data.broadcasts.length === 0) {
+                        this.context.__table.getTableModel().reloadData();
+                    } else {
                         for (let i = 0; i < data.broadcasts.length; i++) {
                             data.broadcasts[i].eventId = e.getResponse();
                         }
@@ -215,7 +217,9 @@ qx.Class.define("admin.ui.events.Page", {
                 data.event.series ? data.event.series.id : null
             ).then(
                 function(e) {
-                    if (data.broadcasts.length > 0) {
+                    if (data.broadcasts.length === 0) {
+                        this.context.__table.getTableModel().reloadData();
+                    } else {
                         let broadcasts = [];
                         let unsavedBroadcasts = [];
 
@@ -228,7 +232,24 @@ qx.Class.define("admin.ui.events.Page", {
                             }
                         }
 
-                        if (broadcasts.length > 0) {
+                        if (broadcasts.length === 0) {
+                            if (unsavedBroadcasts.length > 0) {
+                                admin.RequestManager.getInstance().postBroadcasts(
+                                    this.context,
+                                    unsavedBroadcasts
+                                ).then(
+                                    function (e) {
+                                        this.context.__table.getTableModel().reloadData();
+                                    },
+
+                                    function (e) {
+                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                                    }
+                                );
+                            } else {
+                                this.context.__table.getTableModel().reloadData();
+                            }
+                        } else {
                             admin.RequestManager.getInstance().putBroadcasts(
                                 this.context,
                                 broadcasts
@@ -256,23 +277,6 @@ qx.Class.define("admin.ui.events.Page", {
                                     admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
                                 }
                             );
-                        } else {
-                            if (unsavedBroadcasts.length > 0) {
-                                admin.RequestManager.getInstance().postBroadcasts(
-                                    this.context,
-                                    unsavedBroadcasts
-                                ).then(
-                                    function (e) {
-                                        this.context.__table.getTableModel().reloadData();
-                                    },
-
-                                    function (e) {
-                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                                    }
-                                );
-                            } else {
-                                this.context.__table.getTableModel().reloadData();
-                            }
                         }
                     }
 
