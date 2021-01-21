@@ -2,7 +2,7 @@
     <div>
         <div>
             <span class="upper-left-info">
-                Date: <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
+                Date (GMT): <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
                 <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
             </span>
             <span class="logo">
@@ -24,7 +24,7 @@
                 <tbody>
                 <template v-for="event in events" v-bind:key="event">
                     <tr class="event" @click="toggleEvent(event.id)">
-                        <td>{{ timestampToString(event.start) }}</td>
+                        <td>{{ timestampToString(event.start) }}<span v-html="dateIfNeeded(event.start)"/></td>
                         <td>{{ event.series ? event.series.name : "" }}</td>
                         <td>{{ event.name }}</td>
                         <td>{{ event.location ? event.location.name : "" }}</td>
@@ -81,14 +81,35 @@ export default {
     },
 
     methods: {
+        dateIfNeeded: function(timestamp) {
+            let ret = "";
+            let d = new Date(timestamp * 1000);
+
+            if (d.getDate() != d.getUTCDate()) {
+                ret = " (" + String(d.getMonth() + 1).padStart(2, "0") + "/" +
+                    "<span style=\"color: #ff0000; font-weight: bold\">" + String(d.getDate()).padStart(2, "0") + "</span>/" +
+                    String(d.getFullYear()).padStart(2, "0") +
+                    ")";
+            }
+
+            return ret;
+        },
+
         getEvents: function(dateStr) {
             let d = new Date();
+            d.setHours(0);
+            d.setMinutes(0);
+            d.setSeconds(0);
+            d.setMilliseconds(0);
+            
             if (dateStr) {
                 let s = dateStr.split("/");
                 d.setFullYear(parseInt(s[0]));
                 d.setMonth(parseInt(s[1]) - 1);
                 d.setDate(parseInt(s[2]));
             }
+
+            console.log("Getting events for " + d.toString());
 
             axios.get(
                 "api/events?window_start=" + Math.round(d.getTime() / 1000)
