@@ -50,6 +50,7 @@ qx.Class.define("admin.ui.locations.Page", {
         addButton.addListener("execute", this.__onAdd, this);
         editButton.addListener("execute", this.__onEdit, this);
         deleteButton.addListener("execute", this.__onDelete, this);
+        this.__table.addListener("cellDbltap", this.__onEdit, this);
 
         this.__table.getTableModel().setReady(true);
     },
