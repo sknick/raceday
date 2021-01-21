@@ -91,7 +91,7 @@ export default {
             }
 
             axios.get(
-                "api/events?window_start=" + (d.getTime() / 1000)
+                "api/events?window_start=" + Math.round(d.getTime() / 1000)
             ).then(
                 response => (this.events = response.data)
             );
