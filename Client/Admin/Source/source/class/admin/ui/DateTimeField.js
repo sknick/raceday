@@ -145,12 +145,7 @@ qx.Class.define("admin.ui.DateTimeField", {
                 this.__minutesField.getSelection()[0].getModel()
             );
 
-            // Since the fields are displaying in local time, adjust by the time zone offset before returning the UNIX
-            // timestamp
-            let ret = Math.round(d.getTime() / 1000);
-            ret += d.getTimezoneOffset() * 60;
-
-            return ret;
+            return Math.round(d.getTime() / 1000);
         },
 
         __initializeDayField: function(dayToSelect) {

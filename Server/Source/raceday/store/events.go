@@ -3,9 +3,10 @@ package store
 import (
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type EventRetrievalCriteria struct {
@@ -26,7 +27,7 @@ func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description,
 		 VALUES ($1, $2, $3, $4, $5, $6)`,
 		eventId,
 		name,
-		start,
+		start.UTC(),
 		description,
 		locationId,
 		seriesId,
@@ -161,7 +162,7 @@ func (dh DatastoreHandle) UpdateEvent(id, name string, start time.Time, descript
                 series_id = $5
           WHERE id = $6`,
 		name,
-		start,
+		start.UTC(),
 		description,
 		locationId,
 		seriesId,
