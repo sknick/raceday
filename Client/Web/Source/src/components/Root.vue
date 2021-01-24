@@ -21,8 +21,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
-                <template v-for="event in events" v-bind:key="event">
+                <tbody v-for="event in events" v-bind:key="event">
                     <tr class="event" @click="toggleEvent(event.id)">
                         <td>{{ timestampToString(event.start) }}<span v-html="dateIfNeeded(event.start)"/></td>
                         <td>{{ event.series ? event.series.name : "" }}</td>
@@ -43,7 +42,6 @@
                             </tr>
                         </template>
                     </template>
-                </template>
                 </tbody>
             </table>
         </div>
