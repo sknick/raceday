@@ -207,6 +207,9 @@ paths:
 
       summary: Updates broadcasts.
 
+      parameters:
+        - $ref: "#/components/parameters/AccessTokenParam"
+
       requestBody:
         required: true
         content:
