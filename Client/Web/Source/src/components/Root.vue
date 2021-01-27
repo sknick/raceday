@@ -2,7 +2,7 @@
     <div>
         <div>
             <span class="upper-left-info">
-                Date (GMT): <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
+                Date: <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
                 <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
             </span>
             <span class="logo">
@@ -23,7 +23,7 @@
 
                 <tbody v-for="event in events" v-bind:key="event">
                     <tr class="event" @click="toggleEvent(event.id)">
-                        <td>{{ timestampToString(event.start) }}<span v-html="dateIfNeeded(event.start)"/></td>
+                        <td>{{ timestampToString(event.start) }}</td>
                         <td>{{ event.series ? event.series.name : "" }}</td>
                         <td>{{ event.name }}</td>
                         <td>{{ event.location ? event.location.name : "" }}</td>
@@ -79,20 +79,6 @@ export default {
     },
 
     methods: {
-        dateIfNeeded: function(timestamp) {
-            let ret = "";
-            let d = new Date(timestamp * 1000);
-
-            if (d.getDate() != d.getUTCDate()) {
-                ret = " (" + String(d.getMonth() + 1).padStart(2, "0") + "/" +
-                    "<span style=\"color: #ff0000; font-weight: bold\">" + String(d.getDate()).padStart(2, "0") + "</span>/" +
-                    String(d.getFullYear()).padStart(2, "0") +
-                    ")";
-            }
-
-            return ret;
-        },
-
         getEvents: function(dateStr) {
             let d = new Date();
             d.setHours(12);
@@ -130,18 +116,7 @@ export default {
         },
 
         timestampToString: function(timestamp) {
-            let d = new Date(timestamp * 1000);
-            let timezoneOffset = d.getTimezoneOffset() / 60;
-            let timezoneOffsetStr = "";
-            if (timezoneOffset < 0) {
-                timezoneOffsetStr = "GMT+" + String(timezoneOffset).padStart(2, "0") + "00";
-            } else {
-                timezoneOffsetStr = "GMT-" + String(timezoneOffset).padStart(2, "0") + "00";
-            }
-
-            return String(d.getHours()).padStart(2, "0") + ":" +
-                String(d.getMinutes()).padStart(2, "0") + " " +
-                timezoneOffsetStr;
+            return new Date(timestamp * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
         },
 
         toggleEvent: function(eventId) {
