@@ -2,7 +2,7 @@
     <div>
         <div>
             <span class="upper-left-info">
-                Date: <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
+                Date (GMT): <DatepickerLite class="datepicker" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
                 <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
             </span>
             <span class="logo">
@@ -23,7 +23,7 @@
 
                 <tbody v-for="event in events" v-bind:key="event">
                     <tr class="event" @click="toggleEvent(event.id)">
-                        <td>{{ timestampToString(event.start) }}</td>
+                        <td>{{ timestampToString(event.start) }}<span v-html="dateIfNeeded(event.start)"/></td>
                         <td>{{ event.series ? event.series.name : "" }}</td>
                         <td>{{ event.name }}</td>
                         <td>{{ event.location ? event.location.name : "" }}</td>
@@ -79,6 +79,17 @@ export default {
     },
 
     methods: {
+        dateIfNeeded: function(timestamp) {
+            let ret = "";
+            let d = new Date(timestamp * 1000);
+
+            if (d.getDate() != d.getUTCDate()) {
+                ret = " (<span style=\"color: #ff0000; font-weight: bold\">" + d.toLocaleDateString(undefined, {day: "2-digit", month: "2-digit", year: "2-digit"}) + "</span>)";
+            }
+
+            return ret;
+        },
+
         getEvents: function(dateStr) {
             let d = new Date();
             d.setHours(12);
@@ -116,7 +127,7 @@ export default {
         },
 
         timestampToString: function(timestamp) {
-            return new Date(timestamp * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+            return new Date(timestamp * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", timeZoneName: "short"});
         },
 
         toggleEvent: function(eventId) {
