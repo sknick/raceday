@@ -28,3 +28,4 @@ usrmgr:
 
 deployment:
 	cd Deployments/raceday.watch && docker-compose build
+	cd Deployments/raceday.watch && docker-compose push
