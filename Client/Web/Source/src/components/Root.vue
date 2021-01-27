@@ -95,7 +95,7 @@ export default {
 
         getEvents: function(dateStr) {
             let d = new Date();
-            d.setHours(0);
+            d.setHours(12);
             d.setMinutes(0);
             d.setSeconds(0);
             d.setMilliseconds(0);
