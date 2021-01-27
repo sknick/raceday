@@ -10,7 +10,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
 
         this.__nameField = new qx.ui.form.TextField((this.__event && this.__event.name) ? this.__event.name : "");
 
-        let startLabel = new qx.ui.basic.Label("Start (" + this.__getLocalTimezoneString() + "):");
+        let startLabel = new qx.ui.basic.Label("Start (" + new Date().toLocaleTimeString(undefined, {timeZoneName: "short"}).split(" ")[2] + "):");
         startLabel.setAlignY("middle");
 
         this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ?
@@ -99,19 +99,6 @@ qx.Class.define("admin.ui.events.EditDialog", {
     },
 
     members: {
-        __getLocalTimezoneString: function() {
-            let ret = "";
-
-            let timezoneOffset = new Date().getTimezoneOffset() / 60;
-            if (timezoneOffset < 0) {
-                ret = "GMT+" + String(timezoneOffset).padStart(2, "0") + "00";
-            } else {
-                ret = "GMT-" + String(timezoneOffset).padStart(2, "0") + "00";
-            }
-
-            return ret;
-        },
-
         __onOK: function(e) {
             let name = this.__nameField.getValue().trim();
             if (name === "") {
