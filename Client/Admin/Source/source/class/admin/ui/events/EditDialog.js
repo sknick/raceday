@@ -1,14 +1,22 @@
 qx.Class.define("admin.ui.events.EditDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(locations, series, event, eventBroadcasts) {
+    construct: function(locations, series, event, eventBroadcasts, duplicating) {
         this.__event = event;
-        this.__broadcasts = eventBroadcasts ? eventBroadcasts : [];
+
+        if (!duplicating) {
+            this.__broadcasts = eventBroadcasts ? eventBroadcasts : [];
+        } else {
+            this.__broadcasts = [];
+            for (let i = 0; i < eventBroadcasts.length; i++) {
+                this.__broadcasts.push(new raceday.api.model.UnsavedBroadcast(eventBroadcasts[i]));
+            }
+        }
 
         let nameLabel = new qx.ui.basic.Label("Name:");
         nameLabel.setAlignY("middle");
 
-        this.__nameField = new qx.ui.form.TextField((this.__event && this.__event.name) ? this.__event.name : "");
+        this.__nameField = new qx.ui.form.TextField((!duplicating && this.__event && this.__event.name) ? this.__event.name : "");
 
         let startLabel = new qx.ui.basic.Label("Start (" + new Date().toLocaleTimeString(undefined, {timeZoneName: "short"}).split(" ")[2] + "):");
         startLabel.setAlignY("middle");
@@ -87,15 +95,19 @@ qx.Class.define("admin.ui.events.EditDialog", {
         content.add(broadcastsLabel,         { row: 5, column: 0 });
         content.add(this.__broadcastsField,  { row: 5, column: 1 });
 
-        let okButton = new qx.ui.form.Button(this.__event ? "OK" : "Add");
+        let okButton = new qx.ui.form.Button(this.__event && !duplicating ? "OK" : "Add");
         okButton.setWidth(100);
 
         let cancelButton = new qx.ui.form.Button("Cancel");
 
-        this.base(arguments, this.__event ? "Edit Event" : "Add Event", content, [okButton, cancelButton]);
+        this.base(arguments, this.__event && !duplicating ? "Edit Event" : "Add Event", content, [okButton, cancelButton]);
 
         okButton.addListener("execute", this.__onOK, this);
         cancelButton.addListener("execute", this.__onCancel, this);
+
+        if (duplicating) {
+            this.__event = null;
+        }
     },
 
     members: {

@@ -1,4 +1,5 @@
 /**
+ * @asset(qx/icon/${qx.icontheme}/32/actions/edit-copy.png)
  * @asset(qx/icon/${qx.icontheme}/32/actions/list-add.png)
  * @asset(qx/icon/${qx.icontheme}/32/actions/list-remove.png)
  * @asset(qx/icon/${qx.icontheme}/32/apps/utilities-text-editor.png)
@@ -12,13 +13,15 @@ qx.Class.define("admin.ui.events.Page", {
 
         let addButton = new qx.ui.toolbar.Button("Add", "icon/32/actions/list-add.png");
         let editButton = new qx.ui.toolbar.Button("Edit", "icon/32/apps/utilities-text-editor.png");
-        let deleteButton = new qx.ui.toolbar.Button("Delete", "icon/32/actions/list-remove.png")
+        let duplicateButton = new qx.ui.toolbar.Button("Duplicate", "icon/32/actions/edit-copy.png");
+        let deleteButton = new qx.ui.toolbar.Button("Delete", "icon/32/actions/list-remove.png");
 
         let toolbar = new qx.ui.toolbar.ToolBar();
         toolbar.setPadding(0);
 
         toolbar.add(addButton);
         toolbar.add(editButton);
+        toolbar.add(duplicateButton);
         toolbar.add(deleteButton);
 
         this.__table = new qx.ui.table.Table(
@@ -51,6 +54,7 @@ qx.Class.define("admin.ui.events.Page", {
 
         addButton.addListener("execute", this.__onAdd, this);
         editButton.addListener("execute", this.__onEdit, this);
+        duplicateButton.addListener("execute", this.__onDuplicate, this);
         deleteButton.addListener("execute", this.__onDelete, this);
         this.__table.addListener("cellDbltap", this.__onEdit, this);
 
@@ -136,6 +140,74 @@ qx.Class.define("admin.ui.events.Page", {
                     admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
                 }
             );
+        },
+
+        __onDuplicate: function(e) {
+            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            if (selectedRows.length > 0) {
+                admin.RequestManager.getInstance().getLocations(
+                    this
+                ).then(
+                    function(e) {
+                        let response = e.getResponse();
+
+                        let locations = [];
+                        for (let i = 0; i < response.length; i++) {
+                            locations.push(new raceday.api.model.Location(response[i]));
+                        }
+
+                        admin.RequestManager.getInstance().getSeries(
+                            this.context
+                        ).then(
+                            function(e) {
+                                response = e.getResponse();
+
+                                let series = [];
+                                for (let i = 0; i < response.length; i++) {
+                                    series.push(new raceday.api.model.Series(response[i]));
+                                }
+
+                                let event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
+
+                                admin.RequestManager.getInstance().getBroadcasts(
+                                    this.context,
+                                    event.id,
+                                    null,
+                                    null,
+                                    false
+                                ).then(
+                                    function(e) {
+                                        response = e.getResponse();
+
+                                        let broadcasts = [];
+                                        for (let i = 0; i < response.length; i++) {
+                                            broadcasts.push(new raceday.api.model.Broadcast(response[i]));
+                                        }
+
+                                        let dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts,
+                                            true);
+                                        dlg.addListener("confirmed", this.context.__onAddConfirmed, this.context);
+
+                                        dlg.show();
+                                    },
+
+                                    function(e) {
+                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                                    }
+                                );
+                            },
+
+                            function(e) {
+                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                            }
+                        )
+                    },
+
+                    function(e) {
+                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                    }
+                );
+            }
         },
 
         __onEdit: function(e) {
