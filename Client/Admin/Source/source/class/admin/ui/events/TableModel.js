@@ -32,7 +32,7 @@ qx.Class.define("admin.ui.events.TableModel", {
 
                 admin.RequestManager.getInstance().getEvents(
                     this,
-                    nowTimestamp - 86400,
+                    nowTimestamp - (86400 * 14),
                     -1
                 ).then(
                     function(e) {
