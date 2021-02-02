@@ -18,8 +18,13 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
         this.__updateList();
 
         let addButton = new qx.ui.form.Button(null, "icon/16/actions/list-add.png");
+        addButton.setToolTipText("Add");
+
         let editButton = new qx.ui.form.Button(null, "icon/16/apps/utilities-text-editor.png");
+        editButton.setToolTipText("Edit");
+
         let removeButton = new qx.ui.form.Button(null, "icon/16/actions/list-remove.png");
+        removeButton.setToolTipText("Delete");
 
         let buttonContainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(2));
         buttonContainer.add(addButton);
