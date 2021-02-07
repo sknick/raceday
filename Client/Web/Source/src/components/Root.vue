@@ -6,7 +6,7 @@
                 <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
             </span>
             <span class="logo">
-                Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon"> (<a href="https://github.com/sknick/raceday" target="_blank">About</a>)
             </span>
         </div>
 
