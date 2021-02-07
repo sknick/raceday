@@ -29,7 +29,7 @@ CREATE TABLE location (
 CREATE TABLE event (
     id                          uuid                                NOT NULL,
     name                        varchar                             NOT NULL,
-    start                       timestamp                           NOT NULL,
+    start                       timestamptz                         NOT NULL,
     description                 varchar,
     location_id                 uuid,
     series_id                   uuid,

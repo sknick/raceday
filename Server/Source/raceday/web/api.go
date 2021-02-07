@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	_ "golang.org/x/crypto/blake2s"
 	"log"
 	"net/http"
 	"raceday/Server/Source/raceday/model"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	_ "golang.org/x/crypto/blake2s"
 )
 
 func AccessTokenGet(w http.ResponseWriter, r *http.Request) {
@@ -335,6 +336,7 @@ func EventPut(w http.ResponseWriter, r *http.Request) {
 func EventsGet(w http.ResponseWriter, r *http.Request) {
 	windowStartParam := r.URL.Query().Get("window_start")
 	windowEndParam := r.URL.Query().Get("window_end")
+	timeZoneParam := r.URL.Query().Get("time_zone")
 
 	criteria := store.EventRetrievalCriteria{}
 
@@ -356,6 +358,16 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 		}
 
 		criteria.WindowEnd = &windowEnd
+	}
+
+	if timeZoneParam != "" {
+		timeZone, err := time.LoadLocation(timeZoneParam)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.TimeZone = timeZone
 	}
 
 	events, err := store.Datastore.GetEvents(criteria)

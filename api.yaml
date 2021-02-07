@@ -366,6 +366,11 @@ paths:
           schema:
             type: number
             format: int64
+        - name: time_zone
+          in: query
+          description: The time zone to take into account when querying for events.
+          schema:
+            type: string
 
       responses:
         "200":

@@ -33,7 +33,8 @@ qx.Class.define("admin.ui.events.TableModel", {
                 admin.RequestManager.getInstance().getEvents(
                     this,
                     nowTimestamp - (86400 * 14),
-                    -1
+                    -1,
+                    Intl.DateTimeFormat().resolvedOptions().timeZone
                 ).then(
                     function(e) {
                         let response = e.getResponse();

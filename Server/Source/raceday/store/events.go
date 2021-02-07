@@ -14,6 +14,9 @@ type EventRetrievalCriteria struct {
 
 	// If -1, all events that start on or after WindowStart are retrieved.
 	WindowEnd *float64
+
+	// If not set, UTC is assumed
+	TimeZone *time.Location
 }
 
 func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description, locationId, seriesId *string) (string, error) {
@@ -109,6 +112,10 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 		return ret, nil
 	}
 
+	if criteria.TimeZone == nil {
+		criteria.TimeZone = time.UTC
+	}
+
 	params := make([]interface{}, 0)
 
 	comparison := "="
@@ -117,11 +124,11 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 	}
 
 	params = append(params, criteria.WindowStart)
-	where := fmt.Sprintf("date_trunc('day', event_start) %s date_trunc('day', to_timestamp($%d))", comparison, len(params))
+	where := fmt.Sprintf("date_trunc('day', event_start AT TIME ZONE '%s') %s date_trunc('day', to_timestamp($%d) AT TIME ZONE '%s')", criteria.TimeZone.String(), comparison, len(params), criteria.TimeZone.String())
 
 	if (criteria.WindowEnd != nil) && (*criteria.WindowEnd >= 0) {
 		params = append(params, *criteria.WindowEnd)
-		where += fmt.Sprintf(" AND date_trunc('day', event_start) <= date_trunc('day', to_timestamp($%d))", len(params))
+		where += fmt.Sprintf(" AND date_trunc('day', event_start AT TIME ZONE '%s') <= date_trunc('day', to_timestamp($%d) AT TIME ZONE '%s')", criteria.TimeZone.String(), (params), criteria.TimeZone.String())
 	}
 
 	rows, err := dh.db.Query(

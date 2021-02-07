@@ -91,12 +91,17 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        getEvents: function(context, windowStart, windowEnd, quiet) {
+        getEvents: function(context, windowStart, windowEnd, timeZone, quiet) {
             let params = {
                 "window_start": windowStart
             };
             if (windowEnd) {
                 params["window_end"] = windowEnd;
+            }
+            if (timeZone) {
+                params["time_zone"] = timeZone;
+            } else {
+                params["time_zone"] = "UTC";
             }
 
             let req = this.__prepareRequestWithParams("events", params, quiet, true);
