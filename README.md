@@ -6,7 +6,7 @@ interface of motorsports racing events and any associated broadcasts. A separate
 user interface allows site owners to add and edit race events.
 
 Data for the raceday.watch site is maintained by the awesome guys at
-<a href="https://www.facebook.com/motorsportontv">Notorsport on TV/Online</a>.
+<a href="https://www.facebook.com/motorsportontv">Motorsport on TV/Online</a>.
 They also maintain an alternate view of the coming week's events via a
 beautifully formatted Google Doc.
 
