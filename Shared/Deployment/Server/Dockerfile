@@ -11,9 +11,9 @@ WORKDIR /
 RUN npm install -g @qooxdoo/compiler
 
 WORKDIR /usr
-RUN wget -q --no-check-certificate https://golang.org/dl/go1.14.6.linux-amd64.tar.gz
-RUN tar -xvf ./go1.14.6.linux-amd64.tar.gz
-RUN rm -f ./go1.14.6.linux-amd64.tar.gz
+RUN wget -q --no-check-certificate https://golang.org/dl/go1.15.8.linux-amd64.tar.gz
+RUN tar -xvf ./go1.15.8.linux-amd64.tar.gz
+RUN rm -f ./go1.15.8.linux-amd64.tar.gz
 RUN ln -s /usr/go/bin/go /usr/bin/go
 
 WORKDIR /RaceDay
