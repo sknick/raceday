@@ -1,24 +1,26 @@
 <template>
-
     <div id="app">
-        <Root/>
-    </div>
 
+        <EventListByDay/>
+
+    </div>
 </template>
+
 
 <script>
 
-import Root from "./components/Root.vue"
+import EventListByDay from "./main/event-list-by-day.vue"
 
 export default {
     name: "App",
 
     components: {
-        Root
+        EventListByDay
     }
 }
 
 </script>
+
 
 <style>
 
