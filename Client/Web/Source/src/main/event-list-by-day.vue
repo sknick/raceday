@@ -3,7 +3,7 @@
         <Header/>
 
         <div>
-            <table class="table">
+            <table class="table table-hover event-table">
                 <thead>
                     <tr>
                         <th>Time</th>
@@ -130,3 +130,12 @@ export default {
 }
 
 </script>
+
+
+<style scoped>
+
+.event-table {
+    cursor: default
+}
+
+</style>
