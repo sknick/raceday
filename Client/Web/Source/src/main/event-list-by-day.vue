@@ -14,7 +14,13 @@
                 </thead>
 
                 <tbody v-for="event in events" v-bind:key="event">
-                    <tr class="event" @click="toggleEvent(event.id)">
+                    <tr v-if="!isPast(event.start)" @click="toggleEvent(event.id)">
+                        <td>{{ timestampToString(event.start) }}</td>
+                        <td>{{ event.series ? event.series.name : "" }}</td>
+                        <td>{{ event.name }}</td>
+                        <td>{{ event.location ? event.location.name : "" }}</td>
+                    </tr>
+                    <tr v-else class="text-muted" @click="toggleEvent(event.id)">
                         <td>{{ timestampToString(event.start) }}</td>
                         <td>{{ event.series ? event.series.name : "" }}</td>
                         <td>{{ event.name }}</td>
@@ -64,11 +70,16 @@ export default {
 
     data() {
         return {
+            loadTime: null,
             shownEvents: []
         };
     },
 
     methods: {
+        isPast(start) {
+            return (Math.round(this.loadTime.getTime() / 1000) > start)
+        },
+
         mediaIcon(broadcast) {
             switch (broadcast.type_) {
                 case "Facebook":
@@ -125,6 +136,7 @@ export default {
     },
 
     mounted() {
+        this.loadTime = new Date();
         this.$store.dispatch("updateDate")
     }
 }
