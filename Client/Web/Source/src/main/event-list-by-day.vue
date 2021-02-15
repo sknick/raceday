@@ -21,19 +21,19 @@
                         <td>{{ event.location ? event.location.name : "" }}</td>
                     </tr>
 
-                    <div v-if="shownEvents.includes(event.id)">
-                        <div v-if="event.broadcasts && (event.broadcasts.length > 0)">
+                    <template v-if="shownEvents.includes(event.id)">
+                        <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
                             <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
                                 <td colspan="4" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank" v-if="broadcast.url.match('^https?://')">{{ broadcast.url }}</a><span v-else>{{ broadcast.url }}</span></td>
                                 <td colspan="4" v-else><img :src="mediaIcon(broadcast)" alt="Media icon"> {{ broadcast.type_ }}</td>
                             </tr>
-                        </div>
-                        <div v-else>
+                        </template>
+                        <template v-else>
                             <tr>
                                 <td colspan="4">(No Broadcasts)</td>
                             </tr>
-                        </div>
-                    </div>
+                        </template>
+                    </template>
                 </tbody>
             </table>
         </div>

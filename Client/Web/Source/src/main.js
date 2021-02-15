@@ -1,9 +1,9 @@
 import { createApp } from "vue"
 
 import App from "./app.vue"
-import store from "./store.js"
+import Store from "./store.js"
 
 
 const app = createApp(App)
-app.use(store)
+app.use(Store)
 app.mount("#app")
