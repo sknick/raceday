@@ -38,7 +38,7 @@ export default {
 
     methods: {
         onDateSelected(value) {
-            this.$store.dispatch("updateEvents", value)
+            this.$store.dispatch("updateDate", value)
         }
     }
 }

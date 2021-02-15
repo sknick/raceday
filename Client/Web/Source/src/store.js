@@ -4,6 +4,7 @@ import { createStore } from "vuex"
 
 export default createStore({
     state: {
+        date: null,
         events: []
     },
 
@@ -12,21 +13,27 @@ export default createStore({
     },
 
     mutations: {
+        updateDate(state, date) {
+            state.date = date
+        },
+
         updateEvents(state, events) {
             state.events = events
         }
     },
 
     actions: {
-        updateEvents(context, dateStr) {
+        updateDate(context, date) {
+            context.commit("updateDate", date)
+
             const d = new Date()
             d.setHours(12)
             d.setMinutes(0)
             d.setSeconds(0)
             d.setMilliseconds(0)
             
-            if (dateStr) {
-                let s = dateStr.split("/")
+            if (context.state.date) {
+                let s = context.state.date.split("/")
                 d.setFullYear(parseInt(s[0]))
                 d.setMonth(parseInt(s[1]) - 1)
                 d.setDate(parseInt(s[2]))
@@ -40,7 +47,7 @@ export default createStore({
                 function(response) {
                     context.commit("updateEvents", response.data)
                 }
-            );
+            )
         }
     }
 })

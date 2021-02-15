@@ -113,8 +113,19 @@ export default {
         }
     },
 
+    created() {
+        this.$store.watch(
+            () => {
+                return this.$store.state.date
+            },
+            () => {
+                this.shownEvents = []
+            }
+        )
+    },
+
     mounted() {
-        this.$store.dispatch("updateEvents")
+        this.$store.dispatch("updateDate")
     }
 }
 
