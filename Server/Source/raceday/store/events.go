@@ -128,7 +128,7 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 
 	if (criteria.WindowEnd != nil) && (*criteria.WindowEnd >= 0) {
 		params = append(params, *criteria.WindowEnd)
-		where += fmt.Sprintf(" AND date_trunc('day', event_start AT TIME ZONE '%s') <= date_trunc('day', to_timestamp($%d) AT TIME ZONE '%s')", criteria.TimeZone.String(), (params), criteria.TimeZone.String())
+		where += fmt.Sprintf(" AND date_trunc('day', event_start AT TIME ZONE '%s') <= date_trunc('day', to_timestamp($%d) AT TIME ZONE '%s')", criteria.TimeZone.String(), len(params), criteria.TimeZone.String())
 	}
 
 	rows, err := dh.db.Query(
