@@ -1,8 +1,9 @@
 openapi: 3.0.3
 
 info:
-  title: RaceDay API
-  version: "0.9"
+  title: Race Day API
+  version: "1.0"
+  description: A REST API for accessing data stored in Race Day.
 
 
 paths:
@@ -38,6 +39,9 @@ paths:
                 format: uuid
         "401":
           description: Invalid credentials.
+      
+      tags:
+        - Protected
 
   /broadcast:
 
@@ -62,6 +66,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Broadcast not found.
+      
+      tags:
+        - Protected
 
     post:
       operationId: broadcastPost
@@ -87,6 +94,9 @@ paths:
           schema:
             type: string
             format: uri
+      
+      tags:
+        - Protected
 
       responses:
         "200":
@@ -108,24 +118,28 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
+          description: The ID of the broadcast to update.
           required: true
           schema:
             type: string
             format: uuid
         - name: type
           in: query
+          description: An updated type to apply to the broadcast.
           required: true
           schema:
             type: string
             enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
         - name: event_id
           in: query
+          description: The ID of an event with which to associate the broadcast.
           required: true
           schema:
             type: string
             format: uuid
         - name: url
           in: query
+          description: The URL to apply to the broadcast.
           schema:
             type: string
             format: uri
@@ -137,6 +151,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Broadcast or referenced event not found.
+      
+      tags:
+        - Protected
 
   /broadcasts:
 
@@ -149,6 +166,7 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: ids
           in: query
+          description: The IDs of the broadcasts to delete.
           required: true
           schema:
             type: array
@@ -163,6 +181,9 @@ paths:
           description: Unauthorized.
         "404":
           description: One or more broadcasts not found.
+      
+      tags:
+        - Protected
 
     get:
       operationId: broadcastsGet
@@ -184,7 +205,7 @@ paths:
             format: int64
         - name: include_all_after
           in: query
-          description: Indicates that the event_start parameter should be the earliest that returned broadcast must
+          description: Indicates that the event_start parameter should be the earliest that returned broadcasts must
             start, but any broadcast that airs after that time will also be included.
           schema:
             type: boolean
@@ -201,9 +222,12 @@ paths:
                   $ref: "#/components/schemas/Broadcast"
         "404":
           description: Event not found.
+      
+      tags:
+        - Query
 
     put:
-      operationId: broadcastsput
+      operationId: broadcastsPut
 
       summary: Updates broadcasts.
 
@@ -226,6 +250,9 @@ paths:
           description: Unauthorized.
         "404":
           description: One or more referenced events not found.
+      
+      tags:
+        - Protected
 
   /event:
 
@@ -238,6 +265,7 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
+          description: The ID of the event to delete.
           required: true
           schema:
             type: string
@@ -250,6 +278,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Event not found.
+      
+      tags:
+        - Protected
 
     post:
       operationId: eventPost
@@ -260,26 +291,31 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: name
           in: query
+          description: The name of the new event.
           required: true
           schema:
             type: string
         - name: start
           in: query
+          description: The start time of the new event.
           required: true
           schema:
             type: number
             format: int64
         - name: description
           in: query
+          description: A description of the new event.
           schema:
             type: string
         - name: location_id
           in: query
+          description: The ID of a location with which to associate the event.
           schema:
             type: string
             format: uuid
         - name: series_id
           in: query
+          description: The ID of a series with which to associate the event.
           schema:
             type: string
             format: uuid
@@ -294,6 +330,9 @@ paths:
                 format: uuid
         "403":
           description: Unauthorized.
+      
+      tags:
+        - Protected
 
     put:
       operationId: eventPut
@@ -304,32 +343,38 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
+          description: The ID of the event to update.
           required: true
           schema:
             type: string
             format: uuid
         - name: name
           in: query
+          description: The new name of the event.
           required: true
           schema:
             type: string
         - name: start
           in: query
+          description: The new start time of the event.
           required: true
           schema:
             type: number
             format: int64
         - name: description
           in: query
+          description: A new description of the event.
           schema:
             type: string
         - name: location_id
           in: query
+          description: The ID of a new location with which to associate the event.
           schema:
             type: string
             format: uuid
         - name: series_id
           in: query
+          description: The ID of a new series with which to associate the event.
           schema:
             type: string
             format: uuid
@@ -341,6 +386,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Event not found.
+      
+      tags:
+        - Protected
 
   /events:
 
@@ -368,7 +416,7 @@ paths:
             format: int64
         - name: time_zone
           in: query
-          description: The time zone to take into account when querying for events.
+          description: The time zone to take into account when querying for events. If not specified, UTC is used.
           schema:
             type: string
 
@@ -381,6 +429,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Event"
+      
+      tags:
+        - Query
 
   /location:
 
@@ -393,6 +444,7 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
+          description: The ID of the location to delete.
           required: true
           schema:
             type: string
@@ -405,6 +457,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Location not found.
+      
+      tags:
+        - Protected
 
     post:
       operationId: locationPost
@@ -415,11 +470,13 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: name
           in: query
+          description: The name of the new location.
           required: true
           schema:
             type: string
         - name: description
           in: query
+          description: A description of the new location.
           schema:
             type: string
 
@@ -433,6 +490,9 @@ paths:
                 format: uuid
         "403":
           description: Unauthorized.
+      
+      tags:
+        - Protected
 
     put:
       operationId: locationPut
@@ -443,17 +503,20 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
+          description: The ID of the location to update.
           required: true
           schema:
             type: string
             format: uuid
         - name: name
           in: query
+          description: The name of the location.
           required: true
           schema:
             type: string
         - name: description
           in: query
+          description: A description of the location.
           schema:
             type: string
 
@@ -464,6 +527,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Location not found.
+      
+      tags:
+        - Protected
 
   /locations:
 
@@ -481,6 +547,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Location"
+      
+      tags:
+        - Query
 
   /series:
 
@@ -493,6 +562,7 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
+          description: The ID of the series to delete.
           required: true
           schema:
             type: string
@@ -505,6 +575,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Series not found.
+      
+      tags:
+        - Protected
 
     get:
       operationId: seriesGet
@@ -520,6 +593,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Series"
+      
+      tags:
+        - Query
 
     post:
       operationId: seriesPost
@@ -530,11 +606,13 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: name
           in: query
+          description: The name of the new series.
           required: true
           schema:
             type: string
         - name: description
           in: query
+          description: A description of the new series.
           schema:
             type: string
 
@@ -548,6 +626,9 @@ paths:
                 format: uuid
         "403":
           description: Unauthorized.
+      
+      tags:
+        - Protected
 
     put:
       operationId: seriesPut
@@ -558,17 +639,20 @@ paths:
         - $ref: "#/components/parameters/AccessTokenParam"
         - name: id
           in: query
+          description: The ID of the series to update.
           required: true
           schema:
             type: string
             format: uuid
         - name: name
           in: query
+          description: The name of the series.
           required: true
           schema:
             type: string
         - name: description
           in: query
+          description: A description of the series.
           schema:
             type: string
 
@@ -579,6 +663,9 @@ paths:
           description: Unauthorized.
         "404":
           description: Series not found.
+      
+      tags:
+        - Protected
 
 
 components:
@@ -588,8 +675,11 @@ components:
     AccessTokenParam:
       in: header
       name: AccessToken
+      description: The ID of the access token by which protected resources can be accessed. Acquired via the GET
+        /access_token API.
       schema:
         type: string
+        format: uuid
       required: true
 
 
@@ -599,32 +689,42 @@ components:
       type: object
       properties:
         id:
+          description: The ID of the broadcast.
           type: string
           format: uuid
         type_:
-          type: string
-          enum: [ "Cable", "Facebook", "MotorTrend", "Other", "YouTube" ]
+          $ref: "#/components/schemas/BroadcastType"
         event:
           $ref: "#/components/schemas/Event"
         url:
+          description: A URL providing a way to watch the broadcast or information on the source of the broadcast.
           type: string
       required:
         - id
         - type
         - event
+    
+    BroadcastType:
+      description: The type of a broadcast.
+      type: string
+      enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
 
     Event:
       type: object
       properties:
         id:
+          description: The ID of the event.
           type: string
           format: uuid
         name:
+          description: The name of the event.
           type: string
         start:
+          description: A UNIX timestamp indicating when the event starts.
           type: number
           format: int64
         description:
+          description: A description of the event.
           type: string
         location:
           $ref: "#/components/schemas/Location"
@@ -638,11 +738,14 @@ components:
       type: object
       properties:
         id:
+          description: The ID of the location.
           type: string
           format: uuid
         name:
+          description: The name of the location.
           type: string
         description:
+          description: A description of the location.
           type: string
       required:
         - id
@@ -652,11 +755,14 @@ components:
       type: object
       properties:
         id:
+          description: The ID of the series.
           type: string
           format: uuid
         name:
+          description: The name of the series.
           type: string
         description:
+          description: A description of the series.
           type: string
       required:
         - id
@@ -666,22 +772,31 @@ components:
       type: object
       properties:
         id:
+          description: The ID of the user.
           type: string
         first_name:
+          description: The first name of the user.
           type: string
         last_name:
+          description: The last name of the user.
           type: string
         email:
+          description: The e-mail address of the user.
           type: string
         when_created:
+          description: A UNIX timestamp indicating when this user was created.
           type: integer
         who_created:
+          description: The ID of the user that created this user.
           type: string
         when_updated:
+          description: A UNIX timestamp indicating when this user was last updated.
           type: integer
         who_updated:
+          description: The ID of the last user to update this user.
           type: string
         enabled:
+          description: Whether or not this user is enabled and can login to the system.s
           type: boolean
       required:
         - id
@@ -692,12 +807,13 @@ components:
       type: object
       properties:
         type_:
-          type: string
-          enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
+          $ref: "#/components/schemas/BroadcastType"
         event_id:
+          description: The ID of the event associated with this broadcast.
           type: string
           format: uuid
         url:
+          description: A URL providing a way to watch the broadcast or information on the source of the broadcast.
           type: string
       required:
         - type_
