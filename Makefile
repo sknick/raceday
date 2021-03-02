@@ -9,6 +9,9 @@ python-api:
 	rm Client/API/Python/Build/tox.ini
 	rm Client/API/Python/Build/.travis.yml
 
+python-api-dist: python-api
+	cd Client/API/Python/Build && python3 setup.py bdist_wheel
+
 go-model:
 	java -jar Third_Party/Swagger_Codegen/swagger-codegen-cli-3.0.23.jar generate -l go-server -t Third_Party/Swagger_Codegen/go-server -c Server/api.conf -o Server/Source/raceday -i api.yaml
 	mkdir -p Server/Source/raceday/model
@@ -37,5 +40,5 @@ deployment:
 	cd Deployments/raceday.watch && docker-compose push
 
 clean:
-	rm -r Build
-	rm -r Client/API/Python/Build
+	rm -rf Build
+	rm -rf Client/API/Python/Build
