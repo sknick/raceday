@@ -2,13 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"log"
 	"net/http"
 	"raceday/Server/Source/raceday"
+	"raceday/Server/Source/raceday/export"
 	"raceday/Server/Source/raceday/process"
 	"raceday/Server/Source/raceday/store"
 	"raceday/Server/Source/raceday/web"
+
+	"github.com/spf13/cobra"
 )
 
 const runCommand = "run"
@@ -31,6 +33,18 @@ var (
 			err = store.Initialize(settings.DatabaseSettings)
 			if err != nil {
 				log.Fatal(err)
+			}
+
+			log.Print("Initializing export formats:")
+
+			export.InitializeFormats(settings.ExportSettings)
+
+			if len(export.ExportFormats) == 0 {
+				log.Print("No export formats available!")
+			} else {
+				for _, format := range export.ExportFormats {
+					log.Printf("Loaded %s.", format.GetName())
+				}
 			}
 
 			router := web.NewRouter("/api/")

@@ -381,14 +381,14 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func ExportGet(w http.ResponseWriter, r *http.Request) {
-
+	// TODO
+	w.WriteHeader(http.StatusOK)
 }
 
 func ExportTypesGet(w http.ResponseWriter, r *http.Request) {
 	names := make([]string, 0)
 
-	types := export.GetExportTypes()
-	for _, t := range types {
+	for _, t := range export.ExportFormats {
 		names = append(names, t.GetName())
 	}
 
