@@ -432,6 +432,55 @@ paths:
       
       tags:
         - Query
+  
+  /export:
+
+    get:
+      operationId: exportGet
+
+      summary: Exports data using the specified format.
+
+      parameters:
+        - name: export_type
+          in: query
+          description: The type of export to created. Use the GET /export_types API to get a list of possible types.
+          required: true
+          schema:
+            type: string
+      
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Export type not found.
+      
+      tags:
+        - Query
+  
+  /export_types:
+
+    get:
+      operationId: exportTypesGet
+
+      summary: Retrieves the names of the available export types.
+
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      
+      tags:
+        - Query
 
   /location:
 

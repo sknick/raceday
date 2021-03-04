@@ -1,12 +1,13 @@
 package web
 
 import (
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"raceday/Server/Source/raceday/logging"
 	"raceday/Server/Source/raceday/store"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 type route struct {
@@ -31,6 +32,8 @@ var routes = []route{
 	newGuardedRoute("EventPost", "POST", "/event", EventPost),
 	newGuardedRoute("EventPut", "PUT", "/event", EventPut),
 	newUnguardedRoute("EventsGet", "GET", "/events", EventsGet),
+	newUnguardedRoute("ExportGet", "GET", "/export", ExportGet),
+	newUnguardedRoute("ExportTypesGet", "GET", "/export_types", ExportTypesGet),
 	newGuardedRoute("LocationDelete", "DELETE", "/location", LocationDelete),
 	newGuardedRoute("LocationPost", "POST", "/location", LocationPost),
 	newGuardedRoute("LocationPut", "PUT", "/location", LocationPut),

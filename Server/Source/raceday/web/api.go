@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"raceday/Server/Source/raceday/export"
 	"raceday/Server/Source/raceday/model"
 	"raceday/Server/Source/raceday/store"
 	"runtime"
@@ -52,7 +53,7 @@ func BroadcastDelete(w http.ResponseWriter, r *http.Request) {
 
 func BroadcastPost(w http.ResponseWriter, r *http.Request) {
 	id, err := store.Datastore.CreateBroadcast(
-		r.URL.Query().Get("type"),
+		model.BroadcastTypeFromString(r.URL.Query().Get("type")),
 		r.URL.Query().Get("event_id"),
 		r.URL.Query().Get("url"),
 	)
@@ -76,7 +77,7 @@ func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 		url = &urlParam
 	}
 
-	err := store.Datastore.UpdateBroadcast(id, type_, eventId, url)
+	err := store.Datastore.UpdateBroadcast(id, model.BroadcastTypeFromString(type_), eventId, url)
 	if err != nil {
 		switch err.(type) {
 		case *store.BroadcastNotFoundError:
@@ -377,6 +378,21 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodeAndSend(events, w)
+}
+
+func ExportGet(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func ExportTypesGet(w http.ResponseWriter, r *http.Request) {
+	names := make([]string, 0)
+
+	types := export.GetExportTypes()
+	for _, t := range types {
+		names = append(names, t.GetName())
+	}
+
+	encodeAndSend(names, w)
 }
 
 func LocationDelete(w http.ResponseWriter, r *http.Request) {

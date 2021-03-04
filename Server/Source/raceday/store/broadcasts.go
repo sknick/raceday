@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type BroadcastRetrievalCriteria struct {
@@ -15,7 +16,7 @@ type BroadcastRetrievalCriteria struct {
 	IncludeAllAfter bool
 }
 
-func (dh DatastoreHandle) CreateBroadcast(type_ string, eventId string, url string) (string, error) {
+func (dh DatastoreHandle) CreateBroadcast(type_ model.BroadcastType, eventId string, url string) (string, error) {
 	rows, err := dh.db.Query(
 		`SELECT COUNT(id) AS num
            FROM event
@@ -222,7 +223,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 
 		thisBroadcast := model.Broadcast{
 			Id:    broadcastIdVal,
-			Type_: broadcastTypeVal,
+			Type_: model.BroadcastTypeFromString(broadcastTypeVal),
 			Event: thisEvent,
 		}
 		if broadcastUrlVal.Valid {
@@ -235,7 +236,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 	return ret, nil
 }
 
-func (dh DatastoreHandle) UpdateBroadcast(id, type_, eventId string, url *string) error {
+func (dh DatastoreHandle) UpdateBroadcast(id string, type_ model.BroadcastType, eventId string, url *string) error {
 	rows, err := dh.db.Query(
 		`SELECT COUNT(id) AS num
            FROM event
