@@ -12,6 +12,7 @@ func InitializeFormats(settings raceday.ExportSettings) {
 
 	googleDocFormat := formats.GoogleDoc{}
 	if settings.GoogleServiceAccountKeyFile != "" {
+		googleDocFormat.GoogleServiceAccountKeyFile = settings.GoogleServiceAccountKeyFile
 		ExportFormats = append(ExportFormats, googleDocFormat)
 	}
 }

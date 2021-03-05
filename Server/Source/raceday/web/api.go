@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"raceday/Server/Source/raceday/export"
+	"raceday/Server/Source/raceday/export/formats"
 	"raceday/Server/Source/raceday/model"
 	"raceday/Server/Source/raceday/store"
 	"runtime"
@@ -381,7 +382,27 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func ExportGet(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	exportType := r.URL.Query().Get("export_type")
+
+	var format formats.ExportFormat
+	for _, t := range export.ExportFormats {
+		if t.GetName() == exportType {
+			format = t
+			break
+		}
+	}
+
+	if format == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	err := format.Export()
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
