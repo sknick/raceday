@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"log"
+	"raceday/Server/Source/raceday/store"
+	"time"
 
 	docs "google.golang.org/api/docs/v1"
 	drive "google.golang.org/api/drive/v3"
@@ -36,9 +38,8 @@ func (gd GoogleDoc) Export() error {
 		return err
 	}
 
-	// For updating our new document's permissions and getting a link to it
+	// For updating our new document's permissions
 	permissionsService := drive.NewPermissionsService(drivesApi)
-	// filesService := drive.NewFilesService(drivesApi)
 
 	// For creating the new document
 	docsService := docs.NewDocumentsService(docsApi)
@@ -51,6 +52,45 @@ func (gd GoogleDoc) Export() error {
 	docsCreateReq := docsService.Create(&newDoc)
 
 	doc, err := docsCreateReq.Do()
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+	windowEnd := float64(now.Unix() + 86400)
+
+	criteria := store.EventRetrievalCriteria{
+		WindowStart: float64(now.Unix()),
+		WindowEnd:   &windowEnd,
+	}
+
+	events, err := store.Datastore.GetEvents(criteria)
+	if err != nil {
+		return err
+	}
+
+	batchUpdateRequests := make([]*docs.Request, 0)
+
+	for _, event := range events {
+		req := docs.Request{
+			InsertText: &docs.InsertTextRequest{
+				EndOfSegmentLocation: &docs.EndOfSegmentLocation{
+					SegmentId: "",
+				},
+				Text: event.Name,
+			},
+		}
+
+		batchUpdateRequests = append(batchUpdateRequests, &req)
+	}
+
+	batchUpdate := docs.BatchUpdateDocumentRequest{
+		Requests: batchUpdateRequests,
+	}
+
+	batchUpdateCall := docsService.BatchUpdate(doc.DocumentId, &batchUpdate)
+
+	_, err = batchUpdateCall.Do()
 	if err != nil {
 		return err
 	}
@@ -68,16 +108,6 @@ func (gd GoogleDoc) Export() error {
 	if err != nil {
 		return err
 	}
-
-	log.Printf("Created document with ID: %s", doc.DocumentId)
-
-	// // Finally, figure out the link to the new document:
-	// filesGetReq := filesService.Get(doc.DocumentId)
-
-	// f, err := filesGetReq.Do()
-	// if err != nil {
-	// 	return err
-	// }
 
 	log.Printf("Document available at: https://docs.google.com/document/d/%s", doc.DocumentId)
 
