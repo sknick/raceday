@@ -52,7 +52,7 @@ func BroadcastDelete(w http.ResponseWriter, r *http.Request) {
 
 func BroadcastPost(w http.ResponseWriter, r *http.Request) {
 	id, err := store.Datastore.CreateBroadcast(
-		r.URL.Query().Get("type"),
+		model.BroadcastTypeFromString(r.URL.Query().Get("type")),
 		r.URL.Query().Get("event_id"),
 		r.URL.Query().Get("url"),
 	)
@@ -76,7 +76,7 @@ func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 		url = &urlParam
 	}
 
-	err := store.Datastore.UpdateBroadcast(id, type_, eventId, url)
+	err := store.Datastore.UpdateBroadcast(id, model.BroadcastTypeFromString(type_), eventId, url)
 	if err != nil {
 		switch err.(type) {
 		case *store.BroadcastNotFoundError:
