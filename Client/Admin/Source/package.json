@@ -9,6 +9,6 @@
   "author": "Scott Knick",
   "license": "",
   "devDependencies": {
-    "@qooxdoo/compiler": "^1.0.0-beta-20201106-1652"
+    "@qooxdoo/compiler": "^1.0.0"
   }
 }
