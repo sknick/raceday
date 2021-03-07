@@ -1,6 +1,5 @@
 /**
  * @asset(qx/icon/${qx.icontheme}/32/actions/list-add.png)
- * @asset(qx/icon/${qx.icontheme}/32/actions/list-remove.png)
  * @asset(qx/icon/${qx.icontheme}/32/apps/utilities-text-editor.png)
  */
 qx.Class.define("admin.ui.series.Page", {
@@ -12,14 +11,12 @@ qx.Class.define("admin.ui.series.Page", {
 
         let addButton = new qx.ui.toolbar.Button("Add", "icon/32/actions/list-add.png");
         let editButton = new qx.ui.toolbar.Button("Edit", "icon/32/apps/utilities-text-editor.png");
-        let deleteButton = new qx.ui.toolbar.Button("Delete", "icon/32/actions/list-remove.png")
 
         let toolbar = new qx.ui.toolbar.ToolBar();
         toolbar.setPadding(0);
 
         toolbar.add(addButton);
         toolbar.add(editButton);
-        toolbar.add(deleteButton);
 
         this.__table = new qx.ui.table.Table(
             new admin.ui.series.TableModel(),
@@ -31,6 +28,7 @@ qx.Class.define("admin.ui.series.Page", {
         );
         this.__table.setColumnVisibilityButtonVisible(false);
         this.__table.setShowCellFocusIndicator(false);
+        this.__table.setStatusBarVisible(false);
 
         let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
         resizeBehavior.setWidth(admin.ui.series.TableModel.NAME_COLUMN,        400);
@@ -49,7 +47,6 @@ qx.Class.define("admin.ui.series.Page", {
 
         addButton.addListener("execute", this.__onAdd, this);
         editButton.addListener("execute", this.__onEdit, this);
-        deleteButton.addListener("execute", this.__onDelete, this);
         this.__table.addListener("cellDbltap", this.__onEdit, this);
 
         this.__table.getTableModel().setReady(true);
@@ -97,36 +94,6 @@ qx.Class.define("admin.ui.series.Page", {
                 series.id,
                 series.name,
                 series.description
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().reloadData();
-                },
-
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
-        },
-
-        __onDelete: function(e) {
-            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
-            if (selectedRows.length > 0) {
-                let dlg = new admin.ui.ConfirmationDialog(
-                    admin.Application.APP_TITLE,
-                    "Are you sure you want to delete this series?",
-                    this.__table.getTableModel().getSeries(selectedRows[0].minIndex)
-                );
-                dlg.addListener("confirmed", this.__onDeleteContinue, this);
-
-                dlg.show();
-            }
-        },
-
-        __onDeleteContinue: function(e) {
-            let series = e.getData();
-            admin.RequestManager.getInstance().deleteSeries(
-                this,
-                series.id
             ).then(
                 function(e) {
                     this.context.__table.getTableModel().reloadData();

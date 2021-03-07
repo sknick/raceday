@@ -435,32 +435,6 @@ paths:
 
   /location:
 
-    delete:
-      operationId: locationDelete
-
-      summary: Deletes a location.
-
-      parameters:
-        - $ref: "#/components/parameters/AccessTokenParam"
-        - name: id
-          in: query
-          description: The ID of the location to delete.
-          required: true
-          schema:
-            type: string
-            format: uuid
-
-      responses:
-        "200":
-          description: Successful response.
-        "403":
-          description: Unauthorized.
-        "404":
-          description: Location not found.
-      
-      tags:
-        - Protected
-
     post:
       operationId: locationPost
 
@@ -552,32 +526,6 @@ paths:
         - Query
 
   /series:
-
-    delete:
-      operationId: seriesDelete
-
-      summary: Deletes a series.
-
-      parameters:
-        - $ref: "#/components/parameters/AccessTokenParam"
-        - name: id
-          in: query
-          description: The ID of the series to delete.
-          required: true
-          schema:
-            type: string
-            format: uuid
-
-      responses:
-        "200":
-          description: Successful response.
-        "403":
-          description: Unauthorized.
-        "404":
-          description: Series not found.
-      
-      tags:
-        - Protected
 
     get:
       operationId: seriesGet

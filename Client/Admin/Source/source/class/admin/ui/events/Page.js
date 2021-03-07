@@ -34,6 +34,7 @@ qx.Class.define("admin.ui.events.Page", {
         );
         this.__table.setColumnVisibilityButtonVisible(false);
         this.__table.setShowCellFocusIndicator(false);
+        this.__table.setStatusBarVisible(false);
 
         let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
         resizeBehavior.setWidth(admin.ui.events.TableModel.START_COLUMN,    300);
@@ -134,6 +135,37 @@ qx.Class.define("admin.ui.events.Page", {
                             }
                         );
                     }
+                },
+
+                function(e) {
+                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                }
+            );
+        },
+
+        __onDelete: function(e) {
+            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            if (selectedRows.length > 0) {
+                let dlg = new admin.ui.ConfirmationDialog(
+                    admin.Application.APP_TITLE,
+                    "Are you sure you want to delete this event?",
+                    this.__table.getTableModel().getEvent(selectedRows[0].minIndex)
+                );
+                dlg.addListener("confirmed", this.__onDeleteContinue, this);
+
+                dlg.show();
+            }
+        },
+
+        __onDeleteContinue: function(e) {
+            let event = e.getData();
+            admin.RequestManager.getInstance().deleteEvent(
+                this,
+                event.id
+            ).then(
+                function(e) {
+                    this.context.__table.getTableModel().reloadData();
+                    this.context.__table.getSelectionModel().resetSelection();
                 },
 
                 function(e) {
@@ -372,36 +404,6 @@ qx.Class.define("admin.ui.events.Page", {
                             }
                         )
                     }
-                },
-
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
-        },
-
-        __onDelete: function(e) {
-            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
-            if (selectedRows.length > 0) {
-                let dlg = new admin.ui.ConfirmationDialog(
-                    admin.Application.APP_TITLE,
-                    "Are you sure you want to delete this event?",
-                    this.__table.getTableModel().getEvent(selectedRows[0].minIndex)
-                );
-                dlg.addListener("confirmed", this.__onDeleteContinue, this);
-
-                dlg.show();
-            }
-        },
-
-        __onDeleteContinue: function(e) {
-            let event = e.getData();
-            admin.RequestManager.getInstance().deleteEvent(
-                this,
-                event.id
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().reloadData();
                 },
 
                 function(e) {

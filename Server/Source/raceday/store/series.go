@@ -2,8 +2,9 @@ package store
 
 import (
 	"database/sql"
-	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
+
+	"github.com/google/uuid"
 )
 
 func (dh DatastoreHandle) CreateSeries(name string, description *string) (string, error) {
@@ -24,28 +25,6 @@ func (dh DatastoreHandle) CreateSeries(name string, description *string) (string
 	}
 
 	return seriesId.String(), nil
-}
-
-func (dh DatastoreHandle) DeleteSeries(id string) error {
-	result, err := dh.db.Exec(
-		`DELETE FROM series
-          WHERE id = $1`,
-		id,
-	)
-	if err != nil {
-		return err
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
-		return &SeriesNotFoundError{}
-	}
-
-	return nil
 }
 
 func (dh DatastoreHandle) GetSeries() ([]model.Series, error) {
