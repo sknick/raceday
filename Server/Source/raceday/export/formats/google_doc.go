@@ -3,7 +3,9 @@ package formats
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
+	"raceday/Server/Source/raceday/model"
 	"raceday/Server/Source/raceday/store"
 	"time"
 
@@ -77,7 +79,7 @@ func (gd GoogleDoc) Export() error {
 				EndOfSegmentLocation: &docs.EndOfSegmentLocation{
 					SegmentId: "",
 				},
-				Text: event.Name,
+				Text: eventToString(event),
 			},
 		}
 
@@ -112,4 +114,9 @@ func (gd GoogleDoc) Export() error {
 	log.Printf("Document available at: https://docs.google.com/document/d/%s", doc.DocumentId)
 
 	return nil
+}
+
+func eventToString(event model.Event) string {
+	ret := fmt.Sprintf("%s\r\n", event.Name)
+	return ret
 }
