@@ -118,6 +118,13 @@ func addHeader(ss *excelize.File, labels []string, columnWidths []float64) error
 					Type:  "bottom",
 				},
 			},
+			Fill: excelize.Fill{
+				Color: []string{
+					"dddddd",
+				},
+				Pattern: 1,
+				Type:    "pattern",
+			},
 			Font: &excelize.Font{
 				Bold: true,
 			},
