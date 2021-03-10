@@ -438,13 +438,35 @@ paths:
     get:
       operationId: exportGet
 
-      summary: Exports data using the specified format.
+      summary: Exports data using the specified format. Note that the window_start, window_end, and time_zone parameters
+        may be ignored by some export types.
 
       parameters:
         - name: export_type
           in: query
-          description: The type of export to created. Use the GET /export_types API to get a list of possible types.
+          description: The type of export to be created. Use the GET /export_types API to get a list of possible types.
           required: true
+          schema:
+            type: string
+        - name: window_start
+          in: query
+          description: A UNIX timestamp indicating a particular date on which exported events must start.
+          required: true
+          schema:
+            type: number
+            format: int64
+        - name: window_end
+          in: query
+          description: An optional UNIX timestamp indicating the end of a window in which exported events must start,
+            where `window_start` indicates the beginning of the window. If not specified, only events that start on the
+            date indicated by `window_start` will be exported. If -1 is specified, all events that occur on or after the
+            date indicated by `window_start` are exported.
+          schema:
+            type: number
+            format: int64
+        - name: time_zone
+          in: query
+          description: The time zone to take into account when querying for events. If not specified, UTC is used.
           schema:
             type: string
       
@@ -452,7 +474,7 @@ paths:
         "200":
           description: Successful response.
           content:
-            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+            application/*s:
               schema:
                 type: string
                 format: binary

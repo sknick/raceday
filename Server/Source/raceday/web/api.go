@@ -397,13 +397,47 @@ func ExportGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := format.Export()
+	windowStartParam := r.URL.Query().Get("window_start")
+	windowEndParam := r.URL.Query().Get("window_end")
+	timeZoneParam := r.URL.Query().Get("time_zone")
+
+	criteria := store.EventRetrievalCriteria{}
+
+	if windowStartParam != "" {
+		windowStart, err := strconv.ParseFloat(windowStartParam, 64)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.WindowStart = windowStart
+	}
+
+	if windowEndParam != "" {
+		windowEnd, err := strconv.ParseFloat(windowEndParam, 64)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.WindowEnd = &windowEnd
+	}
+
+	if timeZoneParam != "" {
+		timeZone, err := time.LoadLocation(timeZoneParam)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.TimeZone = timeZone
+	}
+
+	err := format.Export(criteria, w)
 	if err != nil {
 		handleInternalServerError(w, err)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 func ExportTypesGet(w http.ResponseWriter, r *http.Request) {
