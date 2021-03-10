@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"raceday/Server/Source/raceday/model"
 	"raceday/Server/Source/raceday/store"
 	"time"
 
@@ -29,19 +30,49 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 
 	ss := excelize.NewFile()
 
+	headers := make([]string, 0)
+	headers = append(headers, "Date/Time")
+	headers = append(headers, "Event")
+	headers = append(headers, "Series")
+	headers = append(headers, "Location")
+
+	broadcastCols := []model.BroadcastType{
+		model.YOU_TUBE,
+		model.FACEBOOK,
+		model.MOTOR_TREND,
+		model.CABLE,
+		model.OTHER,
+	}
+
+	for _, broadcastCol := range broadcastCols {
+		headers = append(headers, string(broadcastCol))
+	}
+
 	err = addHeader(
 		ss,
-		[]string{
-			"Date/Time",
-			"Event",
-			"Series",
-			"Location",
-		},
+		headers,
 		[]float64{
 			25.0,
 			50.0,
 			50.0,
 			50.0,
+			5.0,
+			5.0,
+			5.0,
+			5.0,
+			5.0,
+		},
+		100.0,
+		[]int{
+			0,
+			0,
+			0,
+			0,
+			90,
+			90,
+			90,
+			90,
+			90,
 		},
 	)
 	if err != nil {
@@ -49,14 +80,44 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 	}
 
 	for i, event := range events {
+		broadcasts, err := store.Datastore.GetBroadcasts(store.BroadcastRetrievalCriteria{EventID: &event.Id})
+		if err != nil {
+			return err
+		}
+
+		var broadcastSources [5]string
+		for _, broadcast := range broadcasts {
+			for j, type_ := range broadcastCols {
+				if broadcast.Type_ == type_ {
+					broadcastSources[j] = "X"
+				}
+			}
+		}
+
+		values := make([]string, 0)
+		values = append(values, time.Unix(int64(event.Start), 0).Format("02 Jan 06 15:04 -0700"))
+		values = append(values, event.Name)
+		values = append(values, event.Series.Name)
+		values = append(values, event.Location.Name)
+
+		for _, broadcastSource := range broadcastSources {
+			values = append(values, broadcastSource)
+		}
+
 		err = addRow(
 			ss,
 			i+2,
-			[]string{
-				time.Unix(int64(event.Start), 0).Format("02 Jan 06 15:04 -0700"),
-				event.Name,
-				event.Series.Name,
-				event.Location.Name,
+			values,
+			[]bool{
+				false,
+				false,
+				false,
+				false,
+				true,
+				true,
+				true,
+				true,
+				true,
 			},
 		)
 		if err != nil {
@@ -90,53 +151,100 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 	return nil
 }
 
-func addHeader(ss *excelize.File, labels []string, columnWidths []float64) error {
-	headerStyle, err := ss.NewStyle(
-		&excelize.Style{
-			Alignment: &excelize.Alignment{
-				Horizontal: "center",
-			},
-			Border: []excelize.Border{
-				{
-					Color: "000000",
-					Style: 1,
-					Type:  "top",
-				},
-				{
-					Color: "000000",
-					Style: 1,
-					Type:  "left",
-				},
-				{
-					Color: "000000",
-					Style: 1,
-					Type:  "right",
-				},
-				{
-					Color: "000000",
-					Style: 1,
-					Type:  "bottom",
-				},
-			},
-			Fill: excelize.Fill{
-				Color: []string{
-					"dddddd",
-				},
-				Pattern: 1,
-				Type:    "pattern",
-			},
-			Font: &excelize.Font{
-				Bold: true,
-			},
-		},
-	)
-	if err != nil {
-		return err
-	}
-
+func addHeader(ss *excelize.File, labels []string, columnWidths []float64, rowHeight float64, textRotation []int) error {
 	capA := int('A')
 
+	var err error
+
 	for i, label := range labels {
+		var styleId int
+
+		if textRotation[i] == 0 {
+			styleId, err = ss.NewStyle(
+				&excelize.Style{
+					Alignment: &excelize.Alignment{
+						Horizontal: "center",
+					},
+					Border: []excelize.Border{
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "top",
+						},
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "left",
+						},
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "right",
+						},
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "bottom",
+						},
+					},
+					Fill: excelize.Fill{
+						Color: []string{
+							"dddddd",
+						},
+						Pattern: 1,
+						Type:    "pattern",
+					},
+					Font: &excelize.Font{
+						Bold: true,
+					},
+				},
+			)
+		} else {
+			styleId, err = ss.NewStyle(
+				&excelize.Style{
+					Alignment: &excelize.Alignment{
+						Horizontal:   "center",
+						TextRotation: textRotation[i],
+					},
+					Border: []excelize.Border{
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "top",
+						},
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "left",
+						},
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "right",
+						},
+						{
+							Color: "000000",
+							Style: 1,
+							Type:  "bottom",
+						},
+					},
+					Fill: excelize.Fill{
+						Color: []string{
+							"dddddd",
+						},
+						Pattern: 1,
+						Type:    "pattern",
+					},
+					Font: &excelize.Font{
+						Bold: true,
+					},
+				},
+			)
+		}
+		if err != nil {
+			return err
+		}
+
 		cell := fmt.Sprintf("%c1", rune(capA+i))
 
 		err = ss.SetCellValue(Sheet, cell, label)
@@ -144,7 +252,7 @@ func addHeader(ss *excelize.File, labels []string, columnWidths []float64) error
 			return err
 		}
 
-		ss.SetCellStyle(Sheet, cell, cell, headerStyle)
+		ss.SetCellStyle(Sheet, cell, cell, styleId)
 		if err != nil {
 			return err
 		}
@@ -159,10 +267,15 @@ func addHeader(ss *excelize.File, labels []string, columnWidths []float64) error
 		}
 	}
 
+	err = ss.SetRowHeight(Sheet, 1, rowHeight)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func addRow(ss *excelize.File, rowIndex int, values []string) error {
+func addRow(ss *excelize.File, rowIndex int, values []string, centerColumns []bool) error {
 	capA := int('A')
 
 	for i, value := range values {
@@ -171,6 +284,24 @@ func addRow(ss *excelize.File, rowIndex int, values []string) error {
 		err := ss.SetCellValue(Sheet, cell, value)
 		if err != nil {
 			return err
+		}
+
+		if centerColumns[i] {
+			styleId, err := ss.NewStyle(
+				&excelize.Style{
+					Alignment: &excelize.Alignment{
+						Horizontal: "center",
+					},
+				},
+			)
+			if err != nil {
+				return err
+			}
+
+			err = ss.SetCellStyle(Sheet, cell, cell, styleId)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
