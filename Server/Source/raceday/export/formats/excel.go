@@ -23,11 +23,13 @@ func (ee ExcelExport) GetName() string {
 }
 
 func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.ResponseWriter) error {
+	// Get the events that match the criteria from the store
 	events, err := store.Datastore.GetEvents(criteria)
 	if err != nil {
 		return err
 	}
 
+	// Get the start and end (if present) times into a native Go time.Time structure
 	start := time.Unix(int64(criteria.WindowStart), 0)
 
 	var end *time.Time
@@ -36,8 +38,10 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 		end = &endTime
 	}
 
+	// Create the new Excel file
 	ss := excelize.NewFile()
 
+	// Set up the header row
 	headers := make([]string, 0)
 	headers = append(headers, "Date/Time")
 	headers = append(headers, "Event")
@@ -67,12 +71,15 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 		return err
 	}
 
+	// Add the data rows
 	for i, event := range events {
+		// Get this event's broadcasts from the store
 		broadcasts, err := store.Datastore.GetBroadcasts(store.BroadcastRetrievalCriteria{EventID: &event.Id})
 		if err != nil {
 			return err
 		}
 
+		// Figure out which broadcast types this event has to check off the those columns
 		var broadcastSources [5]string
 		for _, broadcast := range broadcasts {
 			for j, type_ := range broadcastCols {
@@ -103,6 +110,7 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 		}
 	}
 
+	// Save the Excel file to a temp file so we can reopen it and stream it to the client
 	tmpFile, err := ioutil.TempFile("", "*.xlsx")
 	if err != nil {
 		return err
@@ -142,90 +150,7 @@ func addHeader(ss *excelize.File, labels []string, columnWidths []float64, rowHe
 	var err error
 
 	for i, label := range labels {
-		var styleId int
-
-		if textRotation[i] == 0 {
-			styleId, err = ss.NewStyle(
-				&excelize.Style{
-					Alignment: &excelize.Alignment{
-						Horizontal: "center",
-					},
-					Border: []excelize.Border{
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "top",
-						},
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "left",
-						},
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "right",
-						},
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "bottom",
-						},
-					},
-					Fill: excelize.Fill{
-						Color: []string{
-							"dddddd",
-						},
-						Pattern: 1,
-						Type:    "pattern",
-					},
-					Font: &excelize.Font{
-						Bold: true,
-					},
-				},
-			)
-		} else {
-			styleId, err = ss.NewStyle(
-				&excelize.Style{
-					Alignment: &excelize.Alignment{
-						Horizontal:   "center",
-						TextRotation: textRotation[i],
-					},
-					Border: []excelize.Border{
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "top",
-						},
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "left",
-						},
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "right",
-						},
-						{
-							Color: "000000",
-							Style: 1,
-							Type:  "bottom",
-						},
-					},
-					Fill: excelize.Fill{
-						Color: []string{
-							"dddddd",
-						},
-						Pattern: 1,
-						Type:    "pattern",
-					},
-					Font: &excelize.Font{
-						Bold: true,
-					},
-				},
-			)
-		}
+		styleId, err := getStyle(ss, textRotation[i])
 		if err != nil {
 			return err
 		}
@@ -295,4 +220,50 @@ func addRow(ss *excelize.File, rowIndex int, values []string, centerColumns []bo
 
 func deleteTmp(f string) {
 	os.Remove(f)
+}
+
+func getStyle(ss *excelize.File, rotation int) (int, error) {
+	style := excelize.Style{
+		Alignment: &excelize.Alignment{
+			Horizontal: "center",
+		},
+		Border: []excelize.Border{
+			{
+				Color: "000000",
+				Style: 1,
+				Type:  "top",
+			},
+			{
+				Color: "000000",
+				Style: 1,
+				Type:  "left",
+			},
+			{
+				Color: "000000",
+				Style: 1,
+				Type:  "right",
+			},
+			{
+				Color: "000000",
+				Style: 1,
+				Type:  "bottom",
+			},
+		},
+		Fill: excelize.Fill{
+			Color: []string{
+				"dddddd",
+			},
+			Pattern: 1,
+			Type:    "pattern",
+		},
+		Font: &excelize.Font{
+			Bold: true,
+		},
+	}
+
+	if rotation != 0 {
+		style.Alignment.TextRotation = rotation
+	}
+
+	return ss.NewStyle(&style)
 }
