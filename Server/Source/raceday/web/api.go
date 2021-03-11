@@ -450,22 +450,6 @@ func ExportTypesGet(w http.ResponseWriter, r *http.Request) {
 	encodeAndSend(names, w)
 }
 
-func LocationDelete(w http.ResponseWriter, r *http.Request) {
-	err := store.Datastore.DeleteLocation(r.URL.Query().Get("id"))
-	if err != nil {
-		switch err.(type) {
-		case *store.LocationNotFoundError:
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		handleInternalServerError(w, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-}
-
 func LocationPost(w http.ResponseWriter, r *http.Request) {
 	descriptionParam := r.URL.Query().Get("description")
 
@@ -519,22 +503,6 @@ func LocationsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodeAndSend(locations, w)
-}
-
-func SeriesDelete(w http.ResponseWriter, r *http.Request) {
-	err := store.Datastore.DeleteSeries(r.URL.Query().Get("id"))
-	if err != nil {
-		switch err.(type) {
-		case *store.SeriesNotFoundError:
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		handleInternalServerError(w, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 func SeriesGet(w http.ResponseWriter, r *http.Request) {

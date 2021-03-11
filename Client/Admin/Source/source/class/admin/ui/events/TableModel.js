@@ -1,3 +1,6 @@
+/**
+ * @ignore Intl.DateTimeFormat
+ */
 qx.Class.define("admin.ui.events.TableModel", {
     extend: admin.ui.RemoteTableModel,
 

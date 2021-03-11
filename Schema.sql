@@ -35,6 +35,7 @@ CREATE TABLE event (
     series_id                   uuid,
 
     PRIMARY KEY (id),
+    FOREIGN KEY (location_id) REFERENCES location(id),
     FOREIGN KEY (series_id) REFERENCES series(id)
 );
 

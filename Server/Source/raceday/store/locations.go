@@ -2,8 +2,9 @@ package store
 
 import (
 	"database/sql"
-	"github.com/google/uuid"
 	"raceday/Server/Source/raceday/model"
+
+	"github.com/google/uuid"
 )
 
 func (dh DatastoreHandle) CreateLocation(name string, description *string) (string, error) {
@@ -24,28 +25,6 @@ func (dh DatastoreHandle) CreateLocation(name string, description *string) (stri
 	}
 
 	return locationId.String(), nil
-}
-
-func (dh DatastoreHandle) DeleteLocation(id string) error {
-	result, err := dh.db.Exec(
-		`DELETE FROM location
-          WHERE id = $1`,
-		id,
-	)
-	if err != nil {
-		return err
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
-		return &LocationNotFoundError{}
-	}
-
-	return nil
 }
 
 func (dh DatastoreHandle) GetLocations() ([]model.Location, error) {
