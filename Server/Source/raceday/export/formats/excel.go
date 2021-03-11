@@ -28,6 +28,14 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 		return err
 	}
 
+	start := time.Unix(int64(criteria.WindowStart), 0)
+
+	var end *time.Time
+	if criteria.WindowEnd != nil {
+		endTime := time.Unix(int64(*criteria.WindowEnd), 0)
+		end = &endTime
+	}
+
 	ss := excelize.NewFile()
 
 	headers := make([]string, 0)
@@ -51,29 +59,9 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 	err = addHeader(
 		ss,
 		headers,
-		[]float64{
-			25.0,
-			50.0,
-			50.0,
-			50.0,
-			5.0,
-			5.0,
-			5.0,
-			5.0,
-			5.0,
-		},
+		[]float64{25.0, 50.0, 50.0, 50.0, 5.0, 5.0, 5.0, 5.0, 5.0},
 		100.0,
-		[]int{
-			0,
-			0,
-			0,
-			0,
-			90,
-			90,
-			90,
-			90,
-			90,
-		},
+		[]int{0, 0, 0, 0, 90, 90, 90, 90, 90},
 	)
 	if err != nil {
 		return err
@@ -95,7 +83,7 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 		}
 
 		values := make([]string, 0)
-		values = append(values, time.Unix(int64(event.Start), 0).Format("02 Jan 06 15:04 -0700"))
+		values = append(values, time.Unix(int64(event.Start), 0).Format("2006-01-02 15:04 -0700"))
 		values = append(values, event.Name)
 		values = append(values, event.Series.Name)
 		values = append(values, event.Location.Name)
@@ -108,17 +96,7 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 			ss,
 			i+2,
 			values,
-			[]bool{
-				false,
-				false,
-				false,
-				false,
-				true,
-				true,
-				true,
-				true,
-				true,
-			},
+			[]bool{false, false, false, false, true, true, true, true, true},
 		)
 		if err != nil {
 			return err
@@ -140,8 +118,15 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 		return err
 	}
 
+	dateStr := start.Format("2006-01-02")
+	if end != nil {
+		dateStr = fmt.Sprintf("%s_-_%s", dateStr, end.Format("2006-01-02"))
+	}
+
+	filename := fmt.Sprintf("Race_Day_%s.xlsx", dateStr)
+
 	w.Header().Set("Content-Type", "application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", "Race_Day_Export.xlsx"))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 	w.WriteHeader(http.StatusOK)
 
 	io.Copy(w, tmpFile)
