@@ -2,6 +2,7 @@ package raceday
 
 import (
 	"fmt"
+
 	"gopkg.in/ini.v1"
 )
 
@@ -17,6 +18,9 @@ type Settings struct {
 
 	// Database settings.
 	DatabaseSettings DatabaseSettings
+
+	// Export settings.
+	ExportSettings ExportSettings
 }
 
 // Database / datastore-related settings.
@@ -35,6 +39,12 @@ type DatabaseSettings struct {
 
 	// The password of the user by which to connect to the database.
 	DatabasePassword string
+}
+
+type ExportSettings struct {
+	// The service account key JSON file for accessing Google Cloud APIs. If not specified, the Google Doc export format
+	// will not be available.
+	GoogleServiceAccountKeyFile string
 }
 
 // Provides an instance of Settings that is initialized from the specified configuration file.
@@ -65,6 +75,10 @@ func NewConfig(configFile string) (Settings, error) {
 			DatabaseName:     config.Section("database").Key("name").MustString("raceday"),
 			DatabaseUser:     config.Section("database").Key("user").MustString("postgres"),
 			DatabasePassword: config.Section("database").Key("password").MustString(""),
+		},
+
+		ExportSettings: ExportSettings{
+			GoogleServiceAccountKeyFile: config.Section("export").Key("google_service_account_key_file").MustString(""),
 		},
 	}, nil
 }

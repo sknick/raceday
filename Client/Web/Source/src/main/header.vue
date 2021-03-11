@@ -6,7 +6,7 @@
         </span>
 
         <span class="logo">
-            Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon"> (<a href="https://github.com/sknick/raceday" target="_blank">About</a>)
+            Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon"> (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
         </span>
     </div>
 </template>
@@ -39,6 +39,30 @@ export default {
     methods: {
         onDateSelected(value) {
             this.$store.dispatch("updateDate", value)
+        },
+
+        onExport() {
+            const d = new Date()
+            d.setHours(12)
+            d.setMinutes(0)
+            d.setSeconds(0)
+            d.setMilliseconds(0)
+            
+            if (this.$store.state.date) {
+                let s = this.$store.state.date.split("/")
+                d.setFullYear(parseInt(s[0]))
+                d.setMonth(parseInt(s[1]) - 1)
+                d.setDate(parseInt(s[2]))
+            }
+
+            window.open(
+                "api/export?" +
+                "export_type=" + encodeURIComponent("Excel Spreadsheet") +
+                "&window_start=" + Math.round(d.getTime() / 1000) +
+                "&time_zone=" + Intl.DateTimeFormat().resolvedOptions().timeZone,
+
+                "Export"
+            )
         }
     }
 }

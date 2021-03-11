@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"raceday/Server/Source/raceday/export"
+	"raceday/Server/Source/raceday/export/formats"
 	"raceday/Server/Source/raceday/model"
 	"raceday/Server/Source/raceday/store"
 	"runtime"
@@ -377,6 +379,75 @@ func EventsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodeAndSend(events, w)
+}
+
+func ExportGet(w http.ResponseWriter, r *http.Request) {
+	exportType := r.URL.Query().Get("export_type")
+
+	var format formats.ExportFormat
+	for _, t := range export.ExportFormats {
+		if t.GetName() == exportType {
+			format = t
+			break
+		}
+	}
+
+	if format == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	windowStartParam := r.URL.Query().Get("window_start")
+	windowEndParam := r.URL.Query().Get("window_end")
+	timeZoneParam := r.URL.Query().Get("time_zone")
+
+	criteria := store.EventRetrievalCriteria{}
+
+	if windowStartParam != "" {
+		windowStart, err := strconv.ParseFloat(windowStartParam, 64)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.WindowStart = windowStart
+	}
+
+	if windowEndParam != "" {
+		windowEnd, err := strconv.ParseFloat(windowEndParam, 64)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.WindowEnd = &windowEnd
+	}
+
+	if timeZoneParam != "" {
+		timeZone, err := time.LoadLocation(timeZoneParam)
+		if err != nil {
+			handleInternalServerError(w, err)
+			return
+		}
+
+		criteria.TimeZone = timeZone
+	}
+
+	err := format.Export(criteria, w)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+}
+
+func ExportTypesGet(w http.ResponseWriter, r *http.Request) {
+	names := make([]string, 0)
+
+	for _, t := range export.ExportFormats {
+		names = append(names, t.GetName())
+	}
+
+	encodeAndSend(names, w)
 }
 
 func LocationPost(w http.ResponseWriter, r *http.Request) {
