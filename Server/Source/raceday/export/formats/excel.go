@@ -44,8 +44,8 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 	// Set up the header row
 	headers := make([]string, 0)
 	headers = append(headers, "Date/Time")
-	headers = append(headers, "Event")
 	headers = append(headers, "Series")
+	headers = append(headers, "Event")
 	headers = append(headers, "Location")
 
 	broadcastCols := []model.BroadcastType{
@@ -89,10 +89,15 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 			}
 		}
 
+		eventTime := time.Unix(int64(event.Start), 0)
+		if criteria.TimeZone != nil {
+			eventTime = eventTime.In(criteria.TimeZone)
+		}
+
 		values := make([]string, 0)
-		values = append(values, time.Unix(int64(event.Start), 0).Format("2006-01-02 15:04 -0700"))
-		values = append(values, event.Name)
+		values = append(values, eventTime.Format("2006-01-02 15:04 -0700"))
 		values = append(values, event.Series.Name)
+		values = append(values, event.Name)
 		values = append(values, event.Location.Name)
 
 		for _, broadcastSource := range broadcastSources {
