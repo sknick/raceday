@@ -10,5 +10,10 @@ var ExportFormats []formats.ExportFormat
 func InitializeFormats(settings raceday.ExportSettings) {
 	ExportFormats = make([]formats.ExportFormat, 0)
 
-	ExportFormats = append(ExportFormats, formats.ExcelExport{})
+	ExportFormats = append(
+		ExportFormats,
+		formats.ExcelExport{
+			ImagesDir: settings.ImagesDir,
+		},
+	)
 }

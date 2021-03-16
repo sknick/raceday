@@ -33,6 +33,9 @@ COPY --from=builder /RaceDay/Build/raceday .
 WORKDIR /etc
 COPY Shared/Deployment/raceday.conf .
 
+WORKDIR /var/raceday/images
+COPY Client/Web/Source/src/assets .
+
 WORKDIR /var/www/ui_root
 COPY --from=builder /RaceDay/Client/Web/Source/dist .
 

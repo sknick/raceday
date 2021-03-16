@@ -42,9 +42,8 @@ type DatabaseSettings struct {
 }
 
 type ExportSettings struct {
-	// The service account key JSON file for accessing Google Cloud APIs. If not specified, the Google Doc export format
-	// will not be available.
-	GoogleServiceAccountKeyFile string
+	// The location of the image assets (e.g., broadcast type icons, etc.).
+	ImagesDir string
 }
 
 // Provides an instance of Settings that is initialized from the specified configuration file.
@@ -64,6 +63,11 @@ func NewConfig(configFile string) (Settings, error) {
 		return Settings{}, fmt.Errorf("admin_ui_root not set in configuration file \"%v\"", configFile)
 	}
 
+	imagesDir := config.Section("export").Key("images_dir").MustString("")
+	if imagesDir == "" {
+		return Settings{}, fmt.Errorf("images_dir not set in configuration file \"%v\"", configFile)
+	}
+
 	return Settings{
 		ListenPort:  config.Section("").Key("listen_port").MustInt(8080),
 		UIRoot:      uiRoot,
@@ -78,7 +82,7 @@ func NewConfig(configFile string) (Settings, error) {
 		},
 
 		ExportSettings: ExportSettings{
-			GoogleServiceAccountKeyFile: config.Section("export").Key("google_service_account_key_file").MustString(""),
+			ImagesDir: imagesDir,
 		},
 	}, nil
 }

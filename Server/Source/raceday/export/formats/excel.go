@@ -1,21 +1,42 @@
 package formats
 
 import (
+	"bytes"
 	"fmt"
+	"image"
+	"image/png"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"raceday/Server/Source/raceday/model"
 	"raceday/Server/Source/raceday/store"
+	"regexp"
 	"time"
 
 	excelize "github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/nfnt/resize"
 )
 
 const Sheet = "Sheet1"
 
 type ExcelExport struct {
+	ImagesDir string
+}
+
+type broadcastInfo struct {
+	icon image.Image
+	url  string
+}
+
+func (bi broadcastInfo) hasValidUrl() bool {
+	validUrlRegex := regexp.MustCompile(`^https?\://`)
+	if validUrlRegex.MatchString(bi.url) {
+		return true
+	}
+
+	return false
 }
 
 func (ee ExcelExport) GetName() string {
@@ -48,24 +69,12 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 	headers = append(headers, "Event")
 	headers = append(headers, "Location")
 
-	broadcastCols := []model.BroadcastType{
-		model.YOU_TUBE,
-		model.FACEBOOK,
-		model.MOTOR_TREND,
-		model.CABLE,
-		model.OTHER,
-	}
-
-	for _, broadcastCol := range broadcastCols {
-		headers = append(headers, string(broadcastCol))
-	}
-
 	err = addHeader(
 		ss,
 		headers,
-		[]float64{25.0, 50.0, 50.0, 50.0, 5.0, 5.0, 5.0, 5.0, 5.0},
-		100.0,
-		[]int{0, 0, 0, 0, 90, 90, 90, 90, 90},
+		[]float64{23.0, 40.0, 40.0, 40.0},
+		nil,
+		[]int{0, 0, 0, 0},
 	)
 	if err != nil {
 		return err
@@ -79,36 +88,64 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 			return err
 		}
 
-		// Figure out which broadcast types this event has to check off the those columns
-		var broadcastSources [5]string
-		for _, broadcast := range broadcasts {
-			for j, type_ := range broadcastCols {
-				if broadcast.Type_ == type_ {
-					broadcastSources[j] = "X"
-				}
-			}
-		}
-
 		eventTime := time.Unix(int64(event.Start), 0)
 		if criteria.TimeZone != nil {
 			eventTime = eventTime.In(criteria.TimeZone)
 		}
 
+		// Here are the primary value columns
 		values := make([]string, 0)
 		values = append(values, eventTime.Format("2006-01-02 15:04 -0700"))
 		values = append(values, event.Series.Name)
 		values = append(values, event.Name)
 		values = append(values, event.Location.Name)
 
-		for _, broadcastSource := range broadcastSources {
-			values = append(values, broadcastSource)
+		// And now set up the broadcast links that will go after the primary columns
+		broadcastLinks := make([]broadcastInfo, 0)
+
+		for _, broadcast := range broadcasts {
+			img := ""
+
+			switch broadcast.Type_ {
+			case model.YOU_TUBE:
+				img = "youtube.png"
+				break
+			case model.FACEBOOK:
+				img = "facebook.png"
+				break
+			default:
+				img = "other.png"
+				break
+			}
+
+			imageFile, err := ioutil.ReadFile(path.Join(ee.ImagesDir, img))
+			if err != nil {
+				return err
+			}
+
+			imageFileObj, err := png.Decode(bytes.NewReader(imageFile))
+			if err != nil {
+				return err
+			}
+
+			// Resize the image icon down so it fits better in the spreadsheet cell
+			resizedImage := resize.Thumbnail(16, 16, imageFileObj, resize.NearestNeighbor)
+			broadcastLink := broadcastInfo{
+				icon: resizedImage,
+				url:  broadcast.Url,
+			}
+
+			broadcastLinks = append(broadcastLinks, broadcastLink)
 		}
+
+		rowIndex := i + 2
 
 		err = addRow(
 			ss,
-			i+2,
+			rowIndex,
 			values,
-			[]bool{false, false, false, false, true, true, true, true, true},
+			broadcastLinks,
+			[]bool{false, false, false, false},
 		)
 		if err != nil {
 			return err
@@ -149,7 +186,7 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 	return nil
 }
 
-func addHeader(ss *excelize.File, labels []string, columnWidths []float64, rowHeight float64, textRotation []int) error {
+func addHeader(ss *excelize.File, labels []string, columnWidths []float64, rowHeight *float64, textRotation []int) error {
 	capA := int('A')
 
 	var err error
@@ -182,15 +219,17 @@ func addHeader(ss *excelize.File, labels []string, columnWidths []float64, rowHe
 		}
 	}
 
-	err = ss.SetRowHeight(Sheet, 1, rowHeight)
-	if err != nil {
-		return err
+	if rowHeight != nil {
+		err = ss.SetRowHeight(Sheet, 1, *rowHeight)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func addRow(ss *excelize.File, rowIndex int, values []string, centerColumns []bool) error {
+func addRow(ss *excelize.File, rowIndex int, values []string, broadcastLinks []broadcastInfo, centerColumns []bool) error {
 	capA := int('A')
 
 	for i, value := range values {
@@ -218,6 +257,50 @@ func addRow(ss *excelize.File, rowIndex int, values []string, centerColumns []bo
 				return err
 			}
 		}
+	}
+
+	startingColumnCap := capA + len(values)
+
+	for i, broadcastLink := range broadcastLinks {
+		cell := fmt.Sprintf("%c", startingColumnCap+i)
+
+		err := ss.SetColWidth(Sheet, cell, cell, 3.0)
+		if err != nil {
+			return err
+		}
+
+		cell = fmt.Sprintf("%c%d", startingColumnCap+i, rowIndex)
+
+		buf := new(bytes.Buffer)
+		err = png.Encode(buf, broadcastLink.icon)
+		if err != nil {
+			return err
+		}
+
+		format := ""
+		if broadcastLink.hasValidUrl() {
+			format = fmt.Sprintf(
+				`{
+					 "hyperlink":      "%s",
+					 "hyperlink_type": "External"
+			 	 }`,
+				broadcastLink.url,
+			)
+		}
+
+		err = ss.AddPictureFromBytes(Sheet, cell, format, "Broadcast", ".png", buf.Bytes())
+		if err != nil {
+			return err
+		}
+
+		format = fmt.Sprintf(
+			`{
+				 "author": "Race Day: ",
+				 "text":   "%s"
+			 }`,
+			broadcastLink.url,
+		)
+		err = ss.AddComment(Sheet, cell, format)
 	}
 
 	return nil
