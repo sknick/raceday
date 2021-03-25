@@ -8,10 +8,11 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
-	_ "github.com/lib/pq"
-	_ "golang.org/x/crypto/blake2s"
 	"os"
 	"strings"
+
+	_ "github.com/lib/pq"
+	_ "golang.org/x/crypto/blake2s"
 )
 
 var (
@@ -39,13 +40,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	dbPassString := ""
+	if dbPass != "" {
+		dbPassString = fmt.Sprintf("password=%s", dbPass)
+	}
+
 	connStr := fmt.Sprintf(
-		"host=%s port=%d dbname=%s user=%s password=%s sslmode=disable",
+		"host=%s port=%d dbname=%s user=%s%s sslmode=disable",
 		dbHost,
 		dbPort,
 		dbName,
 		dbUser,
-		dbPass,
+		dbPassString,
 	)
 
 	db, err := sql.Open("postgres", connStr)
