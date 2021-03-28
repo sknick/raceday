@@ -104,10 +104,24 @@ export default {
                 function (response) {
                     for (let i = 0; i < self.events.length; i++) {
                         if (self.events[i].id === eventId) {
-                            self.events[i].broadcasts = []
+                            const broadcasts = []
                             for (let j = 0; j < response.data.length; j++) {
-                                self.events[i].broadcasts.push(response.data[j])
+                                broadcasts.push(response.data[j])
                             }
+
+                            broadcasts.sort(
+                                function(a, b) {
+                                    if (a.url < b.url) {
+                                        return -1
+                                    } else if (a.url > b.url) {
+                                        return 1
+                                    } else {
+                                        return 0
+                                    }
+                                }
+                            )
+
+                            self.events[i].broadcasts = broadcasts
 
                             break
                         }
