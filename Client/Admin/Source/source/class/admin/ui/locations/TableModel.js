@@ -1,5 +1,5 @@
 qx.Class.define("admin.ui.locations.TableModel", {
-    extend: admin.ui.RemoteTableModel,
+    extend: admin.ui.SimpleTableModel,
 
     statics: {
         NAME_COLUMN:        0,
@@ -11,12 +11,10 @@ qx.Class.define("admin.ui.locations.TableModel", {
         this.base(arguments, admin.ui.locations.TableModel.NAME_COLUMN, true);
 
         for (let i = 0; i < admin.ui.locations.TableModel.NUM_COLUMNS; i++) {
-            this.setColumnSortable(i, false);
+            this.setColumnSortable(i, true);
         }
 
         this.setColumns(["Name", "Description"], ["name", "description"]);
-
-        this.__data = null;
     },
 
     members: {
@@ -24,41 +22,33 @@ qx.Class.define("admin.ui.locations.TableModel", {
             return this.getRowData(rowIndex).location;
         },
 
-        _loadRowCount: function() {
+        refresh: function() {
             if (this.getReady()) {
                 admin.RequestManager.getInstance().getLocations(
                     this
                 ).then(
                     function(e) {
-                        let response = e.getResponse();
+                        const response = e.getResponse();
 
-                        this.context.__data = [];
+                        const data = [];
                         for (let i = 0; i < response.length; i++) {
-                            this.context.__data.push(new raceday.api.model.Location(response[i]));
+                            const location = new raceday.api.model.Location(response[i]);
+                            data.push(
+                                {
+                                    name:        location.name,
+                                    description: location.description,
+                                    location:    location
+                                }
+                            );
                         }
 
-                        this.context._onRowCountLoaded(this.context.__data.length);
+                        this.context.setDataAsMapArray(data, true, false);
                     },
 
                     function(e) {
                         admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
                     }
                 )
-            }
-        },
-
-        _loadRowData: function(firstRow, lastRow) {
-            let newRows = [];
-            for (let i = 0; i < this.__data.length; i++) {
-                newRows.push({
-                    name:        this.__data[i].name,
-                    description: this.__data[i].description,
-                    location:    this.__data[i]
-                });
-            }
-
-            if (newRows.length > 0) {
-                this._onRowDataLoaded(newRows);
             }
         }
     }

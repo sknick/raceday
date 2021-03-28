@@ -34,13 +34,13 @@ qx.Class.define("admin.ui.events.Page", {
         );
         this.__table.setColumnVisibilityButtonVisible(false);
         this.__table.setShowCellFocusIndicator(false);
-        this.__table.setStatusBarVisible(false);
+        this.__table.setStatusBarVisible(true);
 
         let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
-        resizeBehavior.setWidth(admin.ui.events.TableModel.START_COLUMN,    300);
+        resizeBehavior.setWidth(admin.ui.events.TableModel.START_COLUMN,    250);
         resizeBehavior.setWidth(admin.ui.events.TableModel.NAME_COLUMN,     "1*");
-        resizeBehavior.setWidth(admin.ui.events.TableModel.LOCATION_COLUMN, 400);
-        resizeBehavior.setWidth(admin.ui.events.TableModel.SERIES_COLUMN,   400);
+        resizeBehavior.setWidth(admin.ui.events.TableModel.LOCATION_COLUMN, 300);
+        resizeBehavior.setWidth(admin.ui.events.TableModel.SERIES_COLUMN,   350);
 
         let content = new qx.ui.container.Composite(new qx.ui.layout.Dock());
         content.add(toolbar,      { edge: "north" });
@@ -116,7 +116,7 @@ qx.Class.define("admin.ui.events.Page", {
             ).then(
                 function(e) {
                     if (data.broadcasts.length === 0) {
-                        this.context.__table.getTableModel().reloadData();
+                        this.context.__table.getTableModel().refresh();
                     } else {
                         for (let i = 0; i < data.broadcasts.length; i++) {
                             data.broadcasts[i].eventId = e.getResponse();
@@ -127,7 +127,7 @@ qx.Class.define("admin.ui.events.Page", {
                             data.broadcasts
                         ).then(
                             function (e) {
-                                this.context.__table.getTableModel().reloadData();
+                                this.context.__table.getTableModel().refresh();
                             },
 
                             function (e) {
@@ -164,7 +164,7 @@ qx.Class.define("admin.ui.events.Page", {
                 event.id
             ).then(
                 function(e) {
-                    this.context.__table.getTableModel().reloadData();
+                    this.context.__table.getTableModel().refresh();
                     this.context.__table.getSelectionModel().resetSelection();
                 },
 
@@ -323,7 +323,7 @@ qx.Class.define("admin.ui.events.Page", {
             ).then(
                 function(e) {
                     if (data.broadcasts.length === 0) {
-                        this.context.__table.getTableModel().reloadData();
+                        this.context.__table.getTableModel().refresh();
                     } else {
                         let broadcasts = [];
                         let unsavedBroadcasts = [];
@@ -344,7 +344,7 @@ qx.Class.define("admin.ui.events.Page", {
                                     unsavedBroadcasts
                                 ).then(
                                     function (e) {
-                                        this.context.__table.getTableModel().reloadData();
+                                        this.context.__table.getTableModel().refresh();
                                     },
 
                                     function (e) {
@@ -352,7 +352,7 @@ qx.Class.define("admin.ui.events.Page", {
                                     }
                                 );
                             } else {
-                                this.context.__table.getTableModel().reloadData();
+                                this.context.__table.getTableModel().refresh();
                             }
                         } else {
                             admin.RequestManager.getInstance().putBroadcasts(
@@ -366,7 +366,7 @@ qx.Class.define("admin.ui.events.Page", {
                                             unsavedBroadcasts
                                         ).then(
                                             function (e) {
-                                                this.context.__table.getTableModel().reloadData();
+                                                this.context.__table.getTableModel().refresh();
                                             },
 
                                             function (e) {
@@ -374,7 +374,7 @@ qx.Class.define("admin.ui.events.Page", {
                                             }
                                         );
                                     } else {
-                                        this.context.__table.getTableModel().reloadData();
+                                        this.context.__table.getTableModel().refresh();
                                     }
                                 },
 

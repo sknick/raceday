@@ -28,7 +28,7 @@ qx.Class.define("admin.ui.series.Page", {
         );
         this.__table.setColumnVisibilityButtonVisible(false);
         this.__table.setShowCellFocusIndicator(false);
-        this.__table.setStatusBarVisible(false);
+        this.__table.setStatusBarVisible(true);
 
         let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
         resizeBehavior.setWidth(admin.ui.series.TableModel.NAME_COLUMN,        400);
@@ -68,7 +68,7 @@ qx.Class.define("admin.ui.series.Page", {
                 series.description
             ).then(
                 function(e) {
-                    this.context.__table.getTableModel().reloadData();
+                    this.context.__table.getTableModel().refresh();
                 },
 
                 function(e) {
@@ -96,7 +96,7 @@ qx.Class.define("admin.ui.series.Page", {
                 series.description
             ).then(
                 function(e) {
-                    this.context.__table.getTableModel().reloadData();
+                    this.context.__table.getTableModel().refresh();
                 },
 
                 function(e) {
