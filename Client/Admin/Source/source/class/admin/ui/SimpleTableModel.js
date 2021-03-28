@@ -15,7 +15,7 @@ qx.Class.define("admin.ui.SimpleTableModel", {
             init: false,
             nullable: false,
             check: "Boolean",
-            apply: "_applyReady"
+            apply: "__applyReady"
         }
     },
 
@@ -34,8 +34,8 @@ qx.Class.define("admin.ui.SimpleTableModel", {
         this.sortByColumn(sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY),
             sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY));
 
-        // Tried to use sorted event but it wasn't firing. This one works for our needs.
-        this.addListener("metaDataChanged", this._onMetadataChanged, this);
+        this.addListener("dataChanged", this.__onDataChanged, this);
+        this.addListener("metaDataChanged", this.__onMetadataChanged, this);
     },
 
     members: {
@@ -46,13 +46,19 @@ qx.Class.define("admin.ui.SimpleTableModel", {
 
         },
 
-        _applyReady: function(value) {
+        __applyReady: function(value) {
             if (value) {
                 this.refresh();
             }
         },
 
-        _onMetadataChanged: function(e) {
+        __onDataChanged: function(e) {
+            const sessionStorage = qx.bom.storage.Web.getSession();
+            this.sortByColumn(sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY),
+                sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY));
+        },
+
+        __onMetadataChanged: function(e) {
             const sessionStorage = qx.bom.storage.Web.getSession();
             sessionStorage.setItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY, this.getSortColumnIndex());
             sessionStorage.setItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY, this.isSortAscending());
