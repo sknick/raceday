@@ -9,10 +9,10 @@ qx.Class.define("admin.ui.locations.Page", {
         this.base(arguments, "Locations");
         this.setLayout(new qx.ui.layout.Canvas());
 
-        let addButton = new qx.ui.toolbar.Button("Add", "icon/32/actions/list-add.png");
-        let editButton = new qx.ui.toolbar.Button("Edit", "icon/32/apps/utilities-text-editor.png");
+        const addButton = new qx.ui.toolbar.Button("Add", "icon/32/actions/list-add.png");
+        const editButton = new qx.ui.toolbar.Button("Edit", "icon/32/apps/utilities-text-editor.png");
 
-        let toolbar = new qx.ui.toolbar.ToolBar();
+        const toolbar = new qx.ui.toolbar.ToolBar();
         toolbar.setPadding(0);
 
         toolbar.add(addButton);
@@ -30,11 +30,11 @@ qx.Class.define("admin.ui.locations.Page", {
         this.__table.setShowCellFocusIndicator(false);
         this.__table.setStatusBarVisible(true);
 
-        let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
+        const resizeBehavior = this.__table.getTableColumnModel().getBehavior();
         resizeBehavior.setWidth(admin.ui.locations.TableModel.NAME_COLUMN,        400);
         resizeBehavior.setWidth(admin.ui.locations.TableModel.DESCRIPTION_COLUMN, "1*");
 
-        let content = new qx.ui.container.Composite(new qx.ui.layout.Dock());
+        const content = new qx.ui.container.Composite(new qx.ui.layout.Dock());
         content.add(toolbar,      { edge: "north" });
         content.add(this.__table, { edge: "center" });
 
@@ -54,14 +54,14 @@ qx.Class.define("admin.ui.locations.Page", {
 
     members: {
         __onAdd: function(e) {
-            let dlg = new admin.ui.locations.EditDialog();
+            const dlg = new admin.ui.locations.EditDialog();
             dlg.addListener("confirmed", this.__onAddConfirmed, this);
 
             dlg.show();
         },
 
         __onAddConfirmed: function(e) {
-            let location = e.getData();
+            const location = e.getData();
             admin.RequestManager.getInstance().postLocation(
                 this,
                 location.name,
@@ -78,9 +78,9 @@ qx.Class.define("admin.ui.locations.Page", {
         },
 
         __onEdit: function(e) {
-            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
-                let dlg = new admin.ui.locations.EditDialog(this.__table.getTableModel().getLocation(selectedRows[0].minIndex));
+                const dlg = new admin.ui.locations.EditDialog(this.__table.getTableModel().getLocation(selectedRows[0].minIndex));
                 dlg.addListener("confirmed", this.__onEditConfirmed, this);
 
                 dlg.show();
@@ -88,7 +88,7 @@ qx.Class.define("admin.ui.locations.Page", {
         },
 
         __onEditConfirmed: function(e) {
-            let location = e.getData();
+            const location = e.getData();
             admin.RequestManager.getInstance().putLocation(
                 this,
                 location.id,

@@ -22,21 +22,21 @@ qx.Class.define("admin.ui.PromptDialog", {
         this.__entryField = new qx.ui.form.TextField(value);
         this.__entryField.setWidth(400);
 
-        let messageLabel = new qx.ui.basic.Label(message);
+        const messageLabel = new qx.ui.basic.Label(message);
         messageLabel.setRich(true);
 
-        let container = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
+        const container = new qx.ui.container.Composite(new qx.ui.layout.VBox(10));
         container.add(messageLabel);
         container.add(this.__entryField);
 
-        let okButton = new qx.ui.form.Button(okButtonText ? okButtonText : "OK");
+        const okButton = new qx.ui.form.Button(okButtonText ? okButtonText : "OK");
         okButton.setWidth(100);
 
-        let cancelButton = new qx.ui.form.Button(cancelButtonText ? cancelButtonText : "Cancel");
+        const cancelButton = new qx.ui.form.Button(cancelButtonText ? cancelButtonText : "Cancel");
         cancelButton.setWidth(70);
 
         this.__entryField.addListener("keypress", function(e) {
-            let key = e.getKeyIdentifier();
+            const key = e.getKeyIdentifier();
             if (key === "Enter") {
                 this.__onOK();
             }
@@ -55,7 +55,7 @@ qx.Class.define("admin.ui.PromptDialog", {
 
     members: {
         __onOK: function() {
-            let text = this.__entryField.getValue() ? this.__entryField.getValue().trim() : "";
+            const text = this.__entryField.getValue() ? this.__entryField.getValue().trim() : "";
             if (text) {
                 if (!this.__regexCheck || this.__regexCheck.test(text)) {
                     this.close();

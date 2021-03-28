@@ -11,12 +11,12 @@ qx.Class.define("admin.ui.events.Page", {
         this.base(arguments, "Events");
         this.setLayout(new qx.ui.layout.Canvas());
 
-        let addButton = new qx.ui.toolbar.Button("Add", "icon/32/actions/list-add.png");
-        let editButton = new qx.ui.toolbar.Button("Edit", "icon/32/apps/utilities-text-editor.png");
-        let duplicateButton = new qx.ui.toolbar.Button("Duplicate", "icon/32/actions/edit-copy.png");
-        let deleteButton = new qx.ui.toolbar.Button("Delete", "icon/32/actions/list-remove.png");
+        const addButton = new qx.ui.toolbar.Button("Add", "icon/32/actions/list-add.png");
+        const editButton = new qx.ui.toolbar.Button("Edit", "icon/32/apps/utilities-text-editor.png");
+        const duplicateButton = new qx.ui.toolbar.Button("Duplicate", "icon/32/actions/edit-copy.png");
+        const deleteButton = new qx.ui.toolbar.Button("Delete", "icon/32/actions/list-remove.png");
 
-        let toolbar = new qx.ui.toolbar.ToolBar();
+        const toolbar = new qx.ui.toolbar.ToolBar();
         toolbar.setPadding(0);
 
         toolbar.add(addButton);
@@ -36,13 +36,13 @@ qx.Class.define("admin.ui.events.Page", {
         this.__table.setShowCellFocusIndicator(false);
         this.__table.setStatusBarVisible(true);
 
-        let resizeBehavior = this.__table.getTableColumnModel().getBehavior();
+        const resizeBehavior = this.__table.getTableColumnModel().getBehavior();
         resizeBehavior.setWidth(admin.ui.events.TableModel.START_COLUMN,    250);
         resizeBehavior.setWidth(admin.ui.events.TableModel.NAME_COLUMN,     "1*");
         resizeBehavior.setWidth(admin.ui.events.TableModel.LOCATION_COLUMN, 300);
         resizeBehavior.setWidth(admin.ui.events.TableModel.SERIES_COLUMN,   350);
 
-        let content = new qx.ui.container.Composite(new qx.ui.layout.Dock());
+        const content = new qx.ui.container.Composite(new qx.ui.layout.Dock());
         content.add(toolbar,      { edge: "north" });
         content.add(this.__table, { edge: "center" });
 
@@ -68,9 +68,9 @@ qx.Class.define("admin.ui.events.Page", {
                 this
             ).then(
                 function(e) {
-                    let response = e.getResponse();
+                    const response = e.getResponse();
 
-                    let locations = [];
+                    const locations = [];
                     for (let i = 0; i < response.length; i++) {
                         locations.push(new raceday.api.model.Location(response[i]));
                     }
@@ -79,14 +79,14 @@ qx.Class.define("admin.ui.events.Page", {
                         this.context
                     ).then(
                         function(e) {
-                            let response = e.getResponse();
+                            const response = e.getResponse();
 
-                            let series = [];
+                            const series = [];
                             for (let i = 0; i < response.length; i++) {
                                 series.push(new raceday.api.model.Series(response[i]));
                             }
 
-                            let dlg = new admin.ui.events.EditDialog(locations, series);
+                            const dlg = new admin.ui.events.EditDialog(locations, series);
                             dlg.addListener("confirmed", this.context.__onAddConfirmed, this.context);
 
                             dlg.show();
@@ -105,7 +105,7 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onAddConfirmed: function(e) {
-            let data = e.getData();
+            const data = e.getData();
             admin.RequestManager.getInstance().postEvent(
                 this,
                 data.event.name,
@@ -144,9 +144,9 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onDelete: function(e) {
-            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
-                let dlg = new admin.ui.ConfirmationDialog(
+                const dlg = new admin.ui.ConfirmationDialog(
                     admin.Application.APP_TITLE,
                     "Are you sure you want to delete this event?",
                     this.__table.getTableModel().getEvent(selectedRows[0].minIndex)
@@ -158,7 +158,7 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onDeleteContinue: function(e) {
-            let event = e.getData();
+            const event = e.getData();
             admin.RequestManager.getInstance().deleteEvent(
                 this,
                 event.id
@@ -175,15 +175,15 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onDuplicate: function(e) {
-            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 admin.RequestManager.getInstance().getLocations(
                     this
                 ).then(
                     function(e) {
-                        let response = e.getResponse();
+                        const response = e.getResponse();
 
-                        let locations = [];
+                        const locations = [];
                         for (let i = 0; i < response.length; i++) {
                             locations.push(new raceday.api.model.Location(response[i]));
                         }
@@ -194,12 +194,12 @@ qx.Class.define("admin.ui.events.Page", {
                             function(e) {
                                 response = e.getResponse();
 
-                                let series = [];
+                                const series = [];
                                 for (let i = 0; i < response.length; i++) {
                                     series.push(new raceday.api.model.Series(response[i]));
                                 }
 
-                                let event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
+                                const event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
 
                                 admin.RequestManager.getInstance().getBroadcasts(
                                     this.context,
@@ -211,12 +211,12 @@ qx.Class.define("admin.ui.events.Page", {
                                     function(e) {
                                         response = e.getResponse();
 
-                                        let broadcasts = [];
+                                        const broadcasts = [];
                                         for (let i = 0; i < response.length; i++) {
                                             broadcasts.push(new raceday.api.model.Broadcast(response[i]));
                                         }
 
-                                        let dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts,
+                                        const dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts,
                                             true);
                                         dlg.addListener("confirmed", this.context.__onAddConfirmed, this.context);
 
@@ -243,15 +243,15 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onEdit: function(e) {
-            let selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 admin.RequestManager.getInstance().getLocations(
                     this
                 ).then(
                     function(e) {
-                        let response = e.getResponse();
+                        const response = e.getResponse();
 
-                        let locations = [];
+                        const locations = [];
                         for (let i = 0; i < response.length; i++) {
                             locations.push(new raceday.api.model.Location(response[i]));
                         }
@@ -262,12 +262,12 @@ qx.Class.define("admin.ui.events.Page", {
                             function(e) {
                                 response = e.getResponse();
 
-                                let series = [];
+                                const series = [];
                                 for (let i = 0; i < response.length; i++) {
                                     series.push(new raceday.api.model.Series(response[i]));
                                 }
 
-                                let event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
+                                const event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
 
                                 admin.RequestManager.getInstance().getBroadcasts(
                                     this.context,
@@ -279,12 +279,12 @@ qx.Class.define("admin.ui.events.Page", {
                                     function(e) {
                                         response = e.getResponse();
 
-                                        let broadcasts = [];
+                                        const broadcasts = [];
                                         for (let i = 0; i < response.length; i++) {
                                             broadcasts.push(new raceday.api.model.Broadcast(response[i]));
                                         }
 
-                                        let dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts);
+                                        const dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts);
                                         dlg.addListener("confirmed", this.context.__onEditConfirmed, this.context);
 
                                         dlg.show();
@@ -310,7 +310,7 @@ qx.Class.define("admin.ui.events.Page", {
         },
 
         __onEditConfirmed: function(e) {
-            let data = e.getData();
+            const data = e.getData();
 
             admin.RequestManager.getInstance().putEvent(
                 this,
@@ -325,8 +325,8 @@ qx.Class.define("admin.ui.events.Page", {
                     if (data.broadcasts.length === 0) {
                         this.context.__table.getTableModel().refresh();
                     } else {
-                        let broadcasts = [];
-                        let unsavedBroadcasts = [];
+                        const broadcasts = [];
+                        const unsavedBroadcasts = [];
 
                         for (let i = 0; i < data.broadcasts.length; i++) {
                             if (data.broadcasts[i] instanceof raceday.api.model.Broadcast) {
@@ -386,7 +386,7 @@ qx.Class.define("admin.ui.events.Page", {
                     }
 
                     if (data.deletedBroadcasts.length > 0) {
-                        let ids = [];
+                        const ids = [];
                         for (let i = 0; i < data.deletedBroadcasts.length; i++) {
                             ids.push(data.deletedBroadcasts[i].id);
                         }

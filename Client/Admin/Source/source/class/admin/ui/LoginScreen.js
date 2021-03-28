@@ -19,13 +19,13 @@ qx.Class.define("admin.ui.LoginScreen", {
             "value": qx.core.Environment.get("password")
         });
 
-        let loginButton = new qx.ui.form.Button("Login");
+        const loginButton = new qx.ui.form.Button("Login");
 
         this.__messageLabel = new qx.ui.basic.Label("");
         this.__messageLabel.setRich(true);
         this.__messageLabel.setTextColor("#000000");
 
-        let gridLayout = new qx.ui.layout.Grid(10, 10);
+        const gridLayout = new qx.ui.layout.Grid(10, 10);
         gridLayout.setColumnAlign(0, "center", "middle");
         gridLayout.setColumnWidth(0, 300);
 
@@ -35,11 +35,11 @@ qx.Class.define("admin.ui.LoginScreen", {
         this.__fieldContainer.add(this.__messageLabel,  { row: 2, column: 0 });
         this.__fieldContainer.add(loginButton,          { row: 3, column: 0 });
 
-        let innerContainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(0, "middle"));
+        const innerContainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(0, "middle"));
         innerContainer.setAllowGrowY(false);
         innerContainer.add(this.__fieldContainer);
 
-        let hboxLayout = new qx.ui.layout.HBox(0, "center");
+        const hboxLayout = new qx.ui.layout.HBox(0, "center");
         hboxLayout.setAlignY("middle");
         this.setLayout(hboxLayout);
 
@@ -69,7 +69,7 @@ qx.Class.define("admin.ui.LoginScreen", {
         },
 
         __onLogin: function(e) {
-            let username = this.__usernameField.getValue();
+            const username = this.__usernameField.getValue();
             if (!username || (username.trim().length === 0)) {
                 this.__messageLabel.setTextColor("#ff0000");
                 this.__messageLabel.setValue("<i>You must specify a username.</i>");
@@ -77,7 +77,7 @@ qx.Class.define("admin.ui.LoginScreen", {
                 return;
             }
 
-            let password = this.__passwordField.getValue();
+            const password = this.__passwordField.getValue();
             if (!password || (password.trim().length === 0)) {
                 this.__messageLabel.setTextColor("#ff0000");
                 this.__messageLabel.setValue("<i>You must specify a password.</i>");

@@ -29,7 +29,7 @@ qx.Class.define("admin.ui.LoadingDialog", {
         this.setWidth(250);
         this.getChildControl("captionbar").setVisibility("excluded");
 
-        let layout = new qx.ui.layout.HBox(0, "center");
+        const layout = new qx.ui.layout.HBox(0, "center");
         layout.setAlignY("middle");
 
         this.setLayout(layout);
@@ -44,11 +44,11 @@ qx.Class.define("admin.ui.LoadingDialog", {
         },
 
         __place : function() {
-            let parent = this.getLayoutParent();
+            const parent = this.getLayoutParent();
             if (parent) {
-                let bounds = parent.getBounds();
+                const bounds = parent.getBounds();
                 if (bounds) {
-                    let hint = this.getSizeHint();
+                    const hint = this.getSizeHint();
                     this.moveTo(bounds.width - hint.width - 40, bounds.height - hint.height - 30);
                 }
             } else {

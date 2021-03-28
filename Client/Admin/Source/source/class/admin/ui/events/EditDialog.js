@@ -13,29 +13,29 @@ qx.Class.define("admin.ui.events.EditDialog", {
             }
         }
 
-        let nameLabel = new qx.ui.basic.Label("Name:");
+        const nameLabel = new qx.ui.basic.Label("Name:");
         nameLabel.setAlignY("middle");
 
         this.__nameField = new qx.ui.form.TextField((!duplicating && this.__event && this.__event.name) ? this.__event.name : "");
 
-        let startLabel = new qx.ui.basic.Label("Start (" + new Date().toLocaleTimeString(undefined, {timeZoneName: "short"}).split(" ")[2] + "):");
+        const startLabel = new qx.ui.basic.Label("Start (" + new Date().toLocaleTimeString(undefined, {timeZoneName: "short"}).split(" ")[2] + "):");
         startLabel.setAlignY("middle");
 
         this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ?
             this.__event.start : null);
 
-        let locationLabel = new qx.ui.basic.Label("Location:");
+            const locationLabel = new qx.ui.basic.Label("Location:");
         locationLabel.setAlignY("middle");
 
 
-        let noLocationItem = new qx.ui.form.ListItem("(None)");
+        const noLocationItem = new qx.ui.form.ListItem("(None)");
 
         this.__locationField = new qx.ui.form.SelectBox();
         this.__locationField.add(noLocationItem);
 
         let selectedLocationItem = noLocationItem;
         for (let i = 0; i < locations.length; i++) {
-            let newItem = new qx.ui.form.ListItem(locations[i].name, null, locations[i]);
+            const newItem = new qx.ui.form.ListItem(locations[i].name, null, locations[i]);
             this.__locationField.add(newItem);
 
             if (this.__event && this.__event.location && (this.__event.location.id === locations[i].id)) {
@@ -46,9 +46,9 @@ qx.Class.define("admin.ui.events.EditDialog", {
         this.__locationField.setSelection([selectedLocationItem]);
 
 
-        let noSeriesItem = new qx.ui.form.ListItem("(None)");
+        const noSeriesItem = new qx.ui.form.ListItem("(None)");
 
-        let seriesLabel = new qx.ui.basic.Label("Series:");
+        const seriesLabel = new qx.ui.basic.Label("Series:");
         seriesLabel.setAlignY("middle");
 
         this.__seriesField = new qx.ui.form.SelectBox();
@@ -56,7 +56,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
 
         let selectedSeriesItem = noSeriesItem;
         for (let i = 0; i < series.length; i++) {
-            let newItem = new qx.ui.form.ListItem(series[i].name, null, series[i]);
+            const newItem = new qx.ui.form.ListItem(series[i].name, null, series[i]);
             this.__seriesField.add(newItem);
 
             if (this.__event && this.__event.series && (this.__event.series.id === series[i].id)) {
@@ -67,7 +67,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
         this.__seriesField.setSelection([selectedSeriesItem]);
 
 
-        let descriptionLabel = new qx.ui.basic.Label("Description:");
+        const descriptionLabel = new qx.ui.basic.Label("Description:");
         descriptionLabel.setPaddingTop(5);
 
         this.__descriptionField = new qx.ui.form.TextArea((this.__event && this.__event.description) ?
@@ -75,12 +75,12 @@ qx.Class.define("admin.ui.events.EditDialog", {
         this.__descriptionField.setHeight(100);
 
 
-        let broadcastsLabel = new qx.ui.basic.Label("Broadcasts:");
+        const broadcastsLabel = new qx.ui.basic.Label("Broadcasts:");
 
         this.__broadcastsField = new admin.ui.events.BroadcastsField(this.__broadcasts);
 
 
-        let content = new qx.ui.container.Composite(new qx.ui.layout.Grid(10, 10));
+        const content = new qx.ui.container.Composite(new qx.ui.layout.Grid(10, 10));
 
         content.add(nameLabel,               { row: 0, column: 0 });
         content.add(this.__nameField,        { row: 0, column: 1 });
@@ -95,10 +95,10 @@ qx.Class.define("admin.ui.events.EditDialog", {
         content.add(broadcastsLabel,         { row: 5, column: 0 });
         content.add(this.__broadcastsField,  { row: 5, column: 1 });
 
-        let okButton = new qx.ui.form.Button(this.__event && !duplicating ? "OK" : "Add");
+        const okButton = new qx.ui.form.Button(this.__event && !duplicating ? "OK" : "Add");
         okButton.setWidth(100);
 
-        let cancelButton = new qx.ui.form.Button("Cancel");
+        const cancelButton = new qx.ui.form.Button("Cancel");
 
         this.base(arguments, this.__event && !duplicating ? "Edit Event" : "Add Event", content, [okButton, cancelButton]);
 
@@ -112,7 +112,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
 
     members: {
         __onOK: function(e) {
-            let name = this.__nameField.getValue().trim();
+            const name = this.__nameField.getValue().trim();
             if (name === "") {
                 this.__nameField.setBackgroundColor("#ed8877");
                 this.__nameField.setToolTipText("You must specify a name");
@@ -131,9 +131,9 @@ qx.Class.define("admin.ui.events.EditDialog", {
             this.__event.location = this.__locationField.getSelection()[0].getModel();
             this.__event.series = this.__seriesField.getSelection()[0].getModel();
 
-            let broadcasts = this.__broadcastsField.getBroadcasts();
+            const broadcasts = this.__broadcastsField.getBroadcasts();
 
-            let deletedBroadcasts = [];
+            const deletedBroadcasts = [];
             for (let i = 0; i < this.__broadcasts.length; i++) {
                 let found = false;
                 for (let j = 0; j < broadcasts.length; j++) {

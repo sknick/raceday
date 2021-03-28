@@ -34,7 +34,7 @@ qx.Class.define("admin.ui.DateTimeField", {
 
         let selectedItem = null;
         for (let i = this.__baseDate.getFullYear() - 10; i < this.__baseDate.getFullYear() + 50; i++) {
-            let thisItem = new qx.ui.form.ListItem(String(i), null, i);
+            const thisItem = new qx.ui.form.ListItem(String(i), null, i);
             this.__yearField.add(thisItem);
 
             if (!selectedItem && (i === this.__baseDate.getFullYear())) {
@@ -53,7 +53,7 @@ qx.Class.define("admin.ui.DateTimeField", {
 
         selectedItem = null;
         for (let i = 0; i < admin.ui.DateTimeField.__MONTHS.length; i++) {
-            let thisItem = new qx.ui.form.ListItem(admin.ui.DateTimeField.__MONTHS[i], null, i);
+            const thisItem = new qx.ui.form.ListItem(admin.ui.DateTimeField.__MONTHS[i], null, i);
             this.__monthField.add(thisItem);
 
             if (!selectedItem && (this.__baseDate.getMonth() === i)) {
@@ -78,7 +78,7 @@ qx.Class.define("admin.ui.DateTimeField", {
 
         selectedItem = null;
         for (let i = 0; i < 24; i++) {
-            let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
+            const thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
             this.__hoursField.add(thisItem);
 
             if (timestamp && !selectedItem && (this.__baseDate.getHours() === i)) {
@@ -98,7 +98,7 @@ qx.Class.define("admin.ui.DateTimeField", {
 
         selectedItem = null;
         for (let i = 0; i < 60; i++) {
-            let thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
+            const thisItem = new qx.ui.form.ListItem(String(i).padStart(2, "0"), null, i);
             this.__minutesField.add(thisItem);
 
             if (timestamp && !selectedItem && (this.__baseDate.getMinutes() === i)) {
@@ -113,13 +113,13 @@ qx.Class.define("admin.ui.DateTimeField", {
         }
 
 
-        let commaLabel = new qx.ui.basic.Label(",");
+        const commaLabel = new qx.ui.basic.Label(",");
         commaLabel.setAlignY("bottom");
 
-        let atLabel = new qx.ui.basic.Label("@");
+        const atLabel = new qx.ui.basic.Label("@");
         atLabel.setAlignY("middle");
 
-        let colonLabel = new qx.ui.basic.Label(":");
+        const colonLabel = new qx.ui.basic.Label(":");
         colonLabel.setAlignY("middle");
 
         this.add(this.__monthField);
@@ -137,7 +137,7 @@ qx.Class.define("admin.ui.DateTimeField", {
 
     members: {
         getTime: function() {
-            let d = new Date(
+            const d = new Date(
                 this.__yearField.getSelection()[0].getModel(),
                 this.__monthField.getSelection()[0].getModel(),
                 this.__dayField.getSelection()[0].getModel(),
@@ -149,7 +149,7 @@ qx.Class.define("admin.ui.DateTimeField", {
         },
 
         __initializeDayField: function(dayToSelect) {
-            let daysInMonth = new Date(
+            const daysInMonth = new Date(
                 this.__baseDate.getFullYear() + this.__yearField.indexOf(
                     this.__yearField.getSelection()[0]
                 ),

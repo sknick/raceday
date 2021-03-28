@@ -32,7 +32,7 @@ qx.Class.define("admin.ui.DialogBase", {
         let buttonPane;
 
         if (!leftButtons) {
-            let layout = new qx.ui.layout.HBox();
+            const layout = new qx.ui.layout.HBox();
             layout.setSpacing(10);
             layout.setAlignX("right");
 
@@ -41,19 +41,19 @@ qx.Class.define("admin.ui.DialogBase", {
                 buttonPane.add(buttons[i]);
             }
         } else {
-            let leftLayout = new qx.ui.layout.HBox();
+            const leftLayout = new qx.ui.layout.HBox();
             leftLayout.setSpacing(10);
 
-            let leftButtonsPane = new qx.ui.container.Composite(leftLayout);
+            const leftButtonsPane = new qx.ui.container.Composite(leftLayout);
             for (let i = 0; i < leftButtons.length; i++) {
                 leftButtonsPane.add(leftButtons[i]);
             }
 
-            let rightLayout = new qx.ui.layout.HBox();
+            const rightLayout = new qx.ui.layout.HBox();
             rightLayout.setSpacing(10);
             rightLayout.setAlignX("right");
 
-            let rightButtonsPane = new qx.ui.container.Composite(rightLayout);
+            const rightButtonsPane = new qx.ui.container.Composite(rightLayout);
             for (let i = 0; i < buttons.length; i++) {
                 rightButtonsPane.add(buttons[i]);
             }

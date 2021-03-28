@@ -17,16 +17,16 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
 
         this.__updateList();
 
-        let addButton = new qx.ui.form.Button(null, "icon/16/actions/list-add.png");
+        const addButton = new qx.ui.form.Button(null, "icon/16/actions/list-add.png");
         addButton.setToolTipText("Add");
 
-        let editButton = new qx.ui.form.Button(null, "icon/16/apps/utilities-text-editor.png");
+        const editButton = new qx.ui.form.Button(null, "icon/16/apps/utilities-text-editor.png");
         editButton.setToolTipText("Edit");
 
-        let removeButton = new qx.ui.form.Button(null, "icon/16/actions/list-remove.png");
+        const removeButton = new qx.ui.form.Button(null, "icon/16/actions/list-remove.png");
         removeButton.setToolTipText("Delete");
 
-        let buttonContainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(2));
+        const buttonContainer = new qx.ui.container.Composite(new qx.ui.layout.VBox(2));
         buttonContainer.add(addButton);
         buttonContainer.add(editButton);
         buttonContainer.add(removeButton);
@@ -53,7 +53,7 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
         },
 
         __updateList: function() {
-            let self = this;
+            const self = this;
             this.__broadcasts.sort(function(a, b) {
                 if (self.__broadcastToString(a) < self.__broadcastToString(b)) {
                     return -1;
@@ -72,7 +72,7 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
         },
 
         __onAddBroadcast: function(e) {
-            let dlg = new admin.ui.events.EditBroadcastDialog();
+            const dlg = new admin.ui.events.EditBroadcastDialog();
             dlg.addListener("confirmed", this.__onAddBroadcastContinue, this);
 
             dlg.show();
@@ -84,9 +84,9 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
         },
 
         __onEditBroadcast: function(e) {
-            let selectedItems = this.__list.getSelection();
+            const selectedItems = this.__list.getSelection();
             if (selectedItems.length > 0) {
-                let dlg = new admin.ui.events.EditBroadcastDialog(selectedItems[0].getModel());
+                const dlg = new admin.ui.events.EditBroadcastDialog(selectedItems[0].getModel());
                 dlg.addListener("confirmed", this.__onEditBroadcastContinue, this);
 
                 dlg.show();
@@ -94,22 +94,22 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
         },
 
         __onEditBroadcastContinue: function(e) {
-            let broadcast = e.getData();
-            let selectedItem = this.__list.getSelection()[0];
+            const broadcast = e.getData();
+            const selectedItem = this.__list.getSelection()[0];
 
             selectedItem.setLabel(this.__broadcastToString(broadcast));
             selectedItem.setModel(broadcast);
         },
 
         __onRemoveBroadcast: function(e) {
-            let selectedItems = this.__list.getSelection();
+            const selectedItems = this.__list.getSelection();
             if (selectedItems.length > 0) {
                 for (let i = 0; i < selectedItems.length; i++) {
                     this.__list.remove(selectedItems[i]);
                 }
             }
 
-            let children = this.__list.getChildren();
+            const children = this.__list.getChildren();
 
             this.__broadcasts = [];
             for (let i = 0; i < children.length; i++) {

@@ -14,12 +14,12 @@ qx.Class.define("admin.ui.ConfirmationDialog", {
      * @param {*} [context]
      */
     construct: function(title, message, context) {
-        let messageLabel = new qx.ui.basic.Label(message);
+        const messageLabel = new qx.ui.basic.Label(message);
         messageLabel.setRich(true);
 
-        let yesButton = new qx.ui.form.Button("Yes");
+        const yesButton = new qx.ui.form.Button("Yes");
         yesButton.setWidth(70);
-        let noButton = new qx.ui.form.Button("No");
+        const noButton = new qx.ui.form.Button("No");
         noButton.setWidth(70);
 
         yesButton.addListener("execute", function(e) {

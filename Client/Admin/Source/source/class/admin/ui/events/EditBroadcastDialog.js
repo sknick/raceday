@@ -4,7 +4,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
     construct: function(broadcast) {
         this.__broadcast = broadcast ? broadcast : new raceday.api.model.UnsavedBroadcast({});
 
-        let typeLabel = new qx.ui.basic.Label("Type:");
+        const typeLabel = new qx.ui.basic.Label("Type:");
         typeLabel.setAlignY("middle");
 
         this.__typeField = new qx.ui.form.SelectBox();
@@ -16,7 +16,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         this.__typeField.add(new qx.ui.form.ListItem("Other"));
         this.__typeField.add(new qx.ui.form.ListItem("YouTube"));
 
-        let typeItems = this.__typeField.getChildren();
+        const typeItems = this.__typeField.getChildren();
 
         let selectedItem = typeItems[0];
         if (this.__broadcast.type_) {
@@ -30,7 +30,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
 
         this.__typeField.setSelection([selectedItem]);
 
-        let urlLabel = new qx.ui.basic.Label("URL (if applicable):");
+        const urlLabel = new qx.ui.basic.Label("URL (if applicable):");
         urlLabel.setAlignY("middle");
 
         this.__urlField = new qx.ui.form.TextField();
@@ -39,12 +39,12 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
             this.__urlField.setValue(this.__broadcast.url);
         }
 
-        let okButton = new qx.ui.form.Button(broadcast ? "OK" : "Add");
+        const okButton = new qx.ui.form.Button(broadcast ? "OK" : "Add");
         okButton.setWidth(100);
 
-        let cancelButton = new qx.ui.form.Button("Cancel");
+        const cancelButton = new qx.ui.form.Button("Cancel");
 
-        let content = new qx.ui.container.Composite(new qx.ui.layout.Grid(10, 10));
+        const content = new qx.ui.container.Composite(new qx.ui.layout.Grid(10, 10));
         content.add(typeLabel,        { row: 0, column: 0 });
         content.add(this.__typeField, { row: 0, column: 1 });
         content.add(urlLabel,         { row: 1, column: 0 });

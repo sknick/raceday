@@ -36,7 +36,7 @@ qx.Class.define("admin.ui.MainWindow", {
             }
 
             if (errorMessage) {
-                let dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE, errorMessage);
+                const dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE, errorMessage);
                 dlg.open();
             }
         }
@@ -51,7 +51,7 @@ qx.Class.define("admin.ui.MainWindow", {
         this.__unauthorizedHandled = false;
         this.__loadingDlg = new admin.ui.LoadingDialog();
 
-        let accessToken = qx.bom.storage.Web.getSession().getItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY);
+        const accessToken = qx.bom.storage.Web.getSession().getItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY);
         if (accessToken) {
             this.__onLoginContinued(accessToken);
         } else {
@@ -79,7 +79,7 @@ qx.Class.define("admin.ui.MainWindow", {
             if (!this.__unauthorizedHandled) {
                 qx.bom.storage.Web.getSession().removeItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY);
 
-                let dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE,
+                const dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE,
                     "Your login session has expired. Press OK to login again.");
                 dlg.addListener("confirmed", this.__onUnauthorizedContinue, this);
                 dlg.open();
@@ -93,7 +93,7 @@ qx.Class.define("admin.ui.MainWindow", {
         },
 
         __onLogin: function(e) {
-            let data = e.getData();
+            const data = e.getData();
             admin.RequestManager.getInstance().getNewAccessToken(this, data.username, data.password, true).then(
                 function(e) {
                     this.context.__onLoginContinued(e.getResponse());
@@ -116,7 +116,7 @@ qx.Class.define("admin.ui.MainWindow", {
                 this.__root.remove(this.__loginDlg);
             }
 
-            let tabView = new qx.ui.tabview.TabView("top");
+            const tabView = new qx.ui.tabview.TabView("top");
             tabView.setContentPadding(0, 0, 0, 0);
 
             tabView.add(new admin.ui.events.Page());

@@ -22,7 +22,7 @@ qx.Class.define("admin.ui.SimpleTableModel", {
     construct: function(defaultColumnSort, defaultSortIsAscending) {
         this.base(arguments);
 
-        let sessionStorage = qx.bom.storage.Web.getSession();
+        const sessionStorage = qx.bom.storage.Web.getSession();
 
         if (sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY) === null) {
             sessionStorage.setItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY, defaultColumnSort);
@@ -53,7 +53,7 @@ qx.Class.define("admin.ui.SimpleTableModel", {
         },
 
         _onMetadataChanged: function(e) {
-            let sessionStorage = qx.bom.storage.Web.getSession();
+            const sessionStorage = qx.bom.storage.Web.getSession();
             sessionStorage.setItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY, this.getSortColumnIndex());
             sessionStorage.setItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY, this.isSortAscending());
         }
