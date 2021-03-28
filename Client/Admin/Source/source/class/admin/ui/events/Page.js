@@ -68,7 +68,7 @@ qx.Class.define("admin.ui.events.Page", {
                 this
             ).then(
                 function(e) {
-                    const response = e.getResponse();
+                    let response = e.getResponse();
 
                     const locations = [];
                     for (let i = 0; i < response.length; i++) {
@@ -79,7 +79,7 @@ qx.Class.define("admin.ui.events.Page", {
                         this.context
                     ).then(
                         function(e) {
-                            const response = e.getResponse();
+                            response = e.getResponse();
 
                             const series = [];
                             for (let i = 0; i < response.length; i++) {
@@ -181,7 +181,7 @@ qx.Class.define("admin.ui.events.Page", {
                     this
                 ).then(
                     function(e) {
-                        const response = e.getResponse();
+                        let response = e.getResponse();
 
                         const locations = [];
                         for (let i = 0; i < response.length; i++) {
@@ -249,7 +249,7 @@ qx.Class.define("admin.ui.events.Page", {
                     this
                 ).then(
                     function(e) {
-                        const response = e.getResponse();
+                        let response = e.getResponse();
 
                         const locations = [];
                         for (let i = 0; i < response.length; i++) {
