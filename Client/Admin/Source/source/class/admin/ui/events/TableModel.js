@@ -16,7 +16,7 @@ qx.Class.define("admin.ui.events.TableModel", {
         this.base(arguments, admin.ui.events.TableModel.START_COLUMN, true);
 
         for (let i = 0; i < admin.ui.events.TableModel.NUM_COLUMNS; i++) {
-            this.setColumnSortable(i, true);
+            this.setColumnSortable(i, false);
         }
 
         this.setColumns(["Start", "Name", "Location", "Series"], ["start", "name", "location", "series"]);
