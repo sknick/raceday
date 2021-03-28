@@ -18,7 +18,11 @@ qx.Class.define("admin.ui.events.EditDialog", {
 
         this.__nameField = new qx.ui.form.TextField((!duplicating && this.__event && this.__event.name) ? this.__event.name : "");
 
-        const startLabel = new qx.ui.basic.Label("Start (" + new Date().toLocaleTimeString(undefined, {timeZoneName: "short"}).split(" ")[2] + "):");
+        let dateStr = new Date().toLocaleTimeString(undefined, {timeZoneName: "short"});
+        const dateStrSplit = dateStr.split(" ");
+        dateStr = dateStrSplit[dateStrSplit.length - 1];
+
+        const startLabel = new qx.ui.basic.Label("Start (" + dateStr + "):");
         startLabel.setAlignY("middle");
 
         this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ?
