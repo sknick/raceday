@@ -10,5 +10,6 @@
   "license": "",
   "devDependencies": {
     "@qooxdoo/compiler": "^1.0.0"
-  }
+  },
+  "dependencies": {}
 }
