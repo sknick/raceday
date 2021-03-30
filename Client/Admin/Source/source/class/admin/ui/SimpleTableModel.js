@@ -33,7 +33,8 @@ qx.Class.define("admin.ui.SimpleTableModel", {
 
         this.sortByColumn(sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY),
             sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY));
-        
+            
+        this.addListener("dataChanged", this.__onDataChanged, this);
         this.addListener("metaDataChanged", this.__onMetadataChanged, this);
     },
 
@@ -49,6 +50,12 @@ qx.Class.define("admin.ui.SimpleTableModel", {
             if (value) {
                 this.refresh();
             }
+        },
+
+        __onDataChanged: function(e) {
+            const sessionStorage = qx.bom.storage.Web.getSession();
+            this.sortByColumn(sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY),
+                sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY));
         },
 
         __onMetadataChanged: function(e) {

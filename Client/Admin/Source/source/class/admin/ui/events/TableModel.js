@@ -5,19 +5,27 @@ qx.Class.define("admin.ui.events.TableModel", {
     extend: admin.ui.SimpleTableModel,
 
     statics: {
-        START_COLUMN:       0,
-        NAME_COLUMN:        1,
-        LOCATION_COLUMN:    2,
-        SERIES_COLUMN:      3,
-        NUM_COLUMNS:        4
+        START_COLUMN:    0,
+        NAME_COLUMN:     1,
+        LOCATION_COLUMN: 2,
+        SERIES_COLUMN:   3,
+        NUM_COLUMNS:     4
     },
 
     construct: function() {
         this.base(arguments, admin.ui.events.TableModel.START_COLUMN, true);
 
         for (let i = 0; i < admin.ui.events.TableModel.NUM_COLUMNS; i++) {
-            this.setColumnSortable(i, false);
+            this.setColumnSortable(i, true);
         }
+
+        this.setSortMethods(
+            admin.ui.events.TableModel.START_COLUMN,
+
+            function(row1, row2, column) {
+                return row1.originalData.event.start - row2.originalData.event.start;
+            }
+        );
 
         this.setColumns(["Start", "Name", "Location", "Series"], ["start", "name", "location", "series"]);
     },

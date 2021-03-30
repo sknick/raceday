@@ -11,7 +11,7 @@ qx.Class.define("admin.ui.locations.TableModel", {
         this.base(arguments, admin.ui.locations.TableModel.NAME_COLUMN, true);
 
         for (let i = 0; i < admin.ui.locations.TableModel.NUM_COLUMNS; i++) {
-            this.setColumnSortable(i, false);
+            this.setColumnSortable(i, true);
         }
 
         this.setColumns(["Name", "Description"], ["name", "description"]);
