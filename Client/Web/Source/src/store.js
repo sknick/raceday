@@ -26,18 +26,17 @@ export default createStore({
         updateDate(context, date) {
             context.commit("updateDate", date)
 
-            const d = new Date()
+            let d = new Date()
+            
+            if (context.state.date) {
+                let s = context.state.date.split("/")
+                d = new Date(parseInt(s[0]), parseInt(s[1]) - 1, parseInt(s[2]))
+            }
+
             d.setHours(12)
             d.setMinutes(0)
             d.setSeconds(0)
             d.setMilliseconds(0)
-            
-            if (context.state.date) {
-                let s = context.state.date.split("/")
-                d.setFullYear(parseInt(s[0]))
-                d.setMonth(parseInt(s[1]) - 1)
-                d.setDate(parseInt(s[2]))
-            }
 
             axios.get(
                 "api/events?" +
