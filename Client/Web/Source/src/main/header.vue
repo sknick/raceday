@@ -1,7 +1,13 @@
 <template>
     <div>
         <span class="upper-left-info">
-            Date: <DatepickerLite class="datepicker" :locale="datepickerSetting.locale" :value-attr="today" @value-changed="onDateSelected"></DatepickerLite>
+            Date: <DatepickerLite
+                      class="datepicker"
+                      :is-button-type="datepickerSetting.isButtonType"
+                      :locale="datepickerSetting.locale"
+                      :value-attr="today"
+                      @value-changed="onDateSelected">
+                  </DatepickerLite>
             <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
         </span>
 
@@ -68,6 +74,7 @@ export default {
 
     setup() {
         const datepickerSetting = {
+            isButtonType: true,
             locale: {
                 format: "YYYY/MM/DD",
                 weekday: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
