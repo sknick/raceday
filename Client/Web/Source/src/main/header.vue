@@ -1,20 +1,55 @@
 <template>
-    <div class="header-container">
-        <span class="upper-left-info">
-            Date: <DatepickerLite
-                      class="datepicker"
-                      :is-button-type="datepickerSetting.isButtonType"
-                      :locale="datepickerSetting.locale"
-                      :value-attr="today"
-                      @value-changed="onDateSelected">
-                  </DatepickerLite>
-            <span>{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
-        </span>
 
-        <span class="logo">
-            Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon"> (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
-        </span>
+    <div v-if="widthIsMinimal()">
+        <div class="header-container">
+            <div class="upper-left-info">
+                <div> Date:
+                    <DatepickerLite
+                        class="datepicker"
+                        :is-button-type="datepickerSetting.isButtonType"
+                        :locale="datepickerSetting.locale"
+                        :value-attr="today"
+                        @value-changed="onDateSelected">
+                    </DatepickerLite>
+                </div>
+            </div>
+
+            <div class="logo">
+                <div>
+                    Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                </div>
+                <div class="about">
+                    (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
+                </div>
+            </div>
+        </div>
+        <div class="events-label">{{ eventsLabelText() }}</div>
     </div>
+
+    <div v-else class="header-container">
+        <div class="upper-left-info">
+            <div> Date:
+                <DatepickerLite
+                    class="datepicker"
+                    :is-button-type="datepickerSetting.isButtonType"
+                    :locale="datepickerSetting.locale"
+                    :value-attr="today"
+                    @value-changed="onDateSelected">
+                </DatepickerLite>
+            </div>
+            <div class="events-label">{{ eventsLabelText() }}</div>
+        </div>
+
+        <div class="logo">
+            <div>
+                Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+            </div>
+            <div class="about">
+                (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
+            </div>
+        </div>
+    </div>
+
 </template>
 
 
@@ -43,6 +78,21 @@ export default {
     },
 
     methods: {
+        canHover() {
+            return window.matchMedia("(any-hover: hover)").matches
+        },
+
+        eventsLabelText() {
+            if (!this.events || this.events.length === 0) {
+                return "0 events"
+            }
+            const numEvents = this.events.length
+            let retStr = `${numEvents} event${numEvents === 1 ? "" : "s"}`
+            retStr += ` (${this.canHover() ? "Click" : "Press"}`
+            retStr += ` on ${numEvents === 1 ? "the" : "an"} event to see available broadcasts)`
+            return retStr
+        },
+
         onDateSelected(value) {
             this.$store.dispatch("updateDate", value)
         },
@@ -69,6 +119,11 @@ export default {
 
                 "Export"
             )
+        },
+
+        widthIsMinimal() {
+            const maxWidth = 601;
+            return window.outerWidth <= maxWidth
         }
     },
 
@@ -97,8 +152,8 @@ export default {
     display: inline;
 }
 
-.event {
-    cursor: pointer;
+.events-label {
+    margin-left: 0.75rem;
 }
 
 .header-container {
@@ -110,6 +165,32 @@ export default {
 
 .logo {
     font-weight: bold;
+}
+
+.logo, .upper-left-info {
+    display: flex;
+    align-items: center;
+    min-width: 6.25rem;
+}
+
+@media screen and (max-width: 601px) and (orientation: portrait) {
+    .about {
+        font-size: smaller;
+    }
+
+    .header-container, .upper-left-info {
+        align-items: center;
+    }
+
+    .logo {
+        flex-direction: column;
+    }
+}
+
+@media screen and (max-width: 599px) and (orientation: portrait) {
+    .events-label {
+        font-size: smaller;
+    }
 }
 
 </style>

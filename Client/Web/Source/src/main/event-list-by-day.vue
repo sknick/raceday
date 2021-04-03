@@ -174,11 +174,11 @@ export default {
 .header-container {
     position: relative;
 }
+
 .page-header {
     position: sticky;
     top: 0;
-    background-color: #272b30; /* TODO: Matches bootstrap, need to find out how to properly override this */
+    background-color: #272b30;
 }
-
 
 </style>
