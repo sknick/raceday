@@ -3,6 +3,7 @@
     <div v-if="widthIsMinimal()">
         <div class="header-container">
             <div class="upper-left-info">
+
                 <div> Date:
                     <DatepickerLite
                         class="datepicker"
@@ -12,22 +13,29 @@
                         @value-changed="onDateSelected">
                     </DatepickerLite>
                 </div>
+
             </div>
 
             <div class="logo">
+
                 <div>
                     Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
                 </div>
+
                 <div class="about">
                     (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
                 </div>
+
             </div>
         </div>
+
         <div class="events-label">{{ eventsLabelText() }}</div>
+
     </div>
 
     <div v-else class="header-container">
         <div class="upper-left-info">
+
             <div> Date:
                 <DatepickerLite
                     class="datepicker"
@@ -37,16 +45,20 @@
                     @value-changed="onDateSelected">
                 </DatepickerLite>
             </div>
+
             <div class="events-label">{{ eventsLabelText() }}</div>
         </div>
 
         <div class="logo">
+
             <div>
                 Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
             </div>
+
             <div class="about">
                 (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
             </div>
+
         </div>
     </div>
 
