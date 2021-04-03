@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="header-container">
         <span class="upper-left-info">
             Date: <DatepickerLite
                       class="datepicker"
@@ -8,7 +8,7 @@
                       :value-attr="today"
                       @value-changed="onDateSelected">
                   </DatepickerLite>
-            <span style="padding-left: 10px">{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
+            <span>{{ events ? events.length : 0 }} event{{ events && events.length === 1 ? "" : "s" }}{{ events && events.length > 0 ? " (Click on " + (events.length !== 1 ? "an" : "the") + " event to see available broadcasts)" : "" }}</span>
         </span>
 
         <span class="logo">
@@ -101,15 +101,15 @@ export default {
     cursor: pointer;
 }
 
-.logo {
-    float:         right;
-    font-weight:   bold;
-    padding-right: 10px;
-    padding-top:   2px;
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75em;
 }
 
-.upper-left-info {
-    padding-left: 5px;
+.logo {
+    font-weight: bold;
 }
 
 </style>
