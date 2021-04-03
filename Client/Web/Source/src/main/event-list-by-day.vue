@@ -1,9 +1,8 @@
 <template>
-    <div>
-        <Header/>
-
-        <div>
-            <table class="table table-hover event-table">
+    <div class="header-container">
+        <div class="page-header">
+            <Header/>
+            <table class="table event-table-headers">
                 <thead>
                     <tr>
                         <th>Time</th>
@@ -12,7 +11,11 @@
                         <th>Location</th>
                     </tr>
                 </thead>
+            </table>
+        </div>
 
+        <div>
+            <table class="table table-hover event-table">
                 <tbody v-for="event in events" v-bind:key="event">
                     <tr v-if="!isPast(event.start)" @click="toggleEvent(event.id)">
                         <td>{{ timestampToString(event.start) }}</td>
@@ -162,6 +165,20 @@ export default {
 
 .event-table {
     cursor: default
+}
+
+.event-table-headers {
+    margin-bottom: 0;
+}
+
+.header-container {
+    position: relative;
+}
+
+.page-header {
+    position: sticky;
+    top: 0;
+    background-color: #272b30;
 }
 
 </style>
