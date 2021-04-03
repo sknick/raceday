@@ -1,6 +1,7 @@
 <template>
 
     <div v-if="widthIsMinimal()">
+
         <div class="header-container">
 
             <div class="upper-left-info">
@@ -32,6 +33,7 @@
         </div>
 
         <div class="events-label">{{ eventsLabelText() }}</div>
+
     </div>
 
     <div v-else class="header-container">
@@ -49,6 +51,7 @@
             </div>
 
             <div class="events-label">{{ eventsLabelText() }}</div>
+            
         </div>
 
         <div class="logo">
@@ -62,7 +65,7 @@
             </div>
 
         </div>
-        
+
     </div>
 
 </template>
@@ -137,7 +140,7 @@ export default {
         },
 
         widthIsMinimal() {
-            const maxWidth = 601;
+            const maxWidth = 601
             return window.outerWidth <= maxWidth
         }
     },
