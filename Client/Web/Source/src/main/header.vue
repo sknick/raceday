@@ -2,6 +2,7 @@
 
     <div v-if="widthIsMinimal()">
         <div class="header-container">
+
             <div class="upper-left-info">
 
                 <div> Date:
@@ -27,13 +28,14 @@
                 </div>
 
             </div>
+
         </div>
 
         <div class="events-label">{{ eventsLabelText() }}</div>
-
     </div>
 
     <div v-else class="header-container">
+
         <div class="upper-left-info">
 
             <div> Date:
@@ -60,6 +62,7 @@
             </div>
 
         </div>
+        
     </div>
 
 </template>
