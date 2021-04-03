@@ -2,7 +2,10 @@
     <div class="header-container">
         <div class="page-header">
             <Header/>
-            <table class="table event-table-headers">
+        </div>
+
+        <div>
+            <table class="table table-hover event-table">
                 <thead>
                     <tr>
                         <th>Time</th>
@@ -11,11 +14,6 @@
                         <th>Location</th>
                     </tr>
                 </thead>
-            </table>
-        </div>
-
-        <div>
-            <table class="table table-hover event-table">
                 <tbody v-for="event in events" v-bind:key="event">
                     <tr v-if="!isPast(event.start)" @click="toggleEvent(event.id)">
                         <td>{{ timestampToString(event.start) }}</td>
