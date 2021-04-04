@@ -1,6 +1,5 @@
 <template>
     <div class="header-container">
-
         <div class="page-header">
             <Header/>
 
@@ -13,7 +12,6 @@
         </div>
 
         <div>
-
             <div class="event-table">
                 <div v-for="event in events" v-bind:key="event">
                     <div :class="{'text-muted': isPast(event.start)}" @click="toggleEvent(event.id)" class="row">
@@ -37,9 +35,7 @@
                         </template>
                     </template>
                 </div>
-
             </div>
-
         </div>
 
     </div>
