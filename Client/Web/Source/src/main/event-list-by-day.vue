@@ -172,7 +172,7 @@ export default {
 .header-container {
     height: 100%;
     width: 100%;
-    overflow: hidden auto;
+    overflow: hidden;
     position: relative;
 }
 
