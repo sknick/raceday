@@ -1,15 +1,8 @@
 <template>
-    <div class="header-container">
+    <div class="main-container">
 
         <div class="page-header">
             <Header/>
-
-            <div class="row event-table-headers">
-                <div class="col-2">Time</div>
-                <div class="col-4">Series</div>
-                <div class="col-3">Event</div>
-                <div class="col-3">Location</div>
-            </div>
         </div>
 
         <div>
@@ -160,16 +153,13 @@ export default {
 <style scoped>
 
 .event-table {
-    cursor: default
+    cursor: default;
+    overflow: hidden auto;
+    /* Header height */
+    height: calc(100vh - 100px);
 }
 
-.event-table-headers {
-    border-top: 2px solid rgba(0,0,0,0.6);
-    font-weight: bold;
-    color: #fff;
-}
-
-.header-container {
+.main-container {
     height: 100%;
     width: 100%;
     overflow: hidden;
@@ -192,6 +182,14 @@ export default {
 
 .row:hover:not(.event-table-headers) {
     background-color: rgba(255,255,255,0.05);
+}
+
+@media screen and (max-width: 601px) and (orientation: portrait) {
+
+    .event-table {
+        /* Header height */
+        height: calc(100vh - 132px);
+    }
 }
 
 </style>
