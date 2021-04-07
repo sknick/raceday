@@ -8,6 +8,7 @@
         <div>
 
             <div class="event-table">
+
                 <div v-for="event in events" v-bind:key="event">
                     <div :class="{'text-muted': isPast(event.start)}" @click="toggleEvent(event.id)" class="row">
                         <div class="col-2">{{ timestampToString(event.start) }}</div>

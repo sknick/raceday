@@ -1,6 +1,7 @@
 <template>
 
     <div class="header-container">
+
         <div v-if="widthIsMinimal()">
 
             <div class="header-info-container">
@@ -77,6 +78,7 @@
             <div class="col-3">Event</div>
             <div class="col-3">Location</div>
         </div>
+
     </div>
 
 </template>
