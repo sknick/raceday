@@ -86,8 +86,8 @@ export default {
 
         // The content will be pushed to the left out of alignment with the headers if there is a scrollbar.
         needsOffsetForScrollbar() {
-            const ref = this.$refs.eventsScroller;
-            return (this.events.length * 50) > ref.getBoundingClientRect().height;
+            const ref = this.$refs.eventsScroller
+            return (this.events.length * 50) > ref.getBoundingClientRect().height
         },
 
         timestampToString(timestamp) {
@@ -198,7 +198,6 @@ export default {
 }
 
 @media screen and (max-width: 601px) and (orientation: portrait) {
-
     .event-table {
         /* Header height */
         height: calc(100vh - 132px);
