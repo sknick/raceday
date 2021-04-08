@@ -7,10 +7,10 @@
 
         <div>
 
-            <div class="event-table">
+            <div class="event-table" ref="eventsScroller">
 
                 <div v-for="event in events" v-bind:key="event">
-                    <div :class="{'text-muted': isPast(event.start)}" @click="toggleEvent(event.id)" class="row">
+                    <div :class="{'text-muted': isPast(event.start), 'offset-for-scrollbar': needsOffsetForScrollbar()}" @click="toggleEvent(event.id)" class="row">
                         <div class="col-2">{{ timestampToString(event.start) }}</div>
                         <div class="col-4">{{ event.series ? event.series.name : "" }}</div>
                         <div class="col-3">{{ event.name }}</div>
@@ -82,6 +82,12 @@ export default {
                 default:
                     return require("../assets/other.png")
             }
+        },
+
+        // The content will be pushed to the left out of alignment with the headers if there is a scrollbar.
+        needsOffsetForScrollbar() {
+            const ref = this.$refs.eventsScroller;
+            return (this.events.length * 50) > ref.getBoundingClientRect().height;
         },
 
         timestampToString(timestamp) {
@@ -158,6 +164,7 @@ export default {
     overflow: hidden auto;
     /* Header height */
     height: calc(100vh - 100px);
+    width: 100%;
 }
 
 .main-container {
@@ -165,6 +172,11 @@ export default {
     width: 100%;
     overflow: hidden;
     position: relative;
+}
+
+.offset-for-scrollbar {
+    /* Offset for scrollbar width */
+    width: calc(100vw + 28px);
 }
 
 .page-header {
