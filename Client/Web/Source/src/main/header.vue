@@ -200,10 +200,6 @@ export default {
     padding: 0.75em;
 }
 
-.header-container {
-    height: 100px;
-}
-
 .logo {
     font-weight: bold;
 }
@@ -231,9 +227,6 @@ export default {
 
     .logo {
         flex-direction: column;
-    }
-    .header-container {
-        height: 132px;
     }
 }
 

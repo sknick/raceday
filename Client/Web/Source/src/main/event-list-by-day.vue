@@ -197,12 +197,4 @@ export default {
     background-color: rgba(255,255,255,0.05);
 }
 
-@media screen and (max-width: 601px) and (orientation: portrait) {
-
-    .event-table {
-        /* Header height */
-        height: calc(100vh - 132px);
-    }
-}
-
 </style>
