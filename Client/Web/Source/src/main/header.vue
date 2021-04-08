@@ -220,7 +220,7 @@ export default {
     padding: 0.75em;
 }
 
-@media screen and (max-width: 601px) and (orientation: portrait) {
+@media screen and (max-width: 768px) and (orientation: portrait) {
     .about {
         font-size: smaller;
     }
