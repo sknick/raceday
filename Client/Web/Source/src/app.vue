@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div class="app-wrapper">
 
         <EventListByDay/>
 
@@ -23,5 +23,11 @@ export default {
 
 
 <style>
+
+.app-wrapper {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
 
 </style>

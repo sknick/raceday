@@ -1,69 +1,82 @@
 <template>
 
-    <div v-if="widthIsMinimal()">
+    <div class="header-container">
 
-        <div class="header-container">
+        <div v-if="widthIsMinimal()">
 
-            <div class="upper-left-info">
+            <div class="header-info-container">
 
-                <div> Date:
-                    <DatepickerLite
-                        class="datepicker"
-                        :is-button-type="datepickerSetting.isButtonType"
-                        :locale="datepickerSetting.locale"
-                        :value-attr="today"
-                        @value-changed="onDateSelected">
-                    </DatepickerLite>
+                <div class="upper-left-info">
+
+                    <div> Date:
+                        <DatepickerLite
+                                class="datepicker"
+                                :is-button-type="datepickerSetting.isButtonType"
+                                :locale="datepickerSetting.locale"
+                                :value-attr="today"
+                                @value-changed="onDateSelected">
+                        </DatepickerLite>
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="logo">
 
-            <div class="logo">
+                    <div>
+                        Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                    </div>
 
-                <div>
-                    Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                    <div class="about">
+                        (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
+                    </div>
+
                 </div>
 
-                <div class="about">
-                    (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="events-label">{{ eventsLabelText() }}</div>
-
-    </div>
-
-    <div v-else class="header-container">
-
-        <div class="upper-left-info">
-
-            <div> Date:
-                <DatepickerLite
-                    class="datepicker"
-                    :is-button-type="datepickerSetting.isButtonType"
-                    :locale="datepickerSetting.locale"
-                    :value-attr="today"
-                    @value-changed="onDateSelected">
-                </DatepickerLite>
             </div>
 
             <div class="events-label">{{ eventsLabelText() }}</div>
-            
+
         </div>
 
-        <div class="logo">
+        <div v-else>
+            <div class="header-info-container">
 
-            <div>
-                Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                <div class="upper-left-info">
+
+                    <div> Date:
+                        <DatepickerLite
+                                class="datepicker"
+                                :is-button-type="datepickerSetting.isButtonType"
+                                :locale="datepickerSetting.locale"
+                                :value-attr="today"
+                                @value-changed="onDateSelected">
+                        </DatepickerLite>
+                    </div>
+
+                    <div class="events-label">{{ eventsLabelText() }}</div>
+
+                </div>
+
+                <div class="logo">
+
+                    <div>
+                        Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                    </div>
+
+                    <div class="about">
+                        (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
+                    </div>
+
+                </div>
+
             </div>
+        </div>
 
-            <div class="about">
-                (<a href="#" @click="onExport">Export</a> | <a href="https://github.com/sknick/raceday" target="_blank">About</a>)
-            </div>
-
+        <div class="row event-table-headers">
+            <div class="col-2">Time</div>
+            <div class="col-4">Series</div>
+            <div class="col-3">Event</div>
+            <div class="col-3">Location</div>
         </div>
 
     </div>
@@ -170,11 +183,17 @@ export default {
     display: inline;
 }
 
+.event-table-headers {
+    border-top: 2px solid rgba(0,0,0,0.6);
+    font-weight: bold;
+    color: #fff;
+}
+
 .events-label {
     margin-left: 0.75rem;
 }
 
-.header-container {
+.header-info-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -191,12 +210,18 @@ export default {
     min-width: 6.25rem;
 }
 
-@media screen and (max-width: 601px) and (orientation: portrait) {
+.row {
+    border-bottom: 2px solid rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 0.75em;
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
     .about {
         font-size: smaller;
     }
 
-    .header-container, .upper-left-info {
+    .header-info-container, .upper-left-info {
         align-items: center;
     }
 

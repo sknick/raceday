@@ -1,51 +1,41 @@
 <template>
-    <div class="header-container">
+    <div class="main-container">
+
         <div class="page-header">
             <Header/>
-            <table class="table event-table-headers">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Series</th>
-                        <th>Event</th>
-                        <th>Location</th>
-                    </tr>
-                </thead>
-            </table>
         </div>
 
         <div>
-            <table class="table table-hover event-table">
-                <tbody v-for="event in events" v-bind:key="event">
-                    <tr v-if="!isPast(event.start)" @click="toggleEvent(event.id)">
-                        <td>{{ timestampToString(event.start) }}</td>
-                        <td>{{ event.series ? event.series.name : "" }}</td>
-                        <td>{{ event.name }}</td>
-                        <td>{{ event.location ? event.location.name : "" }}</td>
-                    </tr>
-                    <tr v-else class="text-muted" @click="toggleEvent(event.id)">
-                        <td>{{ timestampToString(event.start) }}</td>
-                        <td>{{ event.series ? event.series.name : "" }}</td>
-                        <td>{{ event.name }}</td>
-                        <td>{{ event.location ? event.location.name : "" }}</td>
-                    </tr>
+
+            <div class="event-table" ref="eventsScroller">
+
+                <div v-for="event in events" v-bind:key="event">
+                    <div :class="{'text-muted': isPast(event.start), 'offset-for-scrollbar': needsOffsetForScrollbar()}" @click="toggleEvent(event.id)" class="row">
+                        <div class="col-2">{{ timestampToString(event.start) }}</div>
+                        <div class="col-4">{{ event.series ? event.series.name : "" }}</div>
+                        <div class="col-3">{{ event.name }}</div>
+                        <div class="col-3">{{ event.location ? event.location.name : "" }}</div>
+                    </div>
 
                     <template v-if="shownEvents.includes(event.id)">
                         <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
-                            <tr v-for="broadcast in event.broadcasts" v-bind:key="broadcast">
-                                <td colspan="4" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon"> <a :href="broadcast.url" target="_blank" v-if="broadcast.url.match('^https?://')">{{ broadcast.url }}</a><span v-else>{{ broadcast.url }}</span></td>
-                                <td colspan="4" v-else><img :src="mediaIcon(broadcast)" alt="Media icon"> {{ broadcast.type_ }}</td>
-                            </tr>
+                            <div v-for="broadcast in event.broadcasts" v-bind:key="broadcast" class="row">
+                                <div class="col-12" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon" /> <a :href="broadcast.url" target="_blank" v-if="broadcast.url.match('^https?://')">{{ broadcast.url }}</a><span v-else>{{ broadcast.url }}</span></div>
+                                <div class="col-12" v-else><img :src="mediaIcon(broadcast)" alt="Media icon" /> {{ broadcast.type_ }}</div>
+                            </div>
                         </template>
                         <template v-else>
-                            <tr>
-                                <td colspan="4">(No Broadcasts)</td>
-                            </tr>
+                            <div class="row">
+                                <div class="col-12">(No Broadcasts)</div>
+                            </div>
                         </template>
                     </template>
-                </tbody>
-            </table>
+                </div>
+
+            </div>
+
         </div>
+
     </div>
 </template>
 
@@ -92,6 +82,12 @@ export default {
                 default:
                     return require("../assets/other.png")
             }
+        },
+
+        // The content will be pushed to the left out of alignment with the headers if there is a scrollbar.
+        needsOffsetForScrollbar() {
+            const ref = this.$refs.eventsScroller;
+            return (this.events.length * 50) > ref.getBoundingClientRect().height;
         },
 
         timestampToString(timestamp) {
@@ -164,21 +160,41 @@ export default {
 <style scoped>
 
 .event-table {
-    cursor: default
+    cursor: default;
+    overflow: hidden auto;
+    /* Header height */
+    height: calc(100vh - 100px);
+    width: 100%;
 }
 
-.event-table-headers {
-    margin-bottom: 0;
-}
-
-.header-container {
+.main-container {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
     position: relative;
+}
+
+.offset-for-scrollbar {
+    /* Offset for scrollbar width */
+    width: calc(100vw + 28px);
 }
 
 .page-header {
     position: sticky;
     top: 0;
     background-color: #272b30;
+    width: 100%;
+    z-index: 2;
+}
+
+.row {
+    border-bottom: 2px solid rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 0.75em;
+}
+
+.row:hover:not(.event-table-headers) {
+    background-color: rgba(255,255,255,0.05);
 }
 
 </style>
