@@ -19,7 +19,7 @@ type EventRetrievalCriteria struct {
 	TimeZone *time.Location
 }
 
-func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description, locationId, seriesId *string) (string, error) {
+func (dh DatastoreHandle) CreateEvent(accessToken *AccessToken, name string, start time.Time, description, locationId, seriesId *string) (string, error) {
 	eventId, err := uuid.NewRandom()
 	if err != nil {
 		return "", nil
@@ -27,13 +27,15 @@ func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description,
 
 	_, err = dh.db.Exec(
 		`INSERT INTO event
-		 VALUES ($1, $2, $3, $4, $5, $6)`,
+		 VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, $7, CURRENT_TIMESTAMP, $8)`,
 		eventId,
 		name,
 		start.UTC(),
 		description,
 		locationId,
 		seriesId,
+		accessToken.UserID,
+		accessToken.UserID,
 	)
 	if err != nil {
 		return "", err
@@ -159,20 +161,23 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 	return ret, nil
 }
 
-func (dh DatastoreHandle) UpdateEvent(id, name string, start time.Time, description, locationId, seriesId *string) error {
+func (dh DatastoreHandle) UpdateEvent(accessToken *AccessToken, id, name string, start time.Time, description, locationId, seriesId *string) error {
 	result, err := dh.db.Exec(
 		`UPDATE event
             SET name = $1,
                 start = $2,
                 description = $3,
                 location_id = $4,
-                series_id = $5
-          WHERE id = $6`,
+                series_id = $5,
+				when_last_modified = CURRENT_TIMESTAMP,
+				who_last_modified = $6
+          WHERE id = $7`,
 		name,
 		start.UTC(),
 		description,
 		locationId,
 		seriesId,
+		accessToken.UserID,
 		id,
 	)
 	if err != nil {

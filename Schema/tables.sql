@@ -71,9 +71,11 @@ CREATE TABLE access_token (
 
 CREATE TABLE audit_log (
     id                          uuid                                NOT NULL,
-    when_logged                 timestamptz                         NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    table_name                  varchar                             NOT NULL,
     user_id                     varchar,
+    when_logged                 timestamptz                         NOT NULL,
+    table_name                  varchar                             NOT NULL,
+    item_description            varchar                             NOT NULL,
+    action                      audited_action                      NOT NULL,
 
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES system_user(id)

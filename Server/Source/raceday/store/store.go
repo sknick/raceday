@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	"github.com/google/uuid"
-	_ "github.com/lib/pq"
 	"raceday/Server/Source/raceday"
 	"raceday/Server/Source/raceday/model"
+
+	"github.com/google/uuid"
+	_ "github.com/lib/pq"
 )
 
 var Datastore DatastoreHandle
