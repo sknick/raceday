@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"raceday/Server/Source/raceday/model"
 	"time"
 
@@ -27,30 +28,32 @@ func (dh DatastoreHandle) CreateEvent(accessToken *AccessToken, name string, sta
 
 	_, err = dh.db.Exec(
 		`INSERT INTO event
-		 VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP, $7, CURRENT_TIMESTAMP, $8)`,
+		 VALUES ($1, $2, $3, $4, $5, $6)`,
 		eventId,
 		name,
 		start.UTC(),
 		description,
 		locationId,
 		seriesId,
-		accessToken.UserID,
-		accessToken.UserID,
 	)
 	if err != nil {
 		return "", err
 	}
 
+	dh.auditEventAction(accessToken.UserID, eventId.String(), "added", nil)
+
 	return eventId.String(), nil
 }
 
-func (dh DatastoreHandle) DeleteEvent(id string) error {
+func (dh DatastoreHandle) DeleteEvent(accessToken *AccessToken, id string) error {
 	tx, err := dh.db.Begin()
 	if err != nil {
 		return err
 	}
 
 	defer tx.Rollback()
+
+	dh.auditEventAction(accessToken.UserID, id, "deleted", tx)
 
 	result, err := tx.Exec(
 		`DELETE FROM broadcast
@@ -168,16 +171,13 @@ func (dh DatastoreHandle) UpdateEvent(accessToken *AccessToken, id, name string,
                 start = $2,
                 description = $3,
                 location_id = $4,
-                series_id = $5,
-				when_last_modified = CURRENT_TIMESTAMP,
-				who_last_modified = $6
-          WHERE id = $7`,
+                series_id = $5
+          WHERE id = $6`,
 		name,
 		start.UTC(),
 		description,
 		locationId,
 		seriesId,
-		accessToken.UserID,
 		id,
 	)
 	if err != nil {
@@ -193,7 +193,32 @@ func (dh DatastoreHandle) UpdateEvent(accessToken *AccessToken, id, name string,
 		return &EventNotFoundError{}
 	}
 
+	dh.auditEventAction(accessToken.UserID, id, "updated", nil)
+
 	return nil
+}
+
+func (dh DatastoreHandle) auditEventAction(userId, eventId, action string, tx *sql.Tx) {
+	event, err := dh.GetEvent(eventId)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	if event == nil {
+		log.Printf("event with ID %s not found", eventId)
+		return
+	}
+
+	itemDescription := event.Name
+	if event.Series.Name != "" {
+		itemDescription += " (" + event.Series.Name + ")"
+	}
+	if event.Location.Name != "" {
+		itemDescription += " @ " + event.Location.Name
+	}
+
+	dh.auditAction(userId, "event", itemDescription, action, tx)
 }
 
 func newEventFromRow(rows *sql.Rows) (*model.Event, error) {

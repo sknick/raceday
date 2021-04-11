@@ -236,7 +236,13 @@ func BroadcastsPut(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventDelete(w http.ResponseWriter, r *http.Request) {
-	err := store.Datastore.DeleteEvent(r.URL.Query().Get("id"))
+	accessToken, err := getAccessToken(r.Header.Get("AccessToken"))
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	err = store.Datastore.DeleteEvent(accessToken, r.URL.Query().Get("id"))
 	if err != nil {
 		switch err.(type) {
 		case *store.EventNotFoundError:
@@ -252,14 +258,9 @@ func EventDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventPost(w http.ResponseWriter, r *http.Request) {
-	accessTokenId := r.Header.Get("AccessToken")
-	accessToken, err := store.Datastore.GetAccessToken(accessTokenId)
-	if accessToken == nil || err != nil {
-		if accessToken == nil {
-			handleInternalServerError(w, errors.New(fmt.Sprintf("unable to retrieve access token %s", accessTokenId)))
-		} else {
-			handleInternalServerError(w, err)
-		}
+	accessToken, err := getAccessToken(r.Header.Get("AccessToken"))
+	if err != nil {
+		handleInternalServerError(w, err)
 		return
 	}
 
@@ -306,14 +307,9 @@ func EventPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventPut(w http.ResponseWriter, r *http.Request) {
-	accessTokenId := r.Header.Get("AccessToken")
-	accessToken, err := store.Datastore.GetAccessToken(accessTokenId)
-	if accessToken == nil || err != nil {
-		if accessToken == nil {
-			handleInternalServerError(w, errors.New(fmt.Sprintf("unable to retrieve access token %s", accessTokenId)))
-		} else {
-			handleInternalServerError(w, err)
-		}
+	accessToken, err := getAccessToken(r.Header.Get("AccessToken"))
+	if err != nil {
+		handleInternalServerError(w, err)
 		return
 	}
 
@@ -593,6 +589,19 @@ func encodeAndSend(obj interface{}, w http.ResponseWriter) {
 	if err != nil {
 		log.Printf("error while encoding response: %v", err)
 	}
+}
+
+func getAccessToken(accessTokenId string) (*store.AccessToken, error) {
+	ret, err := store.Datastore.GetAccessToken(accessTokenId)
+	if ret == nil || err != nil {
+		if err == nil {
+			err = errors.New(fmt.Sprintf("access token %s not found", accessTokenId))
+		}
+
+		return nil, err
+	}
+
+	return ret, nil
 }
 
 func getIpFromRemoteAddr(remoteAddr string) string {

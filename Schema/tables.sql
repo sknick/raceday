@@ -37,16 +37,10 @@ CREATE TABLE event (
     description                 varchar,
     location_id                 uuid,
     series_id                   uuid,
-    when_created                timestamptz                         NOT NULL,
-    who_created                 varchar                             NOT NULL,
-    when_last_modified          timestamptz                         NOT NULL,
-    who_last_modified           varchar                             NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (location_id)       REFERENCES location(id),
-    FOREIGN KEY (series_id)         REFERENCES series(id),
-    FOREIGN KEY (who_created)       REFERENCES system_user(id),
-    FOREIGN KEY (who_last_modified) REFERENCES system_user(id)
+    FOREIGN KEY (location_id)   REFERENCES location(id),
+    FOREIGN KEY (series_id)     REFERENCES series(id)
 );
 
 CREATE TABLE broadcast (
@@ -56,7 +50,7 @@ CREATE TABLE broadcast (
     url                         varchar,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (event_id) REFERENCES event(id)
+    FOREIGN KEY (event_id)      REFERENCES event(id)
 );
 
 CREATE TABLE access_token (
@@ -66,7 +60,7 @@ CREATE TABLE access_token (
     ip_address                  inet                                NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES system_user(id)
+    FOREIGN KEY (user_id)       REFERENCES system_user(id)
 );
 
 CREATE TABLE audit_log (
@@ -78,5 +72,5 @@ CREATE TABLE audit_log (
     action                      audited_action                      NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES system_user(id)
+    FOREIGN KEY (user_id)       REFERENCES system_user(id)
 );

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"raceday/Server/Source/raceday"
 	"raceday/Server/Source/raceday/model"
 
@@ -231,5 +232,40 @@ func (dh DatastoreHandle) IsUserValid(username string, password string) (bool, e
 		return true, nil
 	} else {
 		return false, nil
+	}
+}
+
+func (dh DatastoreHandle) auditAction(userId, tableName, itemDescription, action string, tx *sql.Tx) {
+	id, err := uuid.NewRandom()
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	if tx == nil {
+		_, err = dh.db.Exec(
+			`INSERT INTO audit_log
+			VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5)`,
+			id,
+			userId,
+			tableName,
+			itemDescription,
+			action,
+		)
+	} else {
+		_, err = tx.Exec(
+			`INSERT INTO audit_log
+			VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5)`,
+			id,
+			userId,
+			tableName,
+			itemDescription,
+			action,
+		)
+	}
+
+	if err != nil {
+		log.Print(err)
+		return
 	}
 }
