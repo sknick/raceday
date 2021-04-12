@@ -2,6 +2,8 @@ package web
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"raceday/Server/Source/raceday/export"
@@ -234,7 +236,13 @@ func BroadcastsPut(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventDelete(w http.ResponseWriter, r *http.Request) {
-	err := store.Datastore.DeleteEvent(r.URL.Query().Get("id"))
+	accessToken, err := getAccessToken(r.Header.Get("AccessToken"))
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	err = store.Datastore.DeleteEvent(accessToken, r.URL.Query().Get("id"))
 	if err != nil {
 		switch err.(type) {
 		case *store.EventNotFoundError:
@@ -250,6 +258,12 @@ func EventDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventPost(w http.ResponseWriter, r *http.Request) {
+	accessToken, err := getAccessToken(r.Header.Get("AccessToken"))
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
 	start, err := strconv.ParseInt(r.URL.Query().Get("start"), 10, 64)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -277,6 +291,7 @@ func EventPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, err := store.Datastore.CreateEvent(
+		accessToken,
 		r.URL.Query().Get("name"),
 		time.Unix(start, 0),
 		description,
@@ -292,6 +307,12 @@ func EventPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventPut(w http.ResponseWriter, r *http.Request) {
+	accessToken, err := getAccessToken(r.Header.Get("AccessToken"))
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
 	id := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
 	start, err := strconv.ParseInt(r.URL.Query().Get("start"), 10, 64)
@@ -320,7 +341,7 @@ func EventPut(w http.ResponseWriter, r *http.Request) {
 		seriesId = &seriesIdParam
 	}
 
-	err = store.Datastore.UpdateEvent(id, name, time.Unix(start, 0), description, locationId, seriesId)
+	err = store.Datastore.UpdateEvent(accessToken, id, name, time.Unix(start, 0), description, locationId, seriesId)
 	if err != nil {
 		switch err.(type) {
 		case *store.EventNotFoundError:
@@ -568,6 +589,19 @@ func encodeAndSend(obj interface{}, w http.ResponseWriter) {
 	if err != nil {
 		log.Printf("error while encoding response: %v", err)
 	}
+}
+
+func getAccessToken(accessTokenId string) (*store.AccessToken, error) {
+	ret, err := store.Datastore.GetAccessToken(accessTokenId)
+	if ret == nil || err != nil {
+		if err == nil {
+			err = errors.New(fmt.Sprintf("access token %s not found", accessTokenId))
+		}
+
+		return nil, err
+	}
+
+	return ret, nil
 }
 
 func getIpFromRemoteAddr(remoteAddr string) string {

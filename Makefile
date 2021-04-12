@@ -35,6 +35,13 @@ admin:
 usrmgr:
 	cd Misc/UserManager/Source && go build -o ../../../Build/usrmgr && chmod 755 ../../../Build/usrmgr
 
+schema:
+	psql -U postgres -h localhost -c 'DROP DATABASE IF EXISTS raceday;'
+	psql -U postgres -h localhost -c 'CREATE DATABASE raceday;'
+	psql -U postgres -h localhost -d raceday -f Schema/01-enums.sql
+	psql -U postgres -h localhost -d raceday -f Schema/02-tables.sql
+	psql -U postgres -h localhost -d raceday -f Schema/03-views.sql
+
 deployment:
 	cd Deployments/raceday.watch && docker-compose build
 	cd Deployments/raceday.watch && docker-compose push

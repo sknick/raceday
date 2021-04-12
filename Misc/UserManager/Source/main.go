@@ -42,7 +42,7 @@ func main() {
 
 	dbPassString := ""
 	if dbPass != "" {
-		dbPassString = fmt.Sprintf("password=%s", dbPass)
+		dbPassString = fmt.Sprintf(" password=%s", dbPass)
 	}
 
 	connStr := fmt.Sprintf(

@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"raceday/Server/Source/raceday/model"
 	"time"
 
@@ -19,7 +20,7 @@ type EventRetrievalCriteria struct {
 	TimeZone *time.Location
 }
 
-func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description, locationId, seriesId *string) (string, error) {
+func (dh DatastoreHandle) CreateEvent(accessToken *AccessToken, name string, start time.Time, description, locationId, seriesId *string) (string, error) {
 	eventId, err := uuid.NewRandom()
 	if err != nil {
 		return "", nil
@@ -39,16 +40,20 @@ func (dh DatastoreHandle) CreateEvent(name string, start time.Time, description,
 		return "", err
 	}
 
+	dh.auditEventAction(accessToken.UserID, eventId.String(), "added", nil)
+
 	return eventId.String(), nil
 }
 
-func (dh DatastoreHandle) DeleteEvent(id string) error {
+func (dh DatastoreHandle) DeleteEvent(accessToken *AccessToken, id string) error {
 	tx, err := dh.db.Begin()
 	if err != nil {
 		return err
 	}
 
 	defer tx.Rollback()
+
+	dh.auditEventAction(accessToken.UserID, id, "deleted", tx)
 
 	result, err := tx.Exec(
 		`DELETE FROM broadcast
@@ -159,7 +164,7 @@ func (dh DatastoreHandle) GetEvents(criteria EventRetrievalCriteria) ([]model.Ev
 	return ret, nil
 }
 
-func (dh DatastoreHandle) UpdateEvent(id, name string, start time.Time, description, locationId, seriesId *string) error {
+func (dh DatastoreHandle) UpdateEvent(accessToken *AccessToken, id, name string, start time.Time, description, locationId, seriesId *string) error {
 	result, err := dh.db.Exec(
 		`UPDATE event
             SET name = $1,
@@ -188,7 +193,35 @@ func (dh DatastoreHandle) UpdateEvent(id, name string, start time.Time, descript
 		return &EventNotFoundError{}
 	}
 
+	dh.auditEventAction(accessToken.UserID, id, "updated", nil)
+
 	return nil
+}
+
+func (dh DatastoreHandle) auditEventAction(userId, eventId, action string, tx *sql.Tx) {
+	event, err := dh.GetEvent(eventId)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	if event == nil {
+		log.Printf("event with ID %s not found", eventId)
+		return
+	}
+
+	itemDescription := event.Name
+	if event.Series.Name != "" {
+		itemDescription += " - " + event.Series.Name
+	}
+	if event.Location.Name != "" {
+		itemDescription += " @ " + event.Location.Name
+	}
+
+	start := time.Unix(int64(event.Start), 0)
+	itemDescription += " (" + start.UTC().Format("2006/01/02 15:04 MST") + ")"
+
+	dh.auditAction(userId, "event", itemDescription, action, tx)
 }
 
 func newEventFromRow(rows *sql.Rows) (*model.Event, error) {

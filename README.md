@@ -40,8 +40,8 @@ The server is a Go executable which can be built via the `server` Makefile
 target. In addition, if using Visual Studio Code, there is a run configuration
 available for compiling and debugging it.
 
-The schema for the PostgreSQL database used by the server is defined in
-`Schema.sql`.
+The schema for the PostgreSQL database used by the server is defined by the SQL
+files in the `Schema` folder.
 
 ### User Manager
 

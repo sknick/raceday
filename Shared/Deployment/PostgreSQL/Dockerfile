@@ -4,5 +4,5 @@ ARG db_password
 
 ENV POSTGRES_USER=$db_user POSTGRES_PASSWORD=$db_password POSTGRES_DB=raceday
 
-COPY ./Schema.sql /docker-entrypoint-initdb.d/
-RUN chmod 777 /docker-entrypoint-initdb.d/Schema.sql
+COPY ./Schema/*.sql /docker-entrypoint-initdb.d/
+RUN chmod 777 /docker-entrypoint-initdb.d/*.sql
