@@ -212,11 +212,14 @@ func (dh DatastoreHandle) auditEventAction(userId, eventId, action string, tx *s
 
 	itemDescription := event.Name
 	if event.Series.Name != "" {
-		itemDescription += " (" + event.Series.Name + ")"
+		itemDescription += " - " + event.Series.Name
 	}
 	if event.Location.Name != "" {
 		itemDescription += " @ " + event.Location.Name
 	}
+
+	start := time.Unix(int64(event.Start), 0)
+	itemDescription += " (" + start.UTC().Format("2006/01/02 15:04 MST") + ")"
 
 	dh.auditAction(userId, "event", itemDescription, action, tx)
 }
