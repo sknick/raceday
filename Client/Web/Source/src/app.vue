@@ -41,6 +41,7 @@ export default {
     width: 100vw;
     overflow: hidden;
 }
+
 @import "css/datepicker.css";
 
 </style>
