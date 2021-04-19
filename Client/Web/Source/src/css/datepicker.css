@@ -1,0 +1,81 @@
+/* Overrides for the vue3-datepicker-lite dependency */
+
+:root {
+    --dp-border-radius: 6px;
+    --dp-border-radius-md: 4px;
+    --dp-border-radius-sm: 2px;
+}
+
+.datepicker > button {
+    border-radius: var(--dp-border-radius-md) !important;
+    border-color: transparent !important;
+    box-shadow: var(--button-shadow);
+    background: var(--button-background) !important;
+    color: var(--light) !important;
+}
+
+.picker__warp {
+    border: 1px transparent !important;
+    background-color: var(--dark) !important;
+    border-radius: var(--dp-border-radius) !important;
+    box-shadow: 3px 3px 10px rgba(39, 43, 48, 0.8), 3px 3px 10px rgba(0, 0, 0, 0.9) !important;
+}
+
+.picker__nav--next,
+.picker__nav--prev {
+    border-radius: var(--dp-border-radius-md);
+}
+
+.picker__nav--next:hover,
+.picker__nav--prev:hover {
+    background-color: var(--cyan) !important;
+    box-shadow: var(--button-shadow);
+}
+
+.picker--focused .picker__day--highlighted,
+.picker__day--highlighted:hover,
+.picker__day--infocus:hover,
+.picker__day--outfocus:hover {
+    background: #0089ec !important;
+    border-radius: var(--dp-border-radius-md);
+}
+
+.picker--focused .picker__day--selected,
+.picker__day--selected,
+.picker__day--selected:hover {
+    border-radius: var(--dp-border-radius-md);
+}
+
+.picker__month > select,
+.picker__year > select {
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.9) !important;
+    background-color: var(--primary) !important;
+    border: transparent !important;
+    border-radius: 4px !important;
+    color: var(--light) !important;
+}
+
+.picker__button--clear,
+.picker__button--close,
+.picker__button--today {
+    border: 1px solid var(--dark) !important;
+    border-radius: var(--dp-border-radius-md) !important;
+    box-shadow: var(--button-shadow);
+    background: var(--button-background) !important;
+    color: var(--button-text-color);
+    padding: 0.15em 0 !important;
+    width: 31% !important;
+    margin: 0 1px !important;
+    transition: background-color 300ms ease-in-out;
+}
+
+.picker__button--clear:hover,
+.picker__button--close:hover,
+.picker__button--today:hover {
+    color: var(--button-text-color-hover) !important;
+    background: var(--button-background-hover) !important;
+}
+
+.picker__button--close:before {
+    content: none !important;
+}
