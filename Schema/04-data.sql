@@ -12,7 +12,7 @@ INSERT INTO lang VALUES ('French',                      '&#127467;&#127479;',   
 INSERT INTO lang VALUES ('German',                      '&#127465;&#127466;',       TRUE);
 INSERT INTO lang VALUES ('Vietnamese',                  '&#127483;&#127475;');
 INSERT INTO lang VALUES ('Italian',                     '&#127470;&#127481;');
-INSERT INTO lang VALUES ('Arabic (Egyptian)',           '&#127466;&#127468;');
+INSERT INTO lang VALUES ('Arabic',                      '&#127462;&#127466;');
 INSERT INTO lang VALUES ('Polish',                      '&#127477;&#127473;');
 INSERT INTO lang VALUES ('Dutch',                       '&#127475;&#127473;');
 INSERT INTO lang VALUES ('Hungarian',                   '&#127469;&#127482;');
