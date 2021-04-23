@@ -80,20 +80,44 @@ paths:
         - name: type
           in: query
           required: true
+          description: The type of broadcast.
           schema:
             type: string
             enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
         - name: event_id
           in: query
+          description: The ID of an event with which to associate the broadcast.
           required: true
           schema:
             type: string
             format: uuid
+        - name: description
+          in: query
+          description: A description of the broadcast.
+          schema:
+            type: string
         - name: url
           in: query
+          description: The URL to apply to the broadcast.
           schema:
             type: string
             format: uri
+        - name: geoblocked
+          in: query
+          description: Whether or not the broadcast is geoblocked.
+          schema:
+            type: boolean
+        - name: paid
+          in: query
+          description: Whether or not the broadcast requires a paid account.
+          schema:
+            type: boolean
+        - name: lang_id
+          in: query
+          description: The ID of the language of the broadcast.
+          schema:
+            type: string
+            format: uuid
       
       tags:
         - Protected
@@ -137,12 +161,33 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: description
+          in: query
+          description: A description of the broadcast.
+          schema:
+            type: string
         - name: url
           in: query
           description: The URL to apply to the broadcast.
           schema:
             type: string
             format: uri
+        - name: geoblocked
+          in: query
+          description: Whether or not the broadcast is geoblocked.
+          schema:
+            type: boolean
+        - name: paid
+          in: query
+          description: Whether or not the broadcast requires a paid account.
+          schema:
+            type: boolean
+        - name: lang_id
+          in: query
+          description: The ID of the language of the broadcast.
+          schema:
+            type: string
+            format: uuid
 
       responses:
         "200":
@@ -715,9 +760,20 @@ components:
           $ref: "#/components/schemas/BroadcastType"
         event:
           $ref: "#/components/schemas/Event"
-        url:
-          description: A URL providing a way to watch the broadcast or information on the source of the broadcast.
+        description:
+          description: A description of the broadcast.
           type: string
+        url:
+          description: A URL providing a way to watch the broadcast.
+          type: string
+        geoblocked:
+          description: Whether or not the broadcast is geoblocked.
+          type: boolean
+        paid:
+          description: Whether or not the broadcast requires a paid account
+          type: boolean
+        lang:
+          $ref: "#/components/schemas/Lang"
       required:
         - id
         - type
@@ -752,6 +808,24 @@ components:
       required:
         - id
         - name
+    
+    Lang:
+      type: object
+      properties:
+        id:
+          description: The ID of the language.
+          type: string
+          format: uuid
+        html_code:
+          description: The HTML character entity that can be used to display the associated flag of the language.
+          type: string
+        priority_listing:
+          description: Whether or not this language should be highlighted among a list of languages.
+          type: boolean
+      required:
+        - id
+        - html_code
+        - priority_listing
 
     Location:
       type: object
