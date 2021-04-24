@@ -108,6 +108,11 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
+        getLangs: function(context, quiet) {
+            const req = this.__prepareRequest("langs", quiet, true);
+            return req.sendWithPromise(this.__createContext(context, req));
+        },
+
         getLocations: function(context, quiet) {
             const req = this.__prepareRequest("locations", quiet, true);
             return req.sendWithPromise(this.__createContext(context, req));

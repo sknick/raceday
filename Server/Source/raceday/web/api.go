@@ -471,6 +471,16 @@ func ExportTypesGet(w http.ResponseWriter, r *http.Request) {
 	encodeAndSend(names, w)
 }
 
+func LangsGet(w http.ResponseWriter, r *http.Request) {
+	langs, err := store.Datastore.GetLangs()
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
+	encodeAndSend(langs, w)
+}
+
 func LocationPost(w http.ResponseWriter, r *http.Request) {
 	descriptionParam := r.URL.Query().Get("description")
 

@@ -548,6 +548,26 @@ paths:
       
       tags:
         - Query
+  
+  /langs:
+
+    get:
+      operationId: langsGet
+
+      summary: Retrieves the languages defined in the system.
+
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lang"
+      
+      tags:
+        - Query
 
   /location:
 
@@ -813,9 +833,8 @@ components:
       type: object
       properties:
         id:
-          description: The ID of the language.
+          description: The name of the language.
           type: string
-          format: uuid
         html_code:
           description: The HTML character entity that can be used to display the associated flag of the language.
           type: string

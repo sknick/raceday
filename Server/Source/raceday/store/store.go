@@ -96,12 +96,47 @@ func (dh DatastoreHandle) GetAccessToken(id string) (*AccessToken, error) {
 
 	if rows.Next() {
 		err = rows.Scan(&id, &whenCreated, &userId, &inet)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		return nil, nil
 	}
 
 	ret := NewAccessToken(id, int(whenCreated), userId, inet)
 	return &ret, nil
+}
+
+func (dh DatastoreHandle) GetLangs() ([]model.Lang, error) {
+	ret := make([]model.Lang, 0)
+
+	var id string
+	var htmlCode string
+	var priorityListing bool
+
+	rows, err := dh.db.Query(
+		`SELECT id,
+				html_code,
+				priority_listing
+		   FROM lang
+		  ORDER BY id ASC`,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(id, htmlCode, priorityListing)
+		if err != nil {
+			return nil, err
+		}
+
+		ret = append(ret, model.NewLang(id, htmlCode, priorityListing))
+	}
+
+	return ret, nil
 }
 
 func (dh DatastoreHandle) GetSystemUser(id string) (*model.SystemUser, error) {
