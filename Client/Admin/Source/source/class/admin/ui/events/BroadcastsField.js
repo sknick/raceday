@@ -6,7 +6,7 @@
 qx.Class.define("admin.ui.events.BroadcastsField", {
     extend: qx.ui.container.Composite,
 
-    construct: function(broadcasts) {
+    construct(broadcasts) {
         this.base(arguments, new qx.ui.layout.Dock(5));
 
         this.__broadcasts = broadcasts ? broadcasts : [];
@@ -40,11 +40,11 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
     },
 
     members: {
-        getBroadcasts: function() {
+        getBroadcasts() {
             return this.__broadcasts;
         },
 
-        __broadcastToString: function(broadcast) {
+        __broadcastToString(broadcast) {
             let ret = broadcast.type_;
             if (broadcast.url) {
                 ret += ": " + broadcast.url;
@@ -52,7 +52,7 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             return ret;
         },
 
-        __updateList: function() {
+        __updateList() {
             const self = this;
             this.__broadcasts.sort(function(a, b) {
                 if (self.__broadcastToString(a) < self.__broadcastToString(b)) {
@@ -71,19 +71,19 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             }
         },
 
-        __onAddBroadcast: function(e) {
+        __onAddBroadcast(e) {
             const dlg = new admin.ui.events.EditBroadcastDialog();
             dlg.addListener("confirmed", this.__onAddBroadcastContinue, this);
 
             dlg.show();
         },
 
-        __onAddBroadcastContinue: function(e) {
+        __onAddBroadcastContinue(e) {
             this.__broadcasts.push(e.getData());
             this.__updateList();
         },
 
-        __onEditBroadcast: function(e) {
+        __onEditBroadcast(e) {
             const selectedItems = this.__list.getSelection();
             if (selectedItems.length > 0) {
                 const dlg = new admin.ui.events.EditBroadcastDialog(selectedItems[0].getModel());
@@ -93,7 +93,7 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             }
         },
 
-        __onEditBroadcastContinue: function(e) {
+        __onEditBroadcastContinue(e) {
             const broadcast = e.getData();
             const selectedItem = this.__list.getSelection()[0];
 
@@ -101,7 +101,7 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             selectedItem.setModel(broadcast);
         },
 
-        __onRemoveBroadcast: function(e) {
+        __onRemoveBroadcast(e) {
             const selectedItems = this.__list.getSelection();
             if (selectedItems.length > 0) {
                 for (let i = 0; i < selectedItems.length; i++) {

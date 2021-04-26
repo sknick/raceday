@@ -1,7 +1,7 @@
 qx.Class.define("admin.ui.events.EditBroadcastDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(broadcast) {
+    construct(broadcast) {
         this.__broadcast = broadcast ? broadcast : new raceday.api.model.UnsavedBroadcast({});
 
         const typeLabel = new qx.ui.basic.Label("Type:");
@@ -57,7 +57,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
     },
 
     members: {
-        __onOK: function(e) {
+        __onOK(e) {
             this.__broadcast.type_ = this.__typeField.getSelection()[0].getLabel();
 
             let url = this.__urlField.getValue();
@@ -73,7 +73,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
             this.fireDataEvent("confirmed", this.__broadcast);
         },
 
-        __onCancel: function(e) {
+        __onCancel(e) {
             this.hide();
         }
     },

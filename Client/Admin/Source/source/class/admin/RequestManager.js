@@ -20,12 +20,12 @@ qx.Class.define("admin.RequestManager", {
     /**
      * Constructor.
      */
-    construct: function() {
+    construct() {
         this.base(arguments);
     },
 
     members: {
-        deleteBroadcast: function(context, id, quiet) {
+        deleteBroadcast(context, id, quiet) {
             const params = {
                 "id": id
             };
@@ -35,7 +35,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        deleteBroadcasts: function(context, ids, quiet) {
+        deleteBroadcasts(context, ids, quiet) {
             const params = {
                 "ids": ids
             };
@@ -45,7 +45,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        deleteEvent: function(context, id, quiet) {
+        deleteEvent(context, id, quiet) {
             const params = {
                 "id": id
             };
@@ -55,7 +55,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        deleteLocation: function(context, id, quiet) {
+        deleteLocation(context, id, quiet) {
             const params = {
                 "id": id
             };
@@ -65,7 +65,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        deleteSeries: function(context, id, quiet) {
+        deleteSeries(context, id, quiet) {
             const params = {
                 "id": id
             };
@@ -75,7 +75,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        getBroadcasts: function(context, eventId, eventStart, includeAllAfter, quiet) {
+        getBroadcasts(context, eventId, eventStart, includeAllAfter, quiet) {
             const params = {};
             if (eventId) {
                 params["event_id"] = eventId;
@@ -91,7 +91,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        getEvents: function(context, windowStart, windowEnd, timeZone, quiet) {
+        getEvents(context, windowStart, windowEnd, timeZone, quiet) {
             const params = {
                 "window_start": windowStart
             };
@@ -108,29 +108,29 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        getLangs: function(context, quiet) {
+        getLangs(context, quiet) {
             const req = this.__prepareRequest("langs", quiet, true);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        getLocations: function(context, quiet) {
+        getLocations(context, quiet) {
             const req = this.__prepareRequest("locations", quiet, true);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        getNewAccessToken: function(context, username, password, quiet) {
+        getNewAccessToken(context, username, password, quiet) {
             const req = this.__prepareRequest("access_token", quiet, true);
             req.setRequestHeader("Username", username);
             req.setRequestHeader("Password", password);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        getSeries: function(context, quiet) {
+        getSeries(context, quiet) {
             const req = this.__prepareRequest("series", quiet, true);
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        postBroadcast: function(context, type, eventId, url, quiet) {
+        postBroadcast(context, type, eventId, url, quiet) {
             const params = {
                 "type":     type,
                 "event_id": eventId
@@ -144,7 +144,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        postBroadcasts: function(context, unsavedBroadcasts, quiet) {
+        postBroadcasts(context, unsavedBroadcasts, quiet) {
             let data = [];
             for (let i = 0; i < unsavedBroadcasts.length; i++) {
                 data.push(unsavedBroadcasts[i].toSimpleObject());
@@ -157,7 +157,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        putBroadcasts: function(context, broadcasts, quiet) {
+        putBroadcasts(context, broadcasts, quiet) {
             let data = [];
             for (let i = 0; i < broadcasts.length; i++) {
                 data.push(broadcasts[i].toSimpleObject());
@@ -170,7 +170,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        postEvent: function(context, name, start, description, locationId, seriesId, quiet) {
+        postEvent(context, name, start, description, locationId, seriesId, quiet) {
             const params = {
                 "name":  name,
                 "start": start
@@ -190,7 +190,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        postLocation: function(context, name, description, quiet) {
+        postLocation(context, name, description, quiet) {
             const params = {
                 "name":        name,
                 "description": description
@@ -201,7 +201,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        putBroadcast: function(context, id, type, eventId, url, quiet) {
+        putBroadcast(context, id, type, eventId, url, quiet) {
             const params = {
                 "id":       id,
                 "type":     type,
@@ -216,7 +216,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        putEvent: function(context, id, name, start, description, locationId, seriesId, quiet) {
+        putEvent(context, id, name, start, description, locationId, seriesId, quiet) {
             const params = {
                 "id":    id,
                 "name":  name,
@@ -237,7 +237,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        putLocation: function(context, id, name, description, quiet) {
+        putLocation(context, id, name, description, quiet) {
             const params = {
                 "id":          id,
                 "name":        name,
@@ -249,7 +249,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        postSeries: function(context, name, description, quiet) {
+        postSeries(context, name, description, quiet) {
             const params = {
                 "name":        name,
                 "description": description
@@ -260,7 +260,7 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        putSeries: function(context, id, name, description, quiet) {
+        putSeries(context, id, name, description, quiet) {
             const params = {
                 "id":          id,
                 "name":        name,
@@ -272,14 +272,14 @@ qx.Class.define("admin.RequestManager", {
             return req.sendWithPromise(this.__createContext(context, req));
         },
 
-        __createContext: function(context, request) {
+        __createContext(context, request) {
             return {
                 context: context,
                 request: request
             };
         },
 
-        __prepareRequest: function(resource, quiet, accessTokenNotNecessary) {
+        __prepareRequest(resource, quiet, accessTokenNotNecessary) {
             if (!accessTokenNotNecessary && (this.getAccessToken() === null)) {
                 throw "No access token specified.";
             }
@@ -293,7 +293,7 @@ qx.Class.define("admin.RequestManager", {
             return req;
         },
 
-        __prepareRequestWithParams: function(resource, params, quiet) {
+        __prepareRequestWithParams(resource, params, quiet) {
             let queryString = "";
             for (let key in params) {
                 if (queryString !== "") queryString += "&";

@@ -9,7 +9,7 @@ qx.Class.define("admin.ui.MessageDialog", {
      * @param {string} message
      * @param {*} [context]
      */
-    construct: function(title, message, context) {
+    construct(title, message, context) {
         const label = new qx.ui.basic.Label(message);
 
         const okButton = new qx.ui.form.Button("OK");

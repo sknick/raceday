@@ -7,7 +7,7 @@ qx.Class.define("admin.ui.series.TableModel", {
         NUM_COLUMNS:        2
     },
 
-    construct: function() {
+    construct() {
         this.base(arguments, admin.ui.series.TableModel.NAME_COLUMN, true);
 
         for (let i = 0; i < admin.ui.series.TableModel.NUM_COLUMNS; i++) {
@@ -18,11 +18,11 @@ qx.Class.define("admin.ui.series.TableModel", {
     },
 
     members: {
-        getSeries: function(rowIndex) {
+        getSeries(rowIndex) {
             return this.getRowData(rowIndex).series;
         },
 
-        refresh: function() {
+        refresh() {
             if (this.getReady()) {
                 admin.RequestManager.getInstance().getSeries(
                     this

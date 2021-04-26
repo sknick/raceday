@@ -17,7 +17,7 @@ qx.Class.define("admin.ui.MainWindow", {
          * @param {number} statusCode
          * @param {*} error
          */
-        handleRequestError: function(statusCode, error) {
+        handleRequestError(statusCode, error) {
             let errorMessage = null;
 
             if (error instanceof qx.type.BaseError) {
@@ -42,7 +42,7 @@ qx.Class.define("admin.ui.MainWindow", {
         }
     },
 
-    construct: function(root) {
+    construct(root) {
         this.base(arguments);
 
         admin.ui.MainWindow.__instance = this;
@@ -64,15 +64,15 @@ qx.Class.define("admin.ui.MainWindow", {
     },
 
     members: {
-        onRequest: function () {
+        onRequest() {
             this.__loadingDlg.open();
         },
 
-        onReturn: function () {
+        onReturn() {
             this.__loadingDlg.close();
         },
 
-        __handleUnauthorized: function () {
+        __handleUnauthorized() {
             // The window.location.reload() call below apparently doesn't happen synchronously, so we're forced to make
             // sure this call to onUnauthorized() isn't a redundant one from another part of the application having
             // attempted a request.
@@ -87,12 +87,12 @@ qx.Class.define("admin.ui.MainWindow", {
             return false;
         },
 
-        __onUnauthorizedContinue: function(context) {
+        __onUnauthorizedContinue(context) {
             window.location.reload();
             this.__unauthorizedHandled = true;
         },
 
-        __onLogin: function(e) {
+        __onLogin(e) {
             const data = e.getData();
             admin.RequestManager.getInstance().getNewAccessToken(this, data.username, data.password, true).then(
                 function(e) {
@@ -108,7 +108,7 @@ qx.Class.define("admin.ui.MainWindow", {
             )
         },
 
-        __onLoginContinued: function(accessToken) {
+        __onLoginContinued(accessToken) {
             admin.RequestManager.getInstance().setAccessToken(accessToken);
             qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
 

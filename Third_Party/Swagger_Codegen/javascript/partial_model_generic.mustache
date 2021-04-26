@@ -1,7 +1,7 @@
 qx.Class.define("raceday.api.model.{{classname}}", {
     extend: qx.core.Object,
 
-    construct: function(data) {
+    construct(data) {
         this.base(arguments);
 
 {{#vars}}        if (data.hasOwnProperty("{{baseName}}")) {
@@ -18,7 +18,7 @@ qx.Class.define("raceday.api.model.{{classname}}", {
     },
 
     members: {
-        toSimpleObject: function() {
+        toSimpleObject() {
             return {
 {{#vars}}
 {{#isPrimitiveType}}                "{{baseName}}": this.{{name}},

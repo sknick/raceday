@@ -7,7 +7,7 @@ qx.Class.define("admin.Application", {
     },
 
     members: {
-        main: function () {
+        main() {
             this.base(arguments);
 
             if (qx.core.Environment.get("qx.debug")) {

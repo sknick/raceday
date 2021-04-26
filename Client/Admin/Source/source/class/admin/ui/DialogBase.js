@@ -16,7 +16,7 @@ qx.Class.define("admin.ui.DialogBase", {
      * @param {Array<qx.ui.form.Button>} [leftButtons] An array of the buttons to display in the bottom left of this
      *                                                 dialog.
      */
-    construct: function(title, content, buttons, leftButtons) {
+    construct(title, content, buttons, leftButtons) {
         this.base(arguments, title);
 
         this.setModal(true);
@@ -72,7 +72,7 @@ qx.Class.define("admin.ui.DialogBase", {
     },
 
     members: {
-        __onKeyPressed: function(e) {
+        __onKeyPressed(e) {
             if (e.getKeyIdentifier() === "Escape") {
                 this.close();
             }

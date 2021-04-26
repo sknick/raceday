@@ -1,7 +1,7 @@
 qx.Class.define("admin.ui.events.EditDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(locations, series, event, eventBroadcasts, duplicating) {
+    construct(locations, series, event, eventBroadcasts, duplicating) {
         this.__event = event;
 
         if (!duplicating) {
@@ -115,7 +115,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
     },
 
     members: {
-        __onOK: function(e) {
+        __onOK(e) {
             const name = this.__nameField.getValue().trim();
             if (name === "") {
                 this.__nameField.setBackgroundColor("#ed8877");
@@ -159,7 +159,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
             });
         },
 
-        __onCancel: function(e) {
+        __onCancel(e) {
             this.hide();
         }
     },

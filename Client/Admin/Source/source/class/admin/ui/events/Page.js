@@ -7,7 +7,7 @@
 qx.Class.define("admin.ui.events.Page", {
     extend: qx.ui.tabview.Page,
 
-    construct: function() {
+    construct() {
         this.base(arguments, "Events");
         this.setLayout(new qx.ui.layout.Canvas());
 
@@ -27,7 +27,7 @@ qx.Class.define("admin.ui.events.Page", {
         this.__table = new qx.ui.table.Table(
             new admin.ui.events.TableModel(),
             {
-                tableColumnModel: function(obj) {
+                tableColumnModel(obj) {
                     return new qx.ui.table.columnmodel.Resize(obj);
                 }
             }
@@ -63,7 +63,7 @@ qx.Class.define("admin.ui.events.Page", {
     },
 
     members: {
-        __onAdd: function(e) {
+        __onAdd(e) {
             admin.RequestManager.getInstance().getLocations(
                 this
             ).then(
@@ -104,7 +104,7 @@ qx.Class.define("admin.ui.events.Page", {
             )
         },
 
-        __onAddConfirmed: function(e) {
+        __onAddConfirmed(e) {
             const data = e.getData();
             admin.RequestManager.getInstance().postEvent(
                 this,
@@ -143,7 +143,7 @@ qx.Class.define("admin.ui.events.Page", {
             );
         },
 
-        __onDelete: function(e) {
+        __onDelete(e) {
             const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 const dlg = new admin.ui.ConfirmationDialog(
@@ -157,7 +157,7 @@ qx.Class.define("admin.ui.events.Page", {
             }
         },
 
-        __onDeleteContinue: function(e) {
+        __onDeleteContinue(e) {
             const event = e.getData();
             admin.RequestManager.getInstance().deleteEvent(
                 this,
@@ -174,7 +174,7 @@ qx.Class.define("admin.ui.events.Page", {
             );
         },
 
-        __onDuplicate: function(e) {
+        __onDuplicate(e) {
             const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 admin.RequestManager.getInstance().getLocations(
@@ -242,7 +242,7 @@ qx.Class.define("admin.ui.events.Page", {
             }
         },
 
-        __onEdit: function(e) {
+        __onEdit(e) {
             const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 admin.RequestManager.getInstance().getLocations(
@@ -309,7 +309,7 @@ qx.Class.define("admin.ui.events.Page", {
             }
         },
 
-        __onEditConfirmed: function(e) {
+        __onEditConfirmed(e) {
             const data = e.getData();
 
             admin.RequestManager.getInstance().putEvent(

@@ -5,7 +5,7 @@
 qx.Class.define("admin.ui.series.Page", {
     extend: qx.ui.tabview.Page,
 
-    construct: function() {
+    construct() {
         this.base(arguments, "Series");
         this.setLayout(new qx.ui.layout.Canvas());
 
@@ -21,7 +21,7 @@ qx.Class.define("admin.ui.series.Page", {
         this.__table = new qx.ui.table.Table(
             new admin.ui.series.TableModel(),
             {
-                tableColumnModel: function(obj) {
+                tableColumnModel(obj) {
                     return new qx.ui.table.columnmodel.Resize(obj);
                 }
             }
@@ -53,14 +53,14 @@ qx.Class.define("admin.ui.series.Page", {
     },
 
     members: {
-        __onAdd: function(e) {
+        __onAdd(e) {
             const dlg = new admin.ui.series.EditDialog();
             dlg.addListener("confirmed", this.__onAddConfirmed, this);
 
             dlg.show();
         },
 
-        __onAddConfirmed: function(e) {
+        __onAddConfirmed(e) {
             const series = e.getData();
             admin.RequestManager.getInstance().postSeries(
                 this,
@@ -77,7 +77,7 @@ qx.Class.define("admin.ui.series.Page", {
             );
         },
 
-        __onEdit: function(e) {
+        __onEdit(e) {
             const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 const dlg = new admin.ui.series.EditDialog(this.__table.getTableModel().getSeries(selectedRows[0].minIndex));
@@ -87,7 +87,7 @@ qx.Class.define("admin.ui.series.Page", {
             }
         },
 
-        __onEditConfirmed: function(e) {
+        __onEditConfirmed(e) {
             const series = e.getData();
             admin.RequestManager.getInstance().putSeries(
                 this,

@@ -12,7 +12,7 @@ qx.Class.define("admin.ui.events.TableModel", {
         NUM_COLUMNS:     4
     },
 
-    construct: function() {
+    construct() {
         this.base(arguments, admin.ui.events.TableModel.START_COLUMN, true);
 
         for (let i = 0; i < admin.ui.events.TableModel.NUM_COLUMNS; i++) {
@@ -31,11 +31,11 @@ qx.Class.define("admin.ui.events.TableModel", {
     },
 
     members: {
-        getEvent: function(rowIndex) {
+        getEvent(rowIndex) {
             return this.getRowData(rowIndex).event;
         },
 
-        refresh: function() {
+        refresh() {
             if (this.getReady()) {
                 const nowTimestamp = Math.round(Date.now() / 1000);
 

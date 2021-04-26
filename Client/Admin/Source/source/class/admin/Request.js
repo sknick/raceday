@@ -4,7 +4,7 @@
 qx.Class.define("admin.Request", {
     extend: qx.io.request.Xhr,
 
-    construct: function(baseUrl, resource, notifier) {
+    construct(baseUrl, resource, notifier) {
         if (!baseUrl.endsWith("/")) {
             baseUrl += "/";
         }
@@ -38,7 +38,7 @@ qx.Class.define("admin.Request", {
     },
 
     members: {
-        send: function() {
+        send() {
             if (this.__notifier !== null) {
                 this.__notifier.onRequest();
             }

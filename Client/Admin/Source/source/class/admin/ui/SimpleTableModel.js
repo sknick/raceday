@@ -19,7 +19,7 @@ qx.Class.define("admin.ui.SimpleTableModel", {
         }
     },
 
-    construct: function(defaultColumnSort, defaultSortIsAscending) {
+    construct(defaultColumnSort, defaultSortIsAscending) {
         this.base(arguments);
 
         const sessionStorage = qx.bom.storage.Web.getSession();
@@ -42,23 +42,23 @@ qx.Class.define("admin.ui.SimpleTableModel", {
         /**
          * Must be overridden by subclasses to actually update the data in the model.
          */
-        refresh: function() {
+        refresh() {
 
         },
 
-        __applyReady: function(value) {
+        __applyReady(value) {
             if (value) {
                 this.refresh();
             }
         },
 
-        __onDataChanged: function(e) {
+        __onDataChanged(e) {
             const sessionStorage = qx.bom.storage.Web.getSession();
             this.sortByColumn(sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY),
                 sessionStorage.getItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY));
         },
 
-        __onMetadataChanged: function(e) {
+        __onMetadataChanged(e) {
             const sessionStorage = qx.bom.storage.Web.getSession();
             sessionStorage.setItem(admin.ui.SimpleTableModel._SORT_COLUMN_KEY, this.getSortColumnIndex());
             sessionStorage.setItem(admin.ui.SimpleTableModel._SORT_ASCENDING_KEY, this.isSortAscending());

@@ -13,7 +13,7 @@ qx.Class.define("admin.ui.ConfirmationDialog", {
      * @param {string} message
      * @param {*} [context]
      */
-    construct: function(title, message, context) {
+    construct(title, message, context) {
         const messageLabel = new qx.ui.basic.Label(message);
         messageLabel.setRich(true);
 
