@@ -286,7 +286,7 @@ paths:
             schema:
               type: object
               properties:
-                type:
+                type_:
                   description: The type of broadcast.
                   type: string
                   enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
