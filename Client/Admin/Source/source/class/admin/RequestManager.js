@@ -25,57 +25,42 @@ qx.Class.define("admin.RequestManager", {
     },
 
     members: {
-        deleteBroadcast(context, id, quiet) {
+        async deleteBroadcast(id, quiet) {
             const params = {
                 "id": id
             };
 
             const req = this.__prepareRequestWithParams("broadcast", params, quiet);
             req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            await req.sendWithPromise();
         },
 
-        deleteBroadcasts(context, ids, quiet) {
+        async deleteBroadcasts(ids, quiet) {
             const params = {
                 "ids": ids
             };
 
             const req = this.__prepareRequestWithParams("broadcasts", params, quiet);
             req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
+
+            await req.sendWithPromise();
         },
 
-        deleteEvent(context, id, quiet) {
+        async deleteEvent(id, quiet) {
             const params = {
                 "id": id
             };
 
             const req = this.__prepareRequestWithParams("event", params, quiet);
             req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
+
+            await req.sendWithPromise();
         },
 
-        deleteLocation(context, id, quiet) {
-            const params = {
-                "id": id
-            };
+        async getBroadcasts(eventId, eventStart, includeAllAfter, quiet) {
+            const ret = [];
 
-            const req = this.__prepareRequestWithParams("location", params, quiet);
-            req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        deleteSeries(context, id, quiet) {
-            const params = {
-                "id": id
-            };
-
-            const req = this.__prepareRequestWithParams("series", params, quiet);
-            req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        getBroadcasts(context, eventId, eventStart, includeAllAfter, quiet) {
             const params = {};
             if (eventId) {
                 params["event_id"] = eventId;
@@ -88,10 +73,19 @@ qx.Class.define("admin.RequestManager", {
             }
 
             const req = this.__prepareRequestWithParams("broadcasts", params, quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Broadcast(response[i]));
+            }
+
+            return ret;
         },
 
-        getEvents(context, windowStart, windowEnd, timeZone, quiet) {
+        async getEvents(windowStart, windowEnd, timeZone, quiet) {
+            const ret = [];
+
             const params = {
                 "window_start": windowStart
             };
@@ -105,32 +99,68 @@ qx.Class.define("admin.RequestManager", {
             }
 
             const req = this.__prepareRequestWithParams("events", params, quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Event(response[i]));
+            }
+
+            return ret;
         },
 
-        getLangs(context, quiet) {
+        async getLangs(quiet) {
+            const ret = [];
+
             const req = this.__prepareRequest("langs", quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Lang(response[i]));
+            }
+
+            return ret;
         },
 
-        getLocations(context, quiet) {
+        async getLocations(quiet) {
+            const ret = [];
+
             const req = this.__prepareRequest("locations", quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Location(response[i]));
+            }
+
+            return ret;
         },
 
-        getNewAccessToken(context, username, password, quiet) {
+        async getNewAccessToken(username, password, quiet) {
             const req = this.__prepareRequest("access_token", quiet, true);
             req.setRequestHeader("Username", username);
             req.setRequestHeader("Password", password);
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
         },
 
-        getSeries(context, quiet) {
+        async getSeries(quiet) {
+            const ret = [];
+
             const req = this.__prepareRequest("series", quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Series(response[i]));
+            }
+
+            return ret;
         },
 
-        postBroadcast(context, type, eventId, url, quiet) {
+        async postBroadcast(type, eventId, url, quiet) {
             const params = {
                 "type":     type,
                 "event_id": eventId
@@ -141,11 +171,13 @@ qx.Class.define("admin.RequestManager", {
 
             const req = this.__prepareRequestWithParams("broadcast", params, quiet);
             req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            return result.getResponse();
         },
 
-        postBroadcasts(context, unsavedBroadcasts, quiet) {
-            let data = [];
+        async postBroadcasts(unsavedBroadcasts, quiet) {
+            const data = [];
             for (let i = 0; i < unsavedBroadcasts.length; i++) {
                 data.push(unsavedBroadcasts[i].toSimpleObject());
             }
@@ -154,11 +186,13 @@ qx.Class.define("admin.RequestManager", {
             req.setMethod("POST");
             req.setRequestHeader("Content-Type", "application/json");
             req.setRequestData(data);
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
         },
 
-        putBroadcasts(context, broadcasts, quiet) {
-            let data = [];
+        async putBroadcasts(broadcasts, quiet) {
+            const data = [];
             for (let i = 0; i < broadcasts.length; i++) {
                 data.push(broadcasts[i].toSimpleObject());
             }
@@ -167,10 +201,11 @@ qx.Class.define("admin.RequestManager", {
             req.setMethod("PUT");
             req.setRequestHeader("Content-Type", "application/json");
             req.setRequestData(data);
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            await req.sendWithPromise();
         },
 
-        postEvent(context, name, start, description, locationId, seriesId, quiet) {
+        async postEvent(name, start, description, locationId, seriesId, quiet) {
             const params = {
                 "name":  name,
                 "start": start
@@ -187,10 +222,13 @@ qx.Class.define("admin.RequestManager", {
 
             const req = this.__prepareRequestWithParams("event", params, quiet);
             req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            const result = await req.sendWithPromise();
+
+            return result.getResponse();
         },
 
-        postLocation(context, name, description, quiet) {
+        async postLocation(name, description, quiet) {
             const params = {
                 "name":        name,
                 "description": description
@@ -198,10 +236,27 @@ qx.Class.define("admin.RequestManager", {
 
             const req = this.__prepareRequestWithParams("location", params, quiet);
             req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
+
+            const result = await req.sendWithPromise();
+
+            return result.getResponse();
         },
 
-        putBroadcast(context, id, type, eventId, url, quiet) {
+        async postSeries(name, description, quiet) {
+            const params = {
+                "name":        name,
+                "description": description
+            };
+
+            const req = this.__prepareRequestWithParams("series", params, quiet);
+            req.setMethod("POST");
+            
+            const result = await req.sendWithPromise();
+
+            return result.getResponse();
+        },
+
+        async putBroadcast(id, type, eventId, url, quiet) {
             const params = {
                 "id":       id,
                 "type":     type,
@@ -213,10 +268,11 @@ qx.Class.define("admin.RequestManager", {
 
             const req = this.__prepareRequestWithParams("broadcast", params, quiet);
             req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            await req.sendWithPromise();
         },
 
-        putEvent(context, id, name, start, description, locationId, seriesId, quiet) {
+        async putEvent(id, name, start, description, locationId, seriesId, quiet) {
             const params = {
                 "id":    id,
                 "name":  name,
@@ -234,10 +290,11 @@ qx.Class.define("admin.RequestManager", {
 
             const req = this.__prepareRequestWithParams("event", params, quiet);
             req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            await req.sendWithPromise();
         },
 
-        putLocation(context, id, name, description, quiet) {
+        async putLocation(id, name, description, quiet) {
             const params = {
                 "id":          id,
                 "name":        name,
@@ -246,21 +303,11 @@ qx.Class.define("admin.RequestManager", {
 
             const req = this.__prepareRequestWithParams("location", params, quiet);
             req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            await req.sendWithPromise();
         },
 
-        postSeries(context, name, description, quiet) {
-            const params = {
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("series", params, quiet);
-            req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        putSeries(context, id, name, description, quiet) {
+        async putSeries(id, name, description, quiet) {
             const params = {
                 "id":          id,
                 "name":        name,
@@ -269,14 +316,8 @@ qx.Class.define("admin.RequestManager", {
 
             const req = this.__prepareRequestWithParams("series", params, quiet);
             req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        __createContext(context, request) {
-            return {
-                context: context,
-                request: request
-            };
+            
+            await req.sendWithPromise();
         },
 
         __prepareRequest(resource, quiet, accessTokenNotNecessary) {
