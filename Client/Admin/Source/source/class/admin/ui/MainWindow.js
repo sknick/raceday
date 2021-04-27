@@ -9,36 +9,10 @@ qx.Class.define("admin.ui.MainWindow", {
     statics: {
         __ACCESS_TOKEN_KEY: "access_token",
         __instance:         null,
-
-        /**
-         * Handles a request error that came back from the server. If the status code is a 403, then the user will be
-         * notified that they need to login again, and the application window will reload.
-         *
-         * @param {number} statusCode
-         * @param {*} error
-         */
-        handleRequestError(statusCode, error) {
-            let errorMessage = null;
-
-            if (error instanceof qx.type.BaseError) {
-                if (statusCode === 403) {
-                    admin.ui.MainWindow.__instance.__handleUnauthorized();
-                } else {
-                    errorMessage = error.toString();
-                }
-            } else if (error instanceof qx.core.Object) {
-                errorMessage = error.toString();
-            } else if (error instanceof String) {
-                errorMessage = error;
-            } else {
-                console.error(error);
-                errorMessage = "An unknown error has occurred.";
-            }
-
-            if (errorMessage) {
-                const dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE, errorMessage);
-                dlg.open();
-            }
+        
+        handleError(error) {
+            // TODO: Get code from elsewhere
+            console.error(error)
         }
     },
 
@@ -92,43 +66,42 @@ qx.Class.define("admin.ui.MainWindow", {
             this.__unauthorizedHandled = true;
         },
 
-        __onLogin(e) {
+        async __onLogin(e) {
             const data = e.getData();
-            admin.RequestManager.getInstance().getNewAccessToken(this, data.username, data.password, true).then(
-                function(e) {
-                    this.context.__onLoginContinued(e.getResponse());
-                },
-                function(e) {
-                    if (this.request.getStatus() === 401) {
-                        this.context.__loginDlg.notifyOfBadLogin();
-                    } else {
-                        this.context.__loginDlg.notifyOfError(e.message);
-                    }
+
+            try {
+                const accessToken = await admin.RequestManager.getInstance().getNewAccessToken(data.username,
+                    data.password, true);
+
+                admin.RequestManager.getInstance().setAccessToken(accessToken);
+                qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
+
+                if (this.__loginDlg) {
+                    this.__root.remove(this.__loginDlg);
                 }
-            )
-        },
 
-        __onLoginContinued(accessToken) {
-            admin.RequestManager.getInstance().setAccessToken(accessToken);
-            qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
+                const tabView = new qx.ui.tabview.TabView("top");
+                tabView.setContentPadding(0, 0, 0, 0);
 
-            if (this.__loginDlg) {
-                this.__root.remove(this.__loginDlg);
+                tabView.add(new admin.ui.events.Page());
+                tabView.add(new admin.ui.series.Page());
+                tabView.add(new admin.ui.locations.Page());
+
+                this.__root.add(tabView, {
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%"
+                });
+            } catch (ex) {
+                // TODO
+                console.error(ex);
+                // if (this.request.getStatus() === 401) {
+                //     this.context.__loginDlg.notifyOfBadLogin();
+                // } else {
+                //     this.context.__loginDlg.notifyOfError(e.message);
+                // }
             }
-
-            const tabView = new qx.ui.tabview.TabView("top");
-            tabView.setContentPadding(0, 0, 0, 0);
-
-            tabView.add(new admin.ui.events.Page());
-            tabView.add(new admin.ui.series.Page());
-            tabView.add(new admin.ui.locations.Page());
-
-            this.__root.add(tabView, {
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%"
-            });
         },
 
         __loadingDlg: null
