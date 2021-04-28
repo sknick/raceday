@@ -65,11 +65,9 @@ qx.Class.define("admin.ui.locations.Page", {
             
             try {
                 await admin.RequestManager.getInstance().postLocation(location.name, location.description);
-
                 this.__table.getTableModel().refresh();
             } catch (ex) {
-                // TODO
-                console.error(ex);
+                admin.ui.MainWindow.handleError(ex);
             }
         },
 
@@ -88,11 +86,9 @@ qx.Class.define("admin.ui.locations.Page", {
 
             try {
                 await admin.RequestManager.getInstance().putLocation(location.id, location.name, location.description);
-
                 this.__table.getTableModel().refresh();
             } catch (ex) {
-                // TODO
-                console.error(ex);
+                admin.ui.MainWindow.handleError(ex);
             }
         }
     }

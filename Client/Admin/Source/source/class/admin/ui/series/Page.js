@@ -65,11 +65,9 @@ qx.Class.define("admin.ui.series.Page", {
 
             try {
                 await admin.RequestManager.getInstance().postSeries(series.name, series.description);
-                
                 this.__table.getTableModel().refresh();
             } catch (ex) {
-                // TODO
-                console.error(ex);
+                admin.ui.MainWindow.handleError(ex);
             }
         },
 
@@ -88,11 +86,9 @@ qx.Class.define("admin.ui.series.Page", {
 
             try {
                 await admin.RequestManager.getInstance().putSeries(series.id, series.name, series.description);
-                
                 this.__table.getTableModel().refresh();
             } catch (ex) {
-                // TODO
-                console.error(ex);
+                admin.ui.MainWindow.handleError(ex);
             }
         }
     }

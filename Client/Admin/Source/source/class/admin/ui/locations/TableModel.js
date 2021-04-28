@@ -40,8 +40,7 @@ qx.Class.define("admin.ui.locations.TableModel", {
 
                     this.setDataAsMapArray(data, true, false);
                 } catch (ex) {
-                    // TODO
-                    console.error(ex);
+                    admin.ui.MainWindow.handleError(ex);
                 }
             }
         }

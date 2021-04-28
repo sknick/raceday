@@ -58,8 +58,7 @@ qx.Class.define("admin.ui.events.TableModel", {
                     
                     this.setDataAsMapArray(data, true, false);
                 } catch (ex) {
-                    // TODO
-                    console.error(ex);
+                    admin.ui.MainWindow.handleError(ex);
                 }
             }
         }

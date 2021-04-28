@@ -11,8 +11,27 @@ qx.Class.define("admin.ui.MainWindow", {
         __instance:         null,
         
         handleError(error) {
-            // TODO: Get code from elsewhere
-            console.error(error)
+            let errorMessage = null;
+        
+            if (error instanceof admin.RequestError) {
+                if (error.getStatusCode() === 403) {
+                    admin.ui.MainWindow.__instance.__handleUnauthorized();
+                } else {
+                    errorMessage = "An error has occurred while communicating with the server: " + error.toString();
+                }
+            } else if (error instanceof qx.core.Object) {
+                errorMessage = error.toString();
+            } else if (error instanceof String) {
+                errorMessage = error;
+            } else {
+                console.error(error);
+                errorMessage = "An unknown error has occurred.";
+            }
+        
+            if (errorMessage) {
+                const dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE, errorMessage);
+                dlg.open();
+            }
         }
     },
 
@@ -94,13 +113,11 @@ qx.Class.define("admin.ui.MainWindow", {
                     height: "100%"
                 });
             } catch (ex) {
-                // TODO
-                console.error(ex);
-                // if (this.request.getStatus() === 401) {
-                //     this.context.__loginDlg.notifyOfBadLogin();
-                // } else {
-                //     this.context.__loginDlg.notifyOfError(e.message);
-                // }
+                if ( (ex instanceof admin.RequestError) && (ex.getStatusCode() === 401) ) {
+                    this.__loginDlg.notifyOfBadLogin();
+                } else {
+                    this.__loginDlg.notifyOfError(ex);
+                }
             }
         },
 
