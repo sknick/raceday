@@ -60,21 +60,17 @@ qx.Class.define("admin.ui.locations.Page", {
             dlg.show();
         },
 
-        __onAddConfirmed(e) {
+        async __onAddConfirmed(e) {
             const location = e.getData();
-            admin.RequestManager.getInstance().postLocation(
-                this,
-                location.name,
-                location.description
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().refresh();
-                },
+            
+            try {
+                await admin.RequestManager.getInstance().postLocation(location.name, location.description);
 
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
+                this.__table.getTableModel().refresh();
+            } catch (ex) {
+                // TODO
+                console.error(ex);
+            }
         },
 
         __onEdit(e) {
@@ -87,22 +83,17 @@ qx.Class.define("admin.ui.locations.Page", {
             }
         },
 
-        __onEditConfirmed(e) {
+        async __onEditConfirmed(e) {
             const location = e.getData();
-            admin.RequestManager.getInstance().putLocation(
-                this,
-                location.id,
-                location.name,
-                location.description
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().refresh();
-                },
 
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
+            try {
+                await admin.RequestManager.getInstance().putLocation(location.id, location.name, location.description);
+
+                this.__table.getTableModel().refresh();
+            } catch (ex) {
+                // TODO
+                console.error(ex);
+            }
         }
     }
 });

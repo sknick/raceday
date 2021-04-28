@@ -35,40 +35,32 @@ qx.Class.define("admin.ui.events.TableModel", {
             return this.getRowData(rowIndex).event;
         },
 
-        refresh() {
+        async refresh() {
             if (this.getReady()) {
                 const nowTimestamp = Math.round(Date.now() / 1000);
 
-                admin.RequestManager.getInstance().getEvents(
-                    this,
-                    nowTimestamp - (86400 * 14),
-                    -1,
-                    Intl.DateTimeFormat().resolvedOptions().timeZone
-                ).then(
-                    function(e) {
-                        const response = e.getResponse();
-
-                        const data = [];
-                        for (let i = 0; i < response.length; i++) {
-                            const event = new raceday.api.model.Event(response[i]);
-                            data.push(
-                                {
-                                    start:    new Date(event.start * 1000).toLocaleString([], {timeZoneName: "short"}),
-                                    name:     event.name,
-                                    location: event.location ? event.location.name : "",
-                                    series:   event.series ? event.series.name : "",
-                                    event:    event
-                                }
-                            );
-                        }
-
-                        this.context.setDataAsMapArray(data, true, false);
-                    },
-
-                    function(e) {
-                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                try {
+                    const events = await admin.RequestManager.getInstance().getEvents(nowTimestamp - (86400 * 14),
+                        -1, Intl.DateTimeFormat().resolvedOptions().timeZone);
+                    
+                    const data = [];
+                    for (let i = 0; i < events.length; i++) {
+                        data.push(
+                            {
+                                start:    new Date(events[i].start * 1000).toLocaleString([], {timeZoneName: "short"}),
+                                name:     events[i].name,
+                                location: events[i].location ? events[i].location.name : "",
+                                series:   events[i].series ? events[i].series.name : "",
+                                event:    events[i]
+                            }
+                        );
                     }
-                )
+                    
+                    this.setDataAsMapArray(data, true, false);
+                } catch (ex) {
+                    // TODO
+                    console.error(ex);
+                }
             }
         }
     }

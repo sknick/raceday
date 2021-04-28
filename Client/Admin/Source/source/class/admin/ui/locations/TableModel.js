@@ -22,33 +22,27 @@ qx.Class.define("admin.ui.locations.TableModel", {
             return this.getRowData(rowIndex).location;
         },
 
-        refresh() {
+        async refresh() {
             if (this.getReady()) {
-                admin.RequestManager.getInstance().getLocations(
-                    this
-                ).then(
-                    function(e) {
-                        const response = e.getResponse();
+                try {
+                    const locations = await admin.RequestManager.getInstance().getLocations();
 
-                        const data = [];
-                        for (let i = 0; i < response.length; i++) {
-                            const location = new raceday.api.model.Location(response[i]);
-                            data.push(
-                                {
-                                    name:        location.name,
-                                    description: location.description,
-                                    location:    location
-                                }
-                            );
-                        }
-
-                        this.context.setDataAsMapArray(data, true, false);
-                    },
-
-                    function(e) {
-                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                    const data = [];
+                    for (let i = 0; i < locations.length; i++) {
+                        data.push(
+                            {
+                                name:        locations[i].name,
+                                description: locations[i].description,
+                                location:    locations[i]
+                            }
+                        );
                     }
-                )
+
+                    this.setDataAsMapArray(data, true, false);
+                } catch (ex) {
+                    // TODO
+                    console.error(ex);
+                }
             }
         }
     }

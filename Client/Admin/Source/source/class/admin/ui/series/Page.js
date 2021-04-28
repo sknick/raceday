@@ -60,21 +60,17 @@ qx.Class.define("admin.ui.series.Page", {
             dlg.show();
         },
 
-        __onAddConfirmed(e) {
+        async __onAddConfirmed(e) {
             const series = e.getData();
-            admin.RequestManager.getInstance().postSeries(
-                this,
-                series.name,
-                series.description
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().refresh();
-                },
 
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
+            try {
+                await admin.RequestManager.getInstance().postSeries(series.name, series.description);
+                
+                this.__table.getTableModel().refresh();
+            } catch (ex) {
+                // TODO
+                console.error(ex);
+            }
         },
 
         __onEdit(e) {
@@ -87,22 +83,17 @@ qx.Class.define("admin.ui.series.Page", {
             }
         },
 
-        __onEditConfirmed(e) {
+        async __onEditConfirmed(e) {
             const series = e.getData();
-            admin.RequestManager.getInstance().putSeries(
-                this,
-                series.id,
-                series.name,
-                series.description
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().refresh();
-                },
 
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
+            try {
+                await admin.RequestManager.getInstance().putSeries(series.id, series.name, series.description);
+                
+                this.__table.getTableModel().refresh();
+            } catch (ex) {
+                // TODO
+                console.error(ex);
+            }
         }
     }
 });
