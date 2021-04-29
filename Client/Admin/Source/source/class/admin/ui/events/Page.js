@@ -158,7 +158,7 @@ qx.Class.define("admin.ui.events.Page", {
                     const locations = await admin.RequestManager.getInstance().getLocations();
                     const series = await admin.RequestManager.getInstance().getSeries();
                     const event = this.__table.getTableModel().getEvent(selectedRows[0].minIndex);
-                    const broadcasts = admin.RequestManager.getInstance().getBroadcasts(event.id, null, null, false);
+                    const broadcasts = await admin.RequestManager.getInstance().getBroadcasts(event.id, null, null, false);
 
                     const dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts);
                     dlg.addListener("confirmed", this.__onEditConfirmed, this);

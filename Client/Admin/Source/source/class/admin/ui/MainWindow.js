@@ -91,27 +91,7 @@ qx.Class.define("admin.ui.MainWindow", {
             try {
                 const accessToken = await admin.RequestManager.getInstance().getNewAccessToken(data.username,
                     data.password, true);
-
-                admin.RequestManager.getInstance().setAccessToken(accessToken);
-                qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
-
-                if (this.__loginDlg) {
-                    this.__root.remove(this.__loginDlg);
-                }
-
-                const tabView = new qx.ui.tabview.TabView("top");
-                tabView.setContentPadding(0, 0, 0, 0);
-
-                tabView.add(new admin.ui.events.Page());
-                tabView.add(new admin.ui.series.Page());
-                tabView.add(new admin.ui.locations.Page());
-
-                this.__root.add(tabView, {
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%"
-                });
+                this.__onLoginContinued(accessToken);
             } catch (ex) {
                 if ( (ex instanceof admin.RequestError) && (ex.getStatusCode() === 401) ) {
                     this.__loginDlg.notifyOfBadLogin();
@@ -119,6 +99,29 @@ qx.Class.define("admin.ui.MainWindow", {
                     this.__loginDlg.notifyOfError(ex);
                 }
             }
+        },
+
+        __onLoginContinued(accessToken) {
+            admin.RequestManager.getInstance().setAccessToken(accessToken);
+            qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
+
+            if (this.__loginDlg) {
+                this.__root.remove(this.__loginDlg);
+            }
+
+            const tabView = new qx.ui.tabview.TabView("top");
+            tabView.setContentPadding(0, 0, 0, 0);
+
+            tabView.add(new admin.ui.events.Page());
+            tabView.add(new admin.ui.series.Page());
+            tabView.add(new admin.ui.locations.Page());
+
+            this.__root.add(tabView, {
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%"
+            });
         },
 
         __loadingDlg: null
