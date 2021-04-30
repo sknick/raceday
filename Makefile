@@ -41,6 +41,7 @@ schema:
 	psql -U postgres -h localhost -d raceday -f Schema/01-enums.sql
 	psql -U postgres -h localhost -d raceday -f Schema/02-tables.sql
 	psql -U postgres -h localhost -d raceday -f Schema/03-views.sql
+	psql -U postgres -h localhost -d raceday -f Schema/04-data.sql
 
 deployment:
 	cd Deployments/raceday.watch && docker-compose build

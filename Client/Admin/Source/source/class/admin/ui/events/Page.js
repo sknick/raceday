@@ -81,13 +81,7 @@ qx.Class.define("admin.ui.events.Page", {
             const data = e.getData();
 
             try {
-                const eventId = await admin.RequestManager.getInstance().postEvent(
-                    data.event.name,
-                    data.event.start,
-                    data.event.description,
-                    data.event.location ? data.event.location.id : null,
-                    data.event.series ? data.event.series.id : null
-                );
+                const eventId = await admin.RequestManager.getInstance().postEvent(data.event);
 
                 if (data.broadcasts.length === 0) {
                     this.__table.getTableModel().refresh();
@@ -174,14 +168,7 @@ qx.Class.define("admin.ui.events.Page", {
             const data = e.getData();
 
             try {
-                await admin.RequestManager.getInstance().putEvent(
-                    data.event.id,
-                    data.event.name,
-                    data.event.start,
-                    data.event.description,
-                    data.event.location ? data.event.location.id : null,
-                    data.event.series ? data.event.series.id : null
-                );
+                await admin.RequestManager.getInstance().putEvent(data.event);
                 
                 if (data.broadcasts.length === 0) {
                     this.__table.getTableModel().refresh();

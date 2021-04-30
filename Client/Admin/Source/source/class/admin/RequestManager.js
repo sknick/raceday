@@ -160,19 +160,13 @@ qx.Class.define("admin.RequestManager", {
             return ret;
         },
 
-        async postBroadcast(type, eventId, url, quiet) {
-            const params = {
-                "type":     type,
-                "event_id": eventId
-            };
-            if (url) {
-                params["url"] = url;
-            }
-
-            const req = this.__prepareRequestWithParams("broadcast", params, quiet);
+        async postBroadcast(unsavedBroadcast, quiet) {
+            const req = this.__prepareRequest("broadcast", quiet);
             req.setMethod("POST");
-            const result = await req.sendWithPromise();
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedBroadcast.toSimpleObject());
 
+            const result = await req.sendWithPromise();
             return result.getResponse();
         },
 
@@ -191,6 +185,45 @@ qx.Class.define("admin.RequestManager", {
             return result.getResponse();
         },
 
+        async postEvent(unsavedEvent, quiet) {
+            const req = this.__prepareRequest("event", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedEvent.toSimpleObject());
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
+        },
+
+        async postLocation(unsavedLocation, quiet) {
+            const req = this.__prepareRequest("location", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedLocation.toSimpleObject());
+
+            const result = await req.sendWithPromise();
+            return result.getResponse();
+        },
+
+        async postSeries(unsavedSeries, quiet) {
+            const req = this.__prepareRequest("series", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedSeries.toSimpleObject());
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
+        },
+
+        async putBroadcast(broadcast, quiet) {
+            const req = this.__prepareRequest("broadcast", quiet);
+            req.setMethod("PUT");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(broadcast.toSimpleObject());
+            
+            await req.sendWithPromise();
+        },
+
         async putBroadcasts(broadcasts, quiet) {
             const data = [];
             for (let i = 0; i < broadcasts.length; i++) {
@@ -205,117 +238,29 @@ qx.Class.define("admin.RequestManager", {
             await req.sendWithPromise();
         },
 
-        async postEvent(name, start, description, locationId, seriesId, quiet) {
-            const params = {
-                "name":  name,
-                "start": start
-            };
-            if (description) {
-                params["description"] = description;
-            }
-            if (locationId) {
-                params["location_id"] = locationId;
-            }
-            if (seriesId) {
-                params["series_id"] = seriesId;
-            }
-
-            const req = this.__prepareRequestWithParams("event", params, quiet);
-            req.setMethod("POST");
-            
-            const result = await req.sendWithPromise();
-
-            return result.getResponse();
-        },
-
-        async postLocation(name, description, quiet) {
-            const params = {
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("location", params, quiet);
-            req.setMethod("POST");
-
-            const result = await req.sendWithPromise();
-
-            return result.getResponse();
-        },
-
-        async postSeries(name, description, quiet) {
-            const params = {
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("series", params, quiet);
-            req.setMethod("POST");
-            
-            const result = await req.sendWithPromise();
-
-            return result.getResponse();
-        },
-
-        async putBroadcast(id, type, eventId, url, quiet) {
-            const params = {
-                "id":       id,
-                "type":     type,
-                "event_id": eventId
-            };
-            if (url) {
-                params["url"] = url;
-            }
-
-            const req = this.__prepareRequestWithParams("broadcast", params, quiet);
+        async putEvent(event, quiet) {
+            const req = this.__prepareRequest("event", quiet);
             req.setMethod("PUT");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(event.toSimpleObject());
             
             await req.sendWithPromise();
         },
 
-        async putEvent(id, name, start, description, locationId, seriesId, quiet) {
-            const params = {
-                "id":    id,
-                "name":  name,
-                "start": start
-            };
-            if (description) {
-                params["description"] = description;
-            }
-            if (locationId) {
-                params["location_id"] = locationId;
-            }
-            if (seriesId) {
-                params["series_id"] = seriesId;
-            }
-
-            const req = this.__prepareRequestWithParams("event", params, quiet);
+        async putLocation(location, quiet) {
+            const req = this.__prepareRequest("location", quiet);
             req.setMethod("PUT");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(location.toSimpleObject());
             
             await req.sendWithPromise();
         },
 
-        async putLocation(id, name, description, quiet) {
-            const params = {
-                "id":          id,
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("location", params, quiet);
+        async putSeries(series, quiet) {
+            const req = this.__prepareRequest("series", quiet);
             req.setMethod("PUT");
-            
-            await req.sendWithPromise();
-        },
-
-        async putSeries(id, name, description, quiet) {
-            const params = {
-                "id":          id,
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("series", params, quiet);
-            req.setMethod("PUT");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(series.toSimpleObject());
             
             await req.sendWithPromise();
         },

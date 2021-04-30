@@ -55,10 +55,23 @@ func BroadcastDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func BroadcastPost(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var broadcast model.UnsavedBroadcast
+
+	err := decoder.Decode(&broadcast)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
+	}
+
 	id, err := store.Datastore.CreateBroadcast(
-		model.BroadcastTypeFromString(r.URL.Query().Get("type")),
-		r.URL.Query().Get("event_id"),
-		r.URL.Query().Get("url"),
+		broadcast.Type_,
+		broadcast.EventId,
+		broadcast.LangIds,
+		&broadcast.Description,
+		&broadcast.Url,
+		&broadcast.Geoblocked,
+		&broadcast.Paid,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -69,18 +82,25 @@ func BroadcastPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func BroadcastPut(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	type_ := r.URL.Query().Get("type")
-	eventId := r.URL.Query().Get("event_id")
+	decoder := json.NewDecoder(r.Body)
+	var broadcast model.Broadcast
 
-	var url *string
-
-	urlParam := r.URL.Query().Get("url")
-	if urlParam != "" {
-		url = &urlParam
+	err := decoder.Decode(&broadcast)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
 	}
 
-	err := store.Datastore.UpdateBroadcast(id, model.BroadcastTypeFromString(type_), eventId, url)
+	err = store.Datastore.UpdateBroadcast(
+		broadcast.Id,
+		broadcast.Type_,
+		broadcast.Event.Id,
+		broadcast.LangIds,
+		&broadcast.Description,
+		&broadcast.Url,
+		&broadcast.Geoblocked,
+		&broadcast.Paid,
+	)
 	if err != nil {
 		switch err.(type) {
 		case *store.BroadcastNotFoundError:
@@ -183,7 +203,11 @@ func BroadcastsPost(w http.ResponseWriter, r *http.Request) {
 		id, err := store.Datastore.CreateBroadcast(
 			broadcast.Type_,
 			broadcast.EventId,
-			broadcast.Url,
+			broadcast.LangIds,
+			&broadcast.Description,
+			&broadcast.Url,
+			&broadcast.Geoblocked,
+			&broadcast.Paid,
 		)
 		if err != nil {
 			switch err.(type) {
@@ -213,12 +237,16 @@ func BroadcastsPut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, broadcast := range broadcasts {
-		var url string
-		if broadcast.Url != "" {
-			url = broadcast.Url
-		}
-
-		err := store.Datastore.UpdateBroadcast(broadcast.Id, broadcast.Type_, broadcast.Event.Id, &url)
+		err := store.Datastore.UpdateBroadcast(
+			broadcast.Id,
+			broadcast.Type_,
+			broadcast.Event.Id,
+			broadcast.LangIds,
+			&broadcast.Description,
+			&broadcast.Url,
+			&broadcast.Geoblocked,
+			&broadcast.Paid,
+		)
 		if err != nil {
 			switch err.(type) {
 			case *store.BroadcastNotFoundError:
@@ -264,39 +292,22 @@ func EventPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start, err := strconv.ParseInt(r.URL.Query().Get("start"), 10, 64)
+	decoder := json.NewDecoder(r.Body)
+	var event model.UnsavedEvent
+
+	err = decoder.Decode(&event)
 	if err != nil {
 		handleInternalServerError(w, err)
 		return
 	}
 
-	descriptionParam := r.URL.Query().Get("description")
-	locationIdParam := r.URL.Query().Get("location_id")
-	seriesIdParam := r.URL.Query().Get("series_id")
-
-	var (
-		description *string
-		locationId  *string
-		seriesId    *string
-	)
-
-	if descriptionParam != "" {
-		description = &descriptionParam
-	}
-	if locationIdParam != "" {
-		locationId = &locationIdParam
-	}
-	if seriesIdParam != "" {
-		seriesId = &seriesIdParam
-	}
-
 	id, err := store.Datastore.CreateEvent(
 		accessToken,
-		r.URL.Query().Get("name"),
-		time.Unix(start, 0),
-		description,
-		locationId,
-		seriesId,
+		event.Name,
+		time.Unix(int64(event.Start), 0),
+		&event.Description,
+		&event.LocationId,
+		&event.SeriesId,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -313,35 +324,24 @@ func EventPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := r.URL.Query().Get("id")
-	name := r.URL.Query().Get("name")
-	start, err := strconv.ParseInt(r.URL.Query().Get("start"), 10, 64)
+	decoder := json.NewDecoder(r.Body)
+	var event model.Event
+
+	err = decoder.Decode(&event)
 	if err != nil {
 		handleInternalServerError(w, err)
 		return
 	}
 
-	descriptionParam := r.URL.Query().Get("description")
-	locationIdParam := r.URL.Query().Get("location_id")
-	seriesIdParam := r.URL.Query().Get("series_id")
-
-	var (
-		description *string
-		locationId  *string
-		seriesId    *string
+	err = store.Datastore.UpdateEvent(
+		accessToken,
+		event.Id,
+		event.Name,
+		time.Unix(int64(event.Start), 0),
+		&event.Description,
+		&event.Location.Id,
+		&event.Series.Id,
 	)
-
-	if descriptionParam != "" {
-		description = &descriptionParam
-	}
-	if locationIdParam != "" {
-		locationId = &locationIdParam
-	}
-	if seriesIdParam != "" {
-		seriesId = &seriesIdParam
-	}
-
-	err = store.Datastore.UpdateEvent(accessToken, id, name, time.Unix(start, 0), description, locationId, seriesId)
 	if err != nil {
 		switch err.(type) {
 		case *store.EventNotFoundError:
@@ -482,16 +482,18 @@ func LangsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func LocationPost(w http.ResponseWriter, r *http.Request) {
-	descriptionParam := r.URL.Query().Get("description")
+	decoder := json.NewDecoder(r.Body)
+	var location model.UnsavedLocation
 
-	var description *string
-	if descriptionParam != "" {
-		description = &descriptionParam
+	err := decoder.Decode(&location)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
 	}
 
 	id, err := store.Datastore.CreateLocation(
-		r.URL.Query().Get("name"),
-		description,
+		location.Name,
+		&location.Description,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -502,16 +504,20 @@ func LocationPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func LocationPut(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	name := r.URL.Query().Get("name")
-	descriptionParam := r.URL.Query().Get("description")
+	decoder := json.NewDecoder(r.Body)
+	var location model.Location
 
-	var description *string
-	if descriptionParam != "" {
-		description = &descriptionParam
+	err := decoder.Decode(&location)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
 	}
 
-	err := store.Datastore.UpdateLocation(id, name, description)
+	err = store.Datastore.UpdateLocation(
+		location.Id,
+		location.Name,
+		&location.Description,
+	)
 	if err != nil {
 		switch err.(type) {
 		case *store.LocationNotFoundError:
@@ -547,16 +553,18 @@ func SeriesGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func SeriesPost(w http.ResponseWriter, r *http.Request) {
-	descriptionParam := r.URL.Query().Get("description")
+	decoder := json.NewDecoder(r.Body)
+	var series model.UnsavedSeries
 
-	var description *string
-	if descriptionParam != "" {
-		description = &descriptionParam
+	err := decoder.Decode(&series)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
 	}
 
 	id, err := store.Datastore.CreateSeries(
-		r.URL.Query().Get("name"),
-		description,
+		series.Name,
+		&series.Description,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -567,16 +575,20 @@ func SeriesPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func SeriesPut(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	name := r.URL.Query().Get("name")
-	descriptionParam := r.URL.Query().Get("description")
+	decoder := json.NewDecoder(r.Body)
+	var series model.Series
 
-	var description *string
-	if descriptionParam != "" {
-		description = &descriptionParam
+	err := decoder.Decode(&series)
+	if err != nil {
+		handleInternalServerError(w, err)
+		return
 	}
 
-	err := store.Datastore.UpdateSeries(id, name, description)
+	err = store.Datastore.UpdateSeries(
+		series.Id,
+		series.Name,
+		&series.Description,
+	)
 	if err != nil {
 		switch err.(type) {
 		case *store.SeriesNotFoundError:

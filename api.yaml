@@ -77,47 +77,13 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-        - name: type
-          in: query
-          required: true
-          description: The type of broadcast.
-          schema:
-            type: string
-            enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
-        - name: event_id
-          in: query
-          description: The ID of an event with which to associate the broadcast.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: description
-          in: query
-          description: A description of the broadcast.
-          schema:
-            type: string
-        - name: url
-          in: query
-          description: The URL to apply to the broadcast.
-          schema:
-            type: string
-            format: uri
-        - name: geoblocked
-          in: query
-          description: Whether or not the broadcast is geoblocked.
-          schema:
-            type: boolean
-        - name: paid
-          in: query
-          description: Whether or not the broadcast requires a paid account.
-          schema:
-            type: boolean
-        - name: lang_id
-          in: query
-          description: The ID of the language of the broadcast.
-          schema:
-            type: string
-            format: uuid
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnsavedBroadcast"
 
       responses:
         "200":
@@ -140,54 +106,13 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-        - name: id
-          in: query
-          description: The ID of the broadcast to update.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: type
-          in: query
-          description: An updated type to apply to the broadcast.
-          required: true
-          schema:
-            type: string
-            enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
-        - name: event_id
-          in: query
-          description: The ID of an event with which to associate the broadcast.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: description
-          in: query
-          description: A description of the broadcast.
-          schema:
-            type: string
-        - name: url
-          in: query
-          description: The URL to apply to the broadcast.
-          schema:
-            type: string
-            format: uri
-        - name: geoblocked
-          in: query
-          description: Whether or not the broadcast is geoblocked.
-          schema:
-            type: boolean
-        - name: paid
-          in: query
-          description: Whether or not the broadcast requires a paid account.
-          schema:
-            type: boolean
-        - name: lang_id
-          in: query
-          description: The ID of the language of the broadcast.
-          schema:
-            type: string
-            format: uuid
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Broadcast"
 
       responses:
         "200":
@@ -278,42 +203,15 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-      
+
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                type_:
-                  description: The type of broadcast.
-                  type: string
-                  enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
-                event_id:
-                  description: The ID of an event with which to associate the broadcast.
-                  type: string
-                  format: uuid
-                description:
-                  description: A description of the broadcast.
-                  type: string
-                url:
-                  description: The URL to apply to the broadcast.
-                  type: string
-                  format: uri
-                geoblocked:
-                  description: Whether or not the broadcast is geoblocked.
-                  type: boolean
-                paid:
-                  description: Whether or not the broadcast requires a paid account.
-                  type: boolean
-                lang_id:
-                  description: The ID of the language of the broadcast.
-                  type: string
-                  format: uuid
-              required:
-                - type
-                - event_id
+              type: array
+              items:
+                $ref: "#/components/schemas/UnsavedBroadcast"
 
       responses:
         "200":
@@ -394,36 +292,13 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-        - name: name
-          in: query
-          description: The name of the new event.
-          required: true
-          schema:
-            type: string
-        - name: start
-          in: query
-          description: The start time of the new event.
-          required: true
-          schema:
-            type: number
-            format: int64
-        - name: description
-          in: query
-          description: A description of the new event.
-          schema:
-            type: string
-        - name: location_id
-          in: query
-          description: The ID of a location with which to associate the event.
-          schema:
-            type: string
-            format: uuid
-        - name: series_id
-          in: query
-          description: The ID of a series with which to associate the event.
-          schema:
-            type: string
-            format: uuid
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnsavedEvent"
 
       responses:
         "200":
@@ -445,44 +320,14 @@ paths:
       summary: Updates an event.
 
       parameters:
-        - $ref: "#/components/parameters/AccessTokenParam"
-        - name: id
-          in: query
-          description: The ID of the event to update.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: name
-          in: query
-          description: The new name of the event.
-          required: true
-          schema:
-            type: string
-        - name: start
-          in: query
-          description: The new start time of the event.
-          required: true
-          schema:
-            type: number
-            format: int64
-        - name: description
-          in: query
-          description: A new description of the event.
-          schema:
-            type: string
-        - name: location_id
-          in: query
-          description: The ID of a new location with which to associate the event.
-          schema:
-            type: string
-            format: uuid
-        - name: series_id
-          in: query
-          description: The ID of a new series with which to associate the event.
-          schema:
-            type: string
-            format: uuid
+        - $ref:  "#/components/parameters/AccessTokenParam"
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Event"
 
       responses:
         "200":
@@ -638,17 +483,13 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-        - name: name
-          in: query
-          description: The name of the new location.
-          required: true
-          schema:
-            type: string
-        - name: description
-          in: query
-          description: A description of the new location.
-          schema:
-            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnsavedLocation"
 
       responses:
         "200":
@@ -671,24 +512,13 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-        - name: id
-          in: query
-          description: The ID of the location to update.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: name
-          in: query
-          description: The name of the location.
-          required: true
-          schema:
-            type: string
-        - name: description
-          in: query
-          description: A description of the location.
-          schema:
-            type: string
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Location"
 
       responses:
         "200":
@@ -748,17 +578,13 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-        - name: name
-          in: query
-          description: The name of the new series.
-          required: true
-          schema:
-            type: string
-        - name: description
-          in: query
-          description: A description of the new series.
-          schema:
-            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnsavedSeries"
 
       responses:
         "200":
@@ -781,24 +607,13 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/AccessTokenParam"
-        - name: id
-          in: query
-          description: The ID of the series to update.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: name
-          in: query
-          description: The name of the series.
-          required: true
-          schema:
-            type: string
-        - name: description
-          in: query
-          description: A description of the series.
-          schema:
-            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Series"
 
       responses:
         "200":
@@ -840,6 +655,10 @@ components:
           $ref: "#/components/schemas/BroadcastType"
         event:
           $ref: "#/components/schemas/Event"
+        lang_ids:
+          type: array
+          items:
+            type: string
         description:
           description: A description of the broadcast.
           type: string
@@ -852,8 +671,6 @@ components:
         paid:
           description: Whether or not the broadcast requires a paid account
           type: boolean
-        lang:
-          $ref: "#/components/schemas/Lang"
       required:
         - id
         - type
@@ -984,9 +801,71 @@ components:
           description: The ID of the event associated with this broadcast.
           type: string
           format: uuid
+        lang_ids:
+          type: array
+          items:
+            type: string
+        description:
+          description: A description of the broadcast.
+          type: string
         url:
-          description: A URL providing a way to watch the broadcast or information on the source of the broadcast.
+          description: A URL providing a way to watch the broadcast.
+          type: string
+        geoblocked:
+          description: Whether or not the broadcast is geoblocked.
+          type: boolean
+        paid:
+          description: Whether or not the broadcast requires a paid account
+          type: boolean
+      required:
+        - type
+        - event_id
+        - lang_ids
+
+    UnsavedEvent:
+      type: object
+      properties:
+        name:
+          description: The name of the event.
+          type: string
+        start:
+          description: A UNIX timestamp indicating when the event starts.
+          type: number
+          format: int64
+        description:
+          description: A description of the event.
+          type: string
+        location_id:
+          description: The ID of the location of this event.
+          type: string
+          format: uuid
+        series_id:
+          description: The ID of the series associated with this event.
+          type: string
+          format: uuid
+      required:
+        - name
+
+    UnsavedLocation:
+      type: object
+      properties:
+        name:
+          description: The name of the location.
+          type: string
+        description:
+          description: A description of the location.
           type: string
       required:
-        - type_
-        - event_id
+        - name
+
+    UnsavedSeries:
+      type: object
+      properties:
+        name:
+          description: The name of the series.
+          type: string
+        description:
+          description: A description of the series.
+          type: string
+      required:
+        - name

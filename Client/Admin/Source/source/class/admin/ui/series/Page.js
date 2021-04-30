@@ -64,7 +64,7 @@ qx.Class.define("admin.ui.series.Page", {
             const series = e.getData();
 
             try {
-                await admin.RequestManager.getInstance().postSeries(series.name, series.description);
+                await admin.RequestManager.getInstance().postSeries(series);
                 this.__table.getTableModel().refresh();
             } catch (ex) {
                 admin.ui.MainWindow.handleError(ex);
@@ -85,7 +85,7 @@ qx.Class.define("admin.ui.series.Page", {
             const series = e.getData();
 
             try {
-                await admin.RequestManager.getInstance().putSeries(series.id, series.name, series.description);
+                await admin.RequestManager.getInstance().putSeries(series);
                 this.__table.getTableModel().refresh();
             } catch (ex) {
                 admin.ui.MainWindow.handleError(ex);

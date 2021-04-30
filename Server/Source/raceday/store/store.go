@@ -304,3 +304,27 @@ func (dh DatastoreHandle) auditAction(userId, tableName, itemDescription, action
 		return
 	}
 }
+
+func (dh DatastoreHandle) getNullBool(value *bool) sql.NullBool {
+	ret := sql.NullBool{
+		Valid: false,
+	}
+	if value != nil {
+		ret.Valid = true
+		ret.Bool = *value
+	}
+
+	return ret
+}
+
+func (dh DatastoreHandle) getNullString(value *string) sql.NullString {
+	ret := sql.NullString{
+		Valid: false,
+	}
+	if value != nil {
+		ret.Valid = true
+		ret.String = *value
+	}
+
+	return ret
+}

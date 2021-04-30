@@ -64,7 +64,7 @@ qx.Class.define("admin.ui.locations.Page", {
             const location = e.getData();
             
             try {
-                await admin.RequestManager.getInstance().postLocation(location.name, location.description);
+                await admin.RequestManager.getInstance().postLocation(location);
                 this.__table.getTableModel().refresh();
             } catch (ex) {
                 admin.ui.MainWindow.handleError(ex);
@@ -85,7 +85,7 @@ qx.Class.define("admin.ui.locations.Page", {
             const location = e.getData();
 
             try {
-                await admin.RequestManager.getInstance().putLocation(location.id, location.name, location.description);
+                await admin.RequestManager.getInstance().putLocation(location);
                 this.__table.getTableModel().refresh();
             } catch (ex) {
                 admin.ui.MainWindow.handleError(ex);

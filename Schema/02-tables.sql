@@ -55,15 +55,14 @@ CREATE TABLE broadcast (
     id                          uuid                                NOT NULL,
     type                        broadcast_type                      NOT NULL,
     event_id                    uuid                                NOT NULL,
+    lang_ids                    varchar[]                           NOT NULL DEFAULT array[]::varchar[],
     description                 varchar,
     url                         varchar,
     geoblocked                  boolean,
     paid                        boolean,
-    lang_id                     varchar,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (event_id)      REFERENCES event(id),
-    FOREIGN KEY (lang_id)       REFERENCES lang(id)
+    FOREIGN KEY (event_id)      REFERENCES event(id)
 );
 
 CREATE TABLE access_token (
