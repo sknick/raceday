@@ -673,8 +673,9 @@ components:
           type: boolean
       required:
         - id
-        - type
+        - type_
         - event
+        - lang_ids
     
     BroadcastType:
       description: The type of a broadcast.
@@ -705,6 +706,7 @@ components:
       required:
         - id
         - name
+        - start
     
     Lang:
       type: object
@@ -818,7 +820,7 @@ components:
           description: Whether or not the broadcast requires a paid account
           type: boolean
       required:
-        - type
+        - type_
         - event_id
         - lang_ids
 
@@ -845,6 +847,7 @@ components:
           format: uuid
       required:
         - name
+        - start
 
     UnsavedLocation:
       type: object

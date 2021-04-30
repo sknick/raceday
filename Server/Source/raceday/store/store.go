@@ -145,7 +145,7 @@ func (dh DatastoreHandle) GetSystemUser(id string) (*model.SystemUser, error) {
 	var emailVal *string
 	var whenCreatedVal int
 	var whoCreatedVal *string
-	var whenUpdatedVal *int
+	var whenUpdatedVal *int32
 	var whoUpdatedVal *string
 	var enabledVal bool
 
@@ -175,37 +175,7 @@ func (dh DatastoreHandle) GetSystemUser(id string) (*model.SystemUser, error) {
 		}
 	}
 
-	firstName := ""
-	if firstNameVal != nil {
-		firstName = *firstNameVal
-	}
-
-	lastName := ""
-	if lastNameVal != nil {
-		lastName = *lastNameVal
-	}
-
-	email := ""
-	if emailVal != nil {
-		email = *emailVal
-	}
-
-	whoCreated := ""
-	if whoCreatedVal != nil {
-		whoCreated = *whoCreatedVal
-	}
-
-	whenUpdated := -1
-	if whenUpdatedVal != nil {
-		whenUpdated = *whenUpdatedVal
-	}
-
-	whoUpdated := ""
-	if whoUpdatedVal != nil {
-		whoUpdated = *whoUpdatedVal
-	}
-
-	ret := model.NewSystemUser(id, firstName, lastName, email, int32(whenCreatedVal), whoCreated, int32(whenUpdated), whoUpdated, enabledVal)
+	ret := model.NewSystemUser(id, firstNameVal, lastNameVal, emailVal, int32(whenCreatedVal), whoCreatedVal, whenUpdatedVal, whoUpdatedVal, enabledVal)
 	return &ret, nil
 }
 

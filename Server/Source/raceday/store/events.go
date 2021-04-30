@@ -264,7 +264,7 @@ func newEventFromRow(rows *sql.Rows) (*model.Event, error) {
 		Start: float64(eventStartVal.Unix()),
 	}
 	if eventDescriptionVal.Valid {
-		ret.Description = eventDescriptionVal.String
+		ret.Description = &eventDescriptionVal.String
 	}
 
 	location := model.Location{}
@@ -275,12 +275,12 @@ func newEventFromRow(rows *sql.Rows) (*model.Event, error) {
 			location.Name = locationNameVal.String
 		}
 		if locationDescriptionVal.Valid {
-			location.Description = locationDescriptionVal.String
+			location.Description = &locationDescriptionVal.String
 		}
 	}
 
 	if location != (model.Location{}) {
-		ret.Location = location
+		ret.Location = &location
 	}
 
 	series := model.Series{}
@@ -291,12 +291,12 @@ func newEventFromRow(rows *sql.Rows) (*model.Event, error) {
 			series.Name = seriesNameVal.String
 		}
 		if seriesDescriptionVal.Valid {
-			series.Description = seriesDescriptionVal.String
+			series.Description = &seriesDescriptionVal.String
 		}
 	}
 
 	if series != (model.Series{}) {
-		ret.Series = series
+		ret.Series = &series
 	}
 
 	return &ret, nil

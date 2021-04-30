@@ -27,12 +27,16 @@ type ExcelExport struct {
 
 type broadcastInfo struct {
 	icon image.Image
-	url  string
+	url  *string
 }
 
 func (bi broadcastInfo) hasValidUrl() bool {
+	if bi.url == nil {
+		return false
+	}
+
 	validUrlRegex := regexp.MustCompile(`^https?\://`)
-	if validUrlRegex.MatchString(bi.url) {
+	if validUrlRegex.MatchString(*bi.url) {
 		return true
 	}
 
@@ -284,7 +288,7 @@ func addRow(ss *excelize.File, rowIndex int, values []string, broadcastLinks []b
 					 "hyperlink":      "%s",
 					 "hyperlink_type": "External"
 			 	 }`,
-				broadcastLink.url,
+				*broadcastLink.url,
 			)
 		}
 
@@ -298,7 +302,7 @@ func addRow(ss *excelize.File, rowIndex int, values []string, broadcastLinks []b
 				 "author": "Race Day: ",
 				 "text":   "%s"
 			 }`,
-			broadcastLink.url,
+			*broadcastLink.url,
 		)
 		err = ss.AddComment(Sheet, cell, format)
 	}

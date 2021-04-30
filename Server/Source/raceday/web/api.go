@@ -68,10 +68,10 @@ func BroadcastPost(w http.ResponseWriter, r *http.Request) {
 		broadcast.Type_,
 		broadcast.EventId,
 		broadcast.LangIds,
-		&broadcast.Description,
-		&broadcast.Url,
-		&broadcast.Geoblocked,
-		&broadcast.Paid,
+		broadcast.Description,
+		broadcast.Url,
+		broadcast.Geoblocked,
+		broadcast.Paid,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -96,10 +96,10 @@ func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 		broadcast.Type_,
 		broadcast.Event.Id,
 		broadcast.LangIds,
-		&broadcast.Description,
-		&broadcast.Url,
-		&broadcast.Geoblocked,
-		&broadcast.Paid,
+		broadcast.Description,
+		broadcast.Url,
+		broadcast.Geoblocked,
+		broadcast.Paid,
 	)
 	if err != nil {
 		switch err.(type) {
@@ -204,10 +204,10 @@ func BroadcastsPost(w http.ResponseWriter, r *http.Request) {
 			broadcast.Type_,
 			broadcast.EventId,
 			broadcast.LangIds,
-			&broadcast.Description,
-			&broadcast.Url,
-			&broadcast.Geoblocked,
-			&broadcast.Paid,
+			broadcast.Description,
+			broadcast.Url,
+			broadcast.Geoblocked,
+			broadcast.Paid,
 		)
 		if err != nil {
 			switch err.(type) {
@@ -242,10 +242,10 @@ func BroadcastsPut(w http.ResponseWriter, r *http.Request) {
 			broadcast.Type_,
 			broadcast.Event.Id,
 			broadcast.LangIds,
-			&broadcast.Description,
-			&broadcast.Url,
-			&broadcast.Geoblocked,
-			&broadcast.Paid,
+			broadcast.Description,
+			broadcast.Url,
+			broadcast.Geoblocked,
+			broadcast.Paid,
 		)
 		if err != nil {
 			switch err.(type) {
@@ -305,9 +305,9 @@ func EventPost(w http.ResponseWriter, r *http.Request) {
 		accessToken,
 		event.Name,
 		time.Unix(int64(event.Start), 0),
-		&event.Description,
-		&event.LocationId,
-		&event.SeriesId,
+		event.Description,
+		event.LocationId,
+		event.SeriesId,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -333,14 +333,24 @@ func EventPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var locationId *string
+	if event.Location != nil {
+		locationId = &event.Location.Id
+	}
+
+	var seriesId *string
+	if event.Series != nil {
+		seriesId = &event.Series.Id
+	}
+
 	err = store.Datastore.UpdateEvent(
 		accessToken,
 		event.Id,
 		event.Name,
 		time.Unix(int64(event.Start), 0),
-		&event.Description,
-		&event.Location.Id,
-		&event.Series.Id,
+		event.Description,
+		locationId,
+		seriesId,
 	)
 	if err != nil {
 		switch err.(type) {
@@ -493,7 +503,7 @@ func LocationPost(w http.ResponseWriter, r *http.Request) {
 
 	id, err := store.Datastore.CreateLocation(
 		location.Name,
-		&location.Description,
+		location.Description,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -516,7 +526,7 @@ func LocationPut(w http.ResponseWriter, r *http.Request) {
 	err = store.Datastore.UpdateLocation(
 		location.Id,
 		location.Name,
-		&location.Description,
+		location.Description,
 	)
 	if err != nil {
 		switch err.(type) {
@@ -564,7 +574,7 @@ func SeriesPost(w http.ResponseWriter, r *http.Request) {
 
 	id, err := store.Datastore.CreateSeries(
 		series.Name,
-		&series.Description,
+		series.Description,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
@@ -587,7 +597,7 @@ func SeriesPut(w http.ResponseWriter, r *http.Request) {
 	err = store.Datastore.UpdateSeries(
 		series.Id,
 		series.Name,
-		&series.Description,
+		series.Description,
 	)
 	if err != nil {
 		switch err.(type) {

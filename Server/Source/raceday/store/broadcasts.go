@@ -210,7 +210,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 				Name: locationNameVal.String,
 			}
 			if locationDescriptionVal.Valid {
-				thisLocation.Description = locationDescriptionVal.String
+				thisLocation.Description = &locationDescriptionVal.String
 			}
 		}
 
@@ -221,7 +221,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 				Name: seriesNameVal.String,
 			}
 			if seriesDescriptionVal.Valid {
-				thisSeries.Description = seriesDescriptionVal.String
+				thisSeries.Description = &seriesDescriptionVal.String
 			}
 		}
 
@@ -229,11 +229,11 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 			Id:       eventIdVal,
 			Name:     eventNameVal,
 			Start:    float64(eventStartVal.Unix()),
-			Location: thisLocation,
-			Series:   thisSeries,
+			Location: &thisLocation,
+			Series:   &thisSeries,
 		}
 		if eventDescriptionVal.Valid {
-			thisEvent.Description = eventDescriptionVal.String
+			thisEvent.Description = &eventDescriptionVal.String
 		}
 
 		thisBroadcast := model.Broadcast{
@@ -243,16 +243,16 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 			LangIds: broadcastLangIdsVal,
 		}
 		if broadcastDescriptionVal.Valid {
-			thisBroadcast.Description = broadcastDescriptionVal.String
+			thisBroadcast.Description = &broadcastDescriptionVal.String
 		}
 		if broadcastUrlVal.Valid {
-			thisBroadcast.Url = broadcastUrlVal.String
+			thisBroadcast.Url = &broadcastUrlVal.String
 		}
 		if broadcastGeoBlockedVal.Valid {
-			thisBroadcast.Geoblocked = broadcastGeoBlockedVal.Bool
+			thisBroadcast.Geoblocked = &broadcastGeoBlockedVal.Bool
 		}
 		if broadcastPaidVal.Valid {
-			thisBroadcast.Paid = broadcastPaidVal.Bool
+			thisBroadcast.Paid = &broadcastPaidVal.Bool
 		}
 
 		ret = append(ret, thisBroadcast)
