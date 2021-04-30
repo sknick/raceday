@@ -49,5 +49,6 @@ deployment:
 
 clean:
 	rm -rf Build
+	rm -rf Client/Admin/Source/source/class/raceday/api/model
 	rm -rf Client/API/Python/Build
 	rm -f Server/Source/raceday/model/*
