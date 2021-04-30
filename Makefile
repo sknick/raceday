@@ -50,3 +50,4 @@ deployment:
 clean:
 	rm -rf Build
 	rm -rf Client/API/Python/Build
+	rm -f Server/Source/raceday/model/*
