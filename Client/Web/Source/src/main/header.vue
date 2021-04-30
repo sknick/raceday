@@ -13,7 +13,7 @@
                                 class="datepicker"
                                 :is-button-type="datepickerSetting.isButtonType"
                                 :locale="datepickerSetting.locale"
-                                :value-attr="today"
+                                :value-attr="pickerDate"
                                 @value-changed="onDateSelected">
                         </DatepickerLite>
                     </div>
@@ -48,10 +48,13 @@
                                 class="datepicker"
                                 :is-button-type="datepickerSetting.isButtonType"
                                 :locale="datepickerSetting.locale"
-                                :value-attr="today"
+                                :value-attr="pickerDate"
                                 @value-changed="onDateSelected">
                         </DatepickerLite>
                     </div>
+
+                    <button type="button" @click="onDateRegressed()"> &larr; </button>
+                    <button type="button" @click="onDateAdvanced()"> &rarr; </button>
 
                     <div class="events-label">{{ eventsLabelText() }}</div>
 
@@ -87,6 +90,13 @@
 <script>
 
 import DatepickerLite from "vue3-datepicker-lite";
+import {
+    add,
+    format,
+    sub
+} from "date-fns";
+
+const DATEPICKER_DATE_FORMAT = "yyyy/MM/dd";
 
 export default {
     name: "Header",
@@ -96,15 +106,19 @@ export default {
     },
 
     computed: {
+        selectedDate() {
+            let d = new Date(this.$store.state.date);
+            return this.formattedDate(d);
+        },
+
         events() {
             return this.$store.state.events
         },
+    },
 
-        today() {
-            let d = new Date();
-            return d.getFullYear() + "/" +
-                String(d.getMonth() + 1).padStart(2, "0") + "/" +
-                String(d.getDate()).padStart(2, "0")
+    data() {
+        return {
+            pickerDate: this.formattedDate(new Date())
         }
     },
 
@@ -122,6 +136,20 @@ export default {
             retStr += ` (${this.canHover() ? "Click" : "Press"}`
             retStr += ` on ${numEvents === 1 ? "the" : "an"} event to see available broadcasts)`
             return retStr
+        },
+
+        formattedDate(d) {
+            return format(d, DATEPICKER_DATE_FORMAT);
+        },
+
+        onDateAdvanced() {
+            const res = this.formattedDate(add(new Date(this.selectedDate), {days: 1}));
+            this.$store.dispatch("updateDate", res);
+        },
+
+        onDateRegressed() {
+            const res = this.formattedDate(sub(new Date(this.selectedDate), {days: 1}));
+            this.$store.dispatch("updateDate", res);
         },
 
         onDateSelected(value) {
@@ -162,7 +190,7 @@ export default {
         const datepickerSetting = {
             isButtonType: true,
             locale: {
-                format: "YYYY/MM/DD",
+                format: DATEPICKER_DATE_FORMAT,
                 weekday: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
                 startsWeeks: 1
             }
@@ -171,7 +199,15 @@ export default {
         return {
             datepickerSetting
         }
-    }
+    },
+
+    watch: {
+        selectedDate(newVal) {
+            if (newVal) {
+                this.pickerDate = newVal;
+            }
+        }
+    },
 }
 
 </script>

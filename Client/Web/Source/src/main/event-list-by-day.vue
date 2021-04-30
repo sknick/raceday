@@ -150,7 +150,6 @@ export default {
 
     mounted() {
         this.loadTime = new Date();
-        this.$store.dispatch("updateDate")
     }
 }
 
