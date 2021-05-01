@@ -1,4 +1,4 @@
-# Race Day
+![Race Day](http://github.com/sknick/raceday/tree/master/Client/Web/Source/src/assets/logo-large.png)
 
 Race Day is a database of motorsports racing events and is the software that
 powers http://raceday.watch. The web application provides a read-only user

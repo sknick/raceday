@@ -25,10 +25,10 @@
 
                 </div>
 
-                <div class="logo">
+                <div class="upper-right-info">
 
-                    <div>
-                        Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                    <div class="logo">
+                        <img :src="require('../assets/logo-small.png')" alt="Race Day"/>
                     </div>
 
                     <div class="about">
@@ -67,10 +67,10 @@
 
                 </div>
 
-                <div class="logo">
+                <div class="upper-right-info">
 
-                    <div>
-                        Race Day <img src="favicon.ico" height="24" width="24" alt="Race Day icon">
+                    <div class="logo">
+                        <img :src="require('../assets/logo-small.png')" alt="Race Day"/>
                     </div>
 
                     <div class="about">
@@ -271,10 +271,14 @@ export default {
 }
 
 .logo {
+    margin-right: 10px;
+}
+
+.upper-right-info {
     font-weight: bold;
 }
 
-.logo, .upper-left-info {
+.upper-left-info, .upper-right-info {
     display: flex;
     align-items: center;
     min-width: 6.25rem;
@@ -295,7 +299,7 @@ export default {
         align-items: center;
     }
 
-    .logo {
+    .upper-right-info {
         flex-direction: column;
     }
 }
