@@ -8,7 +8,7 @@
 
                 <div class="upper-left-info">
 
-                    <div> Date:
+                    <div class="flex-align-center"> Date:
                         <DatepickerLite
                                 class="datepicker"
                                 :is-button-type="datepickerSetting.isButtonType"
@@ -16,6 +16,11 @@
                                 :value-attr="pickerDate"
                                 @value-changed="onDateSelected">
                         </DatepickerLite>
+
+                        <button type="button" @click="onDateRegressed()" class="cycle-button cycle-button-left"></button>
+
+                        <button type="button" @click="onDateAdvanced()" class="cycle-button cycle-button-right"></button>
+
                     </div>
 
                 </div>
@@ -43,7 +48,7 @@
 
                 <div class="upper-left-info">
 
-                    <div> Date:
+                    <div class="flex-align-center"> Date:
                         <DatepickerLite
                                 class="datepicker"
                                 :is-button-type="datepickerSetting.isButtonType"
@@ -51,10 +56,12 @@
                                 :value-attr="pickerDate"
                                 @value-changed="onDateSelected">
                         </DatepickerLite>
-                    </div>
 
-                    <button type="button" @click="onDateRegressed()"> &larr; </button>
-                    <button type="button" @click="onDateAdvanced()"> &rarr; </button>
+                        <button type="button" @click="onDateRegressed()" class="cycle-button cycle-button-left"></button>
+
+                        <button type="button" @click="onDateAdvanced()" class="cycle-button cycle-button-right"></button>
+
+                    </div>
 
                     <div class="events-label">{{ eventsLabelText() }}</div>
 
@@ -214,6 +221,33 @@ export default {
 
 
 <style scoped>
+
+.flex-align-center {
+    display: flex;
+    align-items: center;
+}
+
+.cycle-button {
+    border-radius: var(--dp-border-radius-md);
+    box-shadow: var(--button-shadow);
+    background: var(--button-background);
+    height: 1.5em;
+    width: 1.5em;
+    background-size: cover;
+    margin: 0;
+    padding: 0; /* Resets the padding so that the svg will scale with the button size */
+    padding: 0.25em;
+}
+
+.cycle-button-left {
+    background-image: url("../assets/chevron-left.svg");
+    margin-left: 0.5em;
+}
+
+.cycle-button-right {
+    background-image: url("../assets/chevron-right.svg");
+    margin-left: 0.25em;
+}
 
 .datepicker {
     display: inline;
