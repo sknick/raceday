@@ -69,6 +69,11 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
             }
             this.__broadcast.url = url;
 
+            // TODO
+            this.__broadcast.langIds = [];
+            this.__broadcast.description = "";
+            
+
             this.hide();
             this.fireDataEvent("confirmed", this.__broadcast);
         },
