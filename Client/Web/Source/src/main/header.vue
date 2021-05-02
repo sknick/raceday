@@ -194,20 +194,24 @@ export default {
         },
 
         setDateFromRouteQuery() {
+            let date;
             if (this.$route.query.date) {
-                const querydate = format(parseISO(this.$route.query.date.toString()), DATEPICKER_DATE_FORMAT)
-                this.$store.dispatch("updateDate", querydate)
+                date = this.formattedDate(parseISO(this.$route.query.date.toString()));
             } else {
-                const fDate = format(new Date(), DATEPICKER_DATE_FORMAT)
-                this.$store.dispatch("updateDate", fDate)
-                // Set the date in the url
-                this.$router.replace({
-                    name: this.$route.name,
-                    query: {
-                        date: format(new Date(), URL_DATE_FORMAT)
-                    }
-                })
+                date = this.formattedDate(new Date());
+                this.setDateInRoute(new Date());
             }
+            this.$store.dispatch("updateDate", date);
+            this.pickerDate = date;
+        },
+
+        setDateInRoute(date) {
+            this.$router.replace({
+                name: this.$route.name,
+                query: {
+                    date: format(date, URL_DATE_FORMAT)
+                }
+            })
         },
 
         widthIsMinimal() {
@@ -235,6 +239,7 @@ export default {
         selectedDate(newVal) {
             if (newVal) {
                 this.pickerDate = newVal;
+                this.setDateInRoute(new Date(newVal));
             }
         }
     },
