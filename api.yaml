@@ -837,14 +837,10 @@ components:
         description:
           description: A description of the event.
           type: string
-        location_id:
-          description: The ID of the location of this event.
-          type: string
-          format: uuid
-        series_id:
-          description: The ID of the series associated with this event.
-          type: string
-          format: uuid
+        location:
+          $ref: "#/components/schemas/Location"
+        series:
+          $ref: "#/components/schemas/Series"
       required:
         - name
         - start

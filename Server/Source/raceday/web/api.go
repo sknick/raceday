@@ -301,13 +301,23 @@ func EventPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var locationId *string
+	if event.Location != nil {
+		locationId = &event.Location.Id
+	}
+
+	var seriesId *string
+	if event.Series != nil {
+		seriesId = &event.Series.Id
+	}
+
 	id, err := store.Datastore.CreateEvent(
 		accessToken,
 		event.Name,
 		time.Unix(int64(event.Start), 0),
 		event.Description,
-		event.LocationId,
-		event.SeriesId,
+		locationId,
+		seriesId,
 	)
 	if err != nil {
 		handleInternalServerError(w, err)
