@@ -64,12 +64,10 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         const geoblockedItems = this.__geoblockedField.getChildren();
 
         selectedItem = geoblockedItems[0];
-        if (this.__broadcast.geoblocked) {
-            for (let i = 0; i < geoblockedItems.length; i++) {
-                if (geoblockedItems[i].getModel() === this.__broadcast.geoblocked) {
-                    selectedItem = geoblockedItems[i];
-                    break;
-                }
+        for (let i = 0; i < geoblockedItems.length; i++) {
+            if (geoblockedItems[i].getModel() === this.__broadcast.geoblocked) {
+                selectedItem = geoblockedItems[i];
+                break;
             }
         }
 
@@ -88,12 +86,10 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         const paidItems = this.__paidField.getChildren();
 
         selectedItem = paidItems[0];
-        if (this.__broadcast.paid) {
-            for (let i = 0; i < paidItems.length; i++) {
-                if (paidItems[i].getModel() === this.__broadcast.paid) {
-                    selectedItem = paidItems[i];
-                    break;
-                }
+        for (let i = 0; i < paidItems.length; i++) {
+            if (paidItems[i].getModel() === this.__broadcast.paid) {
+                selectedItem = paidItems[i];
+                break;
             }
         }
 
