@@ -7,6 +7,8 @@ qx.Class.define("admin.ui.MainWindow", {
     implement: [admin.IRequestNotifier],
 
     statics: {
+        LANGS: [],
+
         __ACCESS_TOKEN_KEY: "access_token",
         __instance:         null,
         
@@ -101,27 +103,33 @@ qx.Class.define("admin.ui.MainWindow", {
             }
         },
 
-        __onLoginContinued(accessToken) {
+        async __onLoginContinued(accessToken) {
             admin.RequestManager.getInstance().setAccessToken(accessToken);
             qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
 
-            if (this.__loginDlg) {
-                this.__root.remove(this.__loginDlg);
+            try {
+                admin.ui.MainWindow.LANGS = await admin.RequestManager.getInstance().getLangs();
+
+                if (this.__loginDlg) {
+                    this.__root.remove(this.__loginDlg);
+                }
+
+                const tabView = new qx.ui.tabview.TabView("top");
+                tabView.setContentPadding(0, 0, 0, 0);
+
+                tabView.add(new admin.ui.events.Page());
+                tabView.add(new admin.ui.series.Page());
+                tabView.add(new admin.ui.locations.Page());
+
+                this.__root.add(tabView, {
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%"
+                });
+            } catch (ex) {
+                this.__loginDlg.notifyOfError(ex);
             }
-
-            const tabView = new qx.ui.tabview.TabView("top");
-            tabView.setContentPadding(0, 0, 0, 0);
-
-            tabView.add(new admin.ui.events.Page());
-            tabView.add(new admin.ui.series.Page());
-            tabView.add(new admin.ui.locations.Page());
-
-            this.__root.add(tabView, {
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%"
-            });
         },
 
         __loadingDlg: null

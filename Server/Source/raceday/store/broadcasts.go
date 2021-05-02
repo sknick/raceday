@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type BroadcastRetrievalCriteria struct {
@@ -55,7 +56,7 @@ func (dh DatastoreHandle) CreateBroadcast(type_ model.BroadcastType, eventId str
 		broadcastId,
 		type_,
 		eventId,
-		langIds,
+		pq.Array(langIds),
 		dh.getNullString(description),
 		dh.getNullString(url),
 		dh.getNullBool(geoblocked),
@@ -133,10 +134,11 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 		fmt.Sprintf(
 			`SELECT broadcast_id,
 					broadcast_type,
+					broadcast_description,
 					broadcast_url,
 					broadcast_lang_ids,
 					broadcast_geoblocked,
-					braodcast_paid,
+					broadcast_paid,
 					event_id,
 					event_name,
 					event_start,
@@ -185,7 +187,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 			&broadcastTypeVal,
 			&broadcastDescriptionVal,
 			&broadcastUrlVal,
-			&broadcastLangIdsVal,
+			pq.Array(&broadcastLangIdsVal),
 			&broadcastGeoBlockedVal,
 			&broadcastPaidVal,
 			&eventIdVal,

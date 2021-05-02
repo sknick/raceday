@@ -1,4 +1,4 @@
-qx.Class.define("vision.api.model.{{classname}}", {
+qx.Class.define("raceday.api.model.{{classname}}", {
     extend: qx.core.Object,
 
     construct(data) {
@@ -14,7 +14,7 @@ qx.Class.define("vision.api.model.{{classname}}", {
             this.{{name}} = [];
             for (let i = 0; i < data["{{baseName}}"].length; i++) {
 {{#items.complexType}}
-                this.{{name}}.push(new vision.api.model.{{items.complexType}}(data["{{baseName}}"][i]));
+                this.{{name}}.push(new raceday.api.model.{{items.complexType}}(data["{{baseName}}"][i]));
 {{/items.complexType}}
 {{^items.complexType}}
                 this.{{name}}.push(data["{{baseName}}"][i]);
@@ -22,7 +22,7 @@ qx.Class.define("vision.api.model.{{classname}}", {
             }
 {{/isContainer}}
 {{^isContainer}}
-            this.{{name}} = new vision.api.model.{{complexType}}(data["{{baseName}}"]);
+            this.{{name}} = new raceday.api.model.{{complexType}}(data["{{baseName}}"]);
 {{/isContainer}}
 {{/isPrimitiveType}}
         }
@@ -48,7 +48,12 @@ qx.Class.define("vision.api.model.{{classname}}", {
 {{/items.complexType}}
                 }
 {{/isContainer}}
-{{^isContainer}}                ret["{{baseName}}"] = this.{{name}}.toSimpleObject();
+{{^isContainer}}
+                if (typeof this.{{name}} === "object") {
+                    ret["{{baseName}}"] = this.{{name}} ? this.{{name}}.toSimpleObject() : null;
+                } else {
+                    ret["{{baseName}}"] = this.{{name}};
+                }
 {{/isContainer}}
 {{/isPrimitiveType}}
             }

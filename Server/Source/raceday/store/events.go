@@ -212,13 +212,13 @@ func (dh DatastoreHandle) auditEventAction(userId, eventId, action string, tx *s
 
 	itemDescription := ""
 
-	if event.Series.Name != "" {
+	if event.Series != nil && event.Series.Name != "" {
 		itemDescription += event.Series.Name + ": "
 	}
 
 	itemDescription += event.Name
 
-	if event.Location.Name != "" {
+	if event.Location != nil && event.Location.Name != "" {
 		itemDescription += " @ " + event.Location.Name
 	}
 

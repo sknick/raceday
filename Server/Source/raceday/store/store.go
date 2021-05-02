@@ -128,7 +128,7 @@ func (dh DatastoreHandle) GetLangs() ([]model.Lang, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(id, htmlCode, priorityListing)
+		err = rows.Scan(&id, &htmlCode, &priorityListing)
 		if err != nil {
 			return nil, err
 		}

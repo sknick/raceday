@@ -25,10 +25,9 @@ qx.Class.define("admin.ui.events.EditDialog", {
         const startLabel = new qx.ui.basic.Label("Start (" + dateStr + "):");
         startLabel.setAlignY("middle");
 
-        this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ?
-            this.__event.start : null);
+        this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ? this.__event.start : null);
 
-            const locationLabel = new qx.ui.basic.Label("Location:");
+        const locationLabel = new qx.ui.basic.Label("Location:");
         locationLabel.setAlignY("middle");
 
 
