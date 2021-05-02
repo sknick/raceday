@@ -46,7 +46,6 @@ import Header from "./header.vue"
 
 import axios from "axios"
 
-
 export default {
 
     name: "EventListByDay",
