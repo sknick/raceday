@@ -12,12 +12,14 @@
     "core-js": "^3.8.3",
     "date-fns": "^2.21.1",
     "vue": "^3.0.5",
+    "vue-router": "^4.0.0-0",
     "vue3-datepicker-lite": "^1.8.5",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.11",
     "@vue/cli-plugin-eslint": "^4.5.11",
+    "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "^4.5.11",
     "@vue/compiler-sfc": "^3.0.5",
     "babel-eslint": "^10.1.0",

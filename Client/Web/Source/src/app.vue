@@ -1,26 +1,17 @@
 <template>
-    <div class="app-wrapper">
-
-        <EventListByDay/>
-
+    <div className="app-wrapper">
+        <router-view></router-view>
     </div>
 </template>
 
 
 <script>
 
-import EventListByDay from "./main/event-list-by-day.vue"
-
 export default {
-    name: "App",
-
-    components: {
-        EventListByDay
-    }
+    name: "App"
 }
 
 </script>
-
 
 <style>
 
