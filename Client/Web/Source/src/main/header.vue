@@ -100,13 +100,19 @@ import DatepickerLite from "vue3-datepicker-lite";
 import {
     add,
     format,
+    parseISO,
     sub
 } from "date-fns";
 
-const DATEPICKER_DATE_FORMAT = "yyyy/MM/dd";
+export const DATEPICKER_DATE_FORMAT = "yyyy/MM/dd";
+export const URL_DATE_FORMAT = "yyyyMMdd";
 
 export default {
     name: "Header",
+
+    beforeMount() {
+        this.setDateFromRouteQuery();
+    },
 
     components: {
         DatepickerLite
@@ -114,7 +120,7 @@ export default {
 
     computed: {
         selectedDate() {
-            let d = new Date(this.$store.state.date);
+            let d = this.$store.state.date ? new Date(this.$store.state.date) : new Date()
             return this.formattedDate(d);
         },
 
@@ -125,7 +131,7 @@ export default {
 
     data() {
         return {
-            pickerDate: this.formattedDate(new Date())
+            pickerDate: this.$store.state.date
         }
     },
 
@@ -185,6 +191,23 @@ export default {
 
                 "Export"
             )
+        },
+
+        setDateFromRouteQuery() {
+            if (this.$route.query.date) {
+                const querydate = format(parseISO(this.$route.query.date.toString()), DATEPICKER_DATE_FORMAT)
+                this.$store.dispatch("updateDate", querydate)
+            } else {
+                const fDate = format(new Date(), DATEPICKER_DATE_FORMAT)
+                this.$store.dispatch("updateDate", fDate)
+                // Set the date in the url
+                this.$router.replace({
+                    name: this.$route.name,
+                    query: {
+                        date: format(new Date(), URL_DATE_FORMAT)
+                    }
+                })
+            }
         },
 
         widthIsMinimal() {
