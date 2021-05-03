@@ -11,18 +11,18 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         this.__typeField = new qx.ui.form.SelectBox();
         this.__typeField.setWidth(400);
 
-        this.__typeField.add(new qx.ui.form.ListItem("Cable"));
-        this.__typeField.add(new qx.ui.form.ListItem("Facebook"));
-        this.__typeField.add(new qx.ui.form.ListItem("MotorTrend"));
-        this.__typeField.add(new qx.ui.form.ListItem("Other"));
-        this.__typeField.add(new qx.ui.form.ListItem("YouTube"));
+        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.Cable.toString()));
+        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.Facebook.toString()));
+        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.MotorTrend.toString()));
+        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.Other.toString()));
+        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.YouTube.toString()));
 
         const typeItems = this.__typeField.getChildren();
 
         let selectedItem = typeItems[0];
         if (this.__broadcast.type_) {
             for (let i = 0; i < typeItems.length; i++) {
-                if (typeItems[i].getLabel() === this.__broadcast.type_) {
+                if (typeItems[i].getLabel() === this.__broadcast.type_.toString()) {
                     selectedItem = typeItems[i];
                     break;
                 }

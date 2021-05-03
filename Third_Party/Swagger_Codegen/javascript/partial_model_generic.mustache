@@ -30,6 +30,10 @@ qx.Class.define("raceday.api.model.{{classname}}", {
     },
 
     members: {
+        isEnum() {
+            return false;
+        },
+
         toSimpleObject() {
             const ret = {};
 
@@ -50,7 +54,15 @@ qx.Class.define("raceday.api.model.{{classname}}", {
 {{/isContainer}}
 {{^isContainer}}
                 if (typeof this.{{name}} === "object") {
-                    ret["{{baseName}}"] = this.{{name}} ? this.{{name}}.toSimpleObject() : null;
+                    if (this.{{name}} !== null) {
+                        if (!this.{{name}}.isEnum()) {
+                            ret["{{baseName}}"] = this.{{name}}.toSimpleObject();
+                        } else {
+                            ret["{{baseName}}"] = this.{{name}}.toString();
+                        }
+                    } else {
+                        ret["{{baseName}}"] = null;
+                    }
                 } else {
                     ret["{{baseName}}"] = this.{{name}};
                 }

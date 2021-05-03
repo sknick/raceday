@@ -45,8 +45,10 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
         },
 
         __broadcastToString(broadcast) {
-            let ret = broadcast.type_;
-            if (broadcast.url) {
+            let ret = broadcast.type_.toString();
+            if (broadcast.description) {
+                ret += ": " + broadcast.description;
+            } else if (broadcast.url) {
                 ret += ": " + broadcast.url;
             }
             return ret;
