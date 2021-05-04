@@ -11,11 +11,15 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         this.__typeField = new qx.ui.form.SelectBox();
         this.__typeField.setWidth(400);
 
-        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.Cable.toString()));
-        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.Facebook.toString()));
-        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.MotorTrend.toString()));
-        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.Other.toString()));
-        this.__typeField.add(new qx.ui.form.ListItem(raceday.api.model.BroadcastType.YouTube.toString()));
+        for (let i = 0; i < raceday.api.model.BroadcastType.VALUES.length; i++) {
+            this.__typeField.add(
+                new qx.ui.form.ListItem(
+                    raceday.api.model.BroadcastType.VALUES[i].toString(),
+                    null,
+                    raceday.api.model.BroadcastType.VALUES[i]
+                )
+            );
+        }
 
         const typeItems = this.__typeField.getChildren();
 
@@ -162,7 +166,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
 
     members: {
         __onOK(e) {
-            this.__broadcast.type_ = this.__typeField.getSelection()[0].getLabel();
+            this.__broadcast.type_ = this.__typeField.getSelection()[0].getModel();
 
             let description = this.__descriptionField.getValue();
             if (description) {

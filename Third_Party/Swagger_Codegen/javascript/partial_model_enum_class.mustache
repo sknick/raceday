@@ -1,27 +1,13 @@
 qx.Class.define("raceday.api.model.{{classname}}", {
-    extend: qx.core.Object,
+    type: "static",
 
     statics: {
-{{#allowableValues}}{{#enumVars}}        {{name}}: null,
+{{#allowableValues}}{{#enumVars}}        {{name}}: {{{value}}},
 {{/enumVars}}{{/allowableValues}}
-    },
-
-    construct(value) {
-        this.base(arguments);
-
-        this.__value = value;
-    },
-
-    members: {
-        isEnum() {
-            return true;
-        },
-
-        toString() {
-            return this.__value;
-        }
+        
+        VALUES: [
+{{#allowableValues}}{{#enumVars}}            {{{value}}},
+{{/enumVars}}{{/allowableValues}}
+        ]
     }
 });
-
-{{#allowableValues}}{{#enumVars}}raceday.api.model.{{classname}}.{{name}} = new raceday.api.model.{{classname}}({{{value}}});
-{{/enumVars}}{{/allowableValues}}

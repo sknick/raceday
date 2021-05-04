@@ -9,7 +9,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
         } else {
             this.__broadcasts = [];
             for (let i = 0; i < eventBroadcasts.length; i++) {
-                this.__broadcasts.push(new raceday.api.model.UnsavedBroadcast(eventBroadcasts[i]));
+                this.__broadcasts.push(new raceday.api.model.UnsavedBroadcast(eventBroadcasts[i].toSimpleObject()));
             }
         }
 

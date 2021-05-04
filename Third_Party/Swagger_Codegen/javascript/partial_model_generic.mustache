@@ -14,7 +14,12 @@ qx.Class.define("raceday.api.model.{{classname}}", {
             this.{{name}} = [];
             for (let i = 0; i < data["{{baseName}}"].length; i++) {
 {{#items.complexType}}
+{{^isEnum}}
                 this.{{name}}.push(new raceday.api.model.{{items.complexType}}(data["{{baseName}}"][i]));
+{{/isEnum}}
+{{#isEnum}}
+                this.{{name}}.push(data["{{baseName}}"]);
+{{/isEnum}}
 {{/items.complexType}}
 {{^items.complexType}}
                 this.{{name}}.push(data["{{baseName}}"][i]);
@@ -22,7 +27,12 @@ qx.Class.define("raceday.api.model.{{classname}}", {
             }
 {{/isContainer}}
 {{^isContainer}}
+{{^isEnum}}
             this.{{name}} = new raceday.api.model.{{complexType}}(data["{{baseName}}"]);
+{{/isEnum}}
+{{#isEnum}}
+            this.{{name}} = data["{{baseName}}"];
+{{/isEnum}}
 {{/isContainer}}
 {{/isPrimitiveType}}
         }
@@ -55,11 +65,7 @@ qx.Class.define("raceday.api.model.{{classname}}", {
 {{^isContainer}}
                 if (typeof this.{{name}} === "object") {
                     if (this.{{name}} !== null) {
-                        if (!this.{{name}}.isEnum()) {
-                            ret["{{baseName}}"] = this.{{name}}.toSimpleObject();
-                        } else {
-                            ret["{{baseName}}"] = this.{{name}}.toString();
-                        }
+                        ret["{{baseName}}"] = this.{{name}}.toSimpleObject();
                     } else {
                         ret["{{baseName}}"] = null;
                     }

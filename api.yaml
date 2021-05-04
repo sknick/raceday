@@ -651,8 +651,17 @@ components:
           description: The ID of the broadcast.
           type: string
           format: uuid
+        # Really should be ref to BroadcastType but can't because of bug. Make sure to update all definitions in here
+        # when you update!
         type_:
-          $ref: "#/components/schemas/BroadcastType"
+          description: The type of a broadcast.
+          type: string
+          enum:
+            - Cable
+            - Facebook
+            - MotorTrend
+            - Other
+            - YouTube
         event:
           $ref: "#/components/schemas/Event"
         lang_ids:
@@ -677,10 +686,17 @@ components:
         - event
         - lang_ids
     
+    # Unable to reference due to bug in Swagger Codegen (https://github.com/swagger-api/swagger-codegen/issues/7763), so
+    # the properties which reference this 
     BroadcastType:
       description: The type of a broadcast.
       type: string
-      enum: ["Cable", "Facebook", "MotorTrend", "Other", "YouTube"]
+      enum:
+        - Cable
+        - Facebook
+        - MotorTrend
+        - Other
+        - YouTube
 
     Event:
       type: object
@@ -797,8 +813,17 @@ components:
     UnsavedBroadcast:
       type: object
       properties:
+        # Really should be ref to BroadcastType but can't because of bug. Make sure to update all definitions in here
+        # when you update!
         type_:
-          $ref: "#/components/schemas/BroadcastType"
+          description: The type of a broadcast.
+          type: string
+          enum:
+            - Cable
+            - Facebook
+            - MotorTrend
+            - Other
+            - YouTube
         event_id:
           description: The ID of the event associated with this broadcast.
           type: string
