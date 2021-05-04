@@ -10,7 +10,7 @@
             <div class="event-table" ref="eventsScroller">
 
                 <div v-for="event in events" v-bind:key="event">
-                    <div :class="{'text-muted': isPast(event.start), 'offset-for-scrollbar': needsOffsetForScrollbar()}" @click="toggleEvent(event.id)" class="row">
+                    <div :id="event.id" class="row" :class="{'text-muted': isPast(event.start), 'offset-for-scrollbar': needsOffsetForScrollbar()}" @click="toggleEvent(event.id)">
                         <div class="col-2">{{ timestampToString(event.start) }}</div>
                         <div class="col-4">{{ event.series ? event.series.name : "" }}</div>
                         <div class="col-3">{{ event.name }}</div>
@@ -30,6 +30,10 @@
                             </div>
                         </template>
                     </template>
+                </div>
+
+                <div v-if="events.length === 0">
+                    <p class="no-events"><em>No events for {{$store.state.date}}</em></p>
                 </div>
 
             </div>
@@ -87,6 +91,16 @@ export default {
         needsOffsetForScrollbar() {
             const ref = this.$refs.eventsScroller;
             return (this.events.length * 50) > ref.getBoundingClientRect().height;
+        },
+
+        scrollToFirstCurrentEvent() {
+            const firstCurrent = this.events.find(e => {
+                return !this.isPast(e.start);
+            });
+            if (firstCurrent) {
+                const el = document.getElementById(firstCurrent.id);
+                el && el.scrollIntoView(false);
+            }
         },
 
         timestampToString(timestamp) {
@@ -149,6 +163,9 @@ export default {
 
     mounted() {
         this.loadTime = new Date();
+        setTimeout(() => {
+            this.scrollToFirstCurrentEvent();
+        }, 500);
     }
 }
 
@@ -170,6 +187,14 @@ export default {
     width: 100%;
     overflow: hidden;
     position: relative;
+}
+
+.no-events {
+    color: rgb(255,246,0);
+    font-size: x-large;
+    font-weight: bold;
+    margin: 2em;
+    text-align: center;
 }
 
 .offset-for-scrollbar {
