@@ -54,6 +54,16 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             return ret;
         },
 
+        __editBroadcast() {
+            const selectedItems = this.__list.getSelection();
+            if (selectedItems.length > 0) {
+                const dlg = new admin.ui.events.EditBroadcastDialog(selectedItems[0].getModel());
+                dlg.addListener("confirmed", this.__onEditBroadcastContinue, this);
+
+                dlg.show();
+            }
+        },
+
         __updateList() {
             const self = this;
             this.__broadcasts.sort(function(a, b) {
@@ -68,8 +78,11 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             this.__list.removeAll();
 
             for (let i = 0; i < this.__broadcasts.length; i++) {
-                this.__list.add(new qx.ui.form.ListItem(this.__broadcastToString(this.__broadcasts[i]), null,
-                    this.__broadcasts[i]));
+                const thisItem = new qx.ui.form.ListItem(this.__broadcastToString(this.__broadcasts[i]), null,
+                    this.__broadcasts[i]);
+                this.__list.add(thisItem);
+
+                thisItem.addListener("dblclick", this.__onBroadcastDoubleClicked, this);
             }
         },
 
@@ -85,14 +98,12 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             this.__updateList();
         },
 
-        __onEditBroadcast(e) {
-            const selectedItems = this.__list.getSelection();
-            if (selectedItems.length > 0) {
-                const dlg = new admin.ui.events.EditBroadcastDialog(selectedItems[0].getModel());
-                dlg.addListener("confirmed", this.__onEditBroadcastContinue, this);
+        __onBroadcastDoubleClicked(e) {
+            this.__editBroadcast();
+        },
 
-                dlg.show();
-            }
+        __onEditBroadcast(e) {
+            this.__editBroadcast();
         },
 
         __onEditBroadcastContinue(e) {
