@@ -112,7 +112,9 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
                         admin.ui.MainWindow.LANGS[i].id
                     ).set(
                         {
-                            rich: true
+                            model: admin.ui.MainWindow.LANGS[i],
+                            rich:  true,
+                            value: this.__isLangSelected(admin.ui.MainWindow.LANGS[i], this.__broadcast.langIds)
                         }
                     )
                 );
@@ -129,7 +131,9 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
                         admin.ui.MainWindow.LANGS[i].id
                     ).set(
                         {
-                            rich: true
+                            model: admin.ui.MainWindow.LANGS[i],
+                            rich:  true,
+                            value: this.__isLangSelected(admin.ui.MainWindow.LANGS[i], this.__broadcast.langIds)
                         }
                     )
                 );
@@ -165,6 +169,16 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
     },
 
     members: {
+        __isLangSelected(lang, selectedLangIds) {
+            for (let i = 0; i < selectedLangIds.length; i++) {
+                if (lang.id === selectedLangIds[i]) {
+                    return true
+                }
+            }
+
+            return false;
+        },
+
         __onOK(e) {
             this.__broadcast.type_ = this.__typeField.getSelection()[0].getModel();
 
@@ -189,8 +203,12 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
             this.__broadcast.geoblocked = this.__geoblockedField.getSelection()[0].getModel();
             this.__broadcast.paid = this.__paidField.getSelection()[0].getModel();
 
-            // TODO
             this.__broadcast.langIds = [];
+
+            const selectedCheckBoxes = this.__langsField.getSelectedCheckBoxes();
+            for (let i = 0; i < selectedCheckBoxes.length; i++) {
+                this.__broadcast.langIds.push(selectedCheckBoxes[i].getModel().id);
+            }
 
             this.hide();
             this.fireDataEvent("confirmed", this.__broadcast);
