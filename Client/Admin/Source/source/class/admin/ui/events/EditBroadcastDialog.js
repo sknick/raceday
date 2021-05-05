@@ -170,9 +170,11 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
 
     members: {
         __isLangSelected(lang, selectedLangIds) {
-            for (let i = 0; i < selectedLangIds.length; i++) {
-                if (lang.id === selectedLangIds[i]) {
-                    return true
+            if (selectedLangIds) {
+                for (let i = 0; i < selectedLangIds.length; i++) {
+                    if (lang.id === selectedLangIds[i]) {
+                        return true
+                    }
                 }
             }
 
