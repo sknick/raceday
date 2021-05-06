@@ -65,7 +65,7 @@ func BroadcastPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, err := store.Datastore.CreateBroadcast(
-		broadcast.Type_,
+		model.BroadcastTypeFromString(broadcast.Type_),
 		broadcast.EventId,
 		broadcast.LangIds,
 		broadcast.Description,
@@ -93,7 +93,7 @@ func BroadcastPut(w http.ResponseWriter, r *http.Request) {
 
 	err = store.Datastore.UpdateBroadcast(
 		broadcast.Id,
-		broadcast.Type_,
+		model.BroadcastTypeFromString(broadcast.Type_),
 		broadcast.Event.Id,
 		broadcast.LangIds,
 		broadcast.Description,
@@ -201,7 +201,7 @@ func BroadcastsPost(w http.ResponseWriter, r *http.Request) {
 
 	for _, broadcast := range broadcasts {
 		id, err := store.Datastore.CreateBroadcast(
-			broadcast.Type_,
+			model.BroadcastTypeFromString(broadcast.Type_),
 			broadcast.EventId,
 			broadcast.LangIds,
 			broadcast.Description,
@@ -239,7 +239,7 @@ func BroadcastsPut(w http.ResponseWriter, r *http.Request) {
 	for _, broadcast := range broadcasts {
 		err := store.Datastore.UpdateBroadcast(
 			broadcast.Id,
-			broadcast.Type_,
+			model.BroadcastTypeFromString(broadcast.Type_),
 			broadcast.Event.Id,
 			broadcast.LangIds,
 			broadcast.Description,

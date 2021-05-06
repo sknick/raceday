@@ -240,7 +240,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 
 		thisBroadcast := model.Broadcast{
 			Id:      broadcastIdVal,
-			Type_:   model.BroadcastTypeFromString(broadcastTypeVal),
+			Type_:   broadcastTypeVal,
 			Event:   thisEvent,
 			LangIds: broadcastLangIdsVal,
 		}

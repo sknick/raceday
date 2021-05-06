@@ -111,10 +111,10 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 			img := ""
 
 			switch broadcast.Type_ {
-			case model.YOU_TUBE:
+			case string(model.YOU_TUBE):
 				img = "youtube.png"
 				break
-			case model.FACEBOOK:
+			case string(model.FACEBOOK):
 				img = "facebook.png"
 				break
 			default:
