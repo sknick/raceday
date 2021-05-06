@@ -20,8 +20,13 @@
                     <template v-if="shownEvents.includes(event.id)">
                         <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
                             <div v-for="broadcast in event.broadcasts" v-bind:key="broadcast" class="row">
-                                <div class="col-12" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon" /> <a :href="broadcast.url" target="_blank" v-if="broadcast.url.match('^https?://')">{{ getLinkText(broadcast) }}</a><span v-else>{{ getLinkText(broadcast) }}</span></div>
-                                <div class="col-12" v-else><img :src="mediaIcon(broadcast)" alt="Media icon" /> {{ broadcast.type_ }}</div>
+                                <div class="col-12" v-if="broadcast.url">
+                                    <img :src="mediaIcon(broadcast)" alt="Media icon" /> <a :href="broadcast.url" target="_blank" v-if="broadcast.url.match('^https?://')">{{ getLinkText(broadcast) }}</a>
+                                    <span v-else>{{ getLinkText(broadcast) }}</span>
+                                </div>
+                                <div class="col-12" v-else>
+                                    <img :src="mediaIcon(broadcast)" alt="Media icon" /> {{ broadcast.type_ }}
+                                </div>
                             </div>
                         </template>
                         <template v-else>
@@ -164,6 +169,10 @@ export default {
 
 
 <style scoped>
+
+a {
+    color: #91bfe6;
+}
 
 .event-table {
     cursor: default;
