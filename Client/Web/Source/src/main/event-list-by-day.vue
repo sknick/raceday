@@ -33,7 +33,7 @@
                 </div>
 
                 <div v-if="events.length === 0">
-                    <p class="no-events"><em>No events for {{$store.state.date}}</em></p>
+                    <p class="no-events">(No events for this date)</p>
                 </div>
 
             </div>
@@ -190,10 +190,7 @@ export default {
 }
 
 .no-events {
-    color: rgb(255,246,0);
-    font-size: x-large;
-    font-weight: bold;
-    margin: 2em;
+    margin: 3em;
     text-align: center;
 }
 
