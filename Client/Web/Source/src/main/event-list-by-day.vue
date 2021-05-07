@@ -166,6 +166,12 @@ export default {
         setTimeout(() => {
             this.scrollToFirstCurrentEvent();
         }, 500);
+    },
+
+    watch: {
+        events() {
+            this.scrollToFirstCurrentEvent();
+        }
     }
 }
 
