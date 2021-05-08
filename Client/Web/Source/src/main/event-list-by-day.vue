@@ -20,12 +20,8 @@
                     <template v-if="shownEvents.includes(event.id)">
                         <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
                             <div v-for="broadcast in event.broadcasts" v-bind:key="broadcast" class="row">
-                                <div class="col-12" v-if="broadcast.url">
-                                    <img :src="mediaIcon(broadcast)" alt="Media icon" /> <a :href="broadcast.url" target="_blank" v-if="broadcast.url.match('^https?://')">{{ getLinkText(broadcast) }}</a>
-                                    <span v-else>{{ getLinkText(broadcast) }}</span>
-                                </div>
-                                <div class="col-12" v-else>
-                                    <img :src="mediaIcon(broadcast)" alt="Media icon" /> {{ broadcast.type_ }}
+                                <div class="col-12">
+                                    <BroadcastItem :broadcast="broadcast"/>
                                 </div>
                             </div>
                         </template>
@@ -48,6 +44,7 @@
 <script>
 
 import Header from "./header.vue"
+import BroadcastItem from "./broadcast-item.vue"
 
 import axios from "axios"
 
@@ -56,7 +53,8 @@ export default {
     name: "EventListByDay",
 
     components: {
-        Header
+        Header,
+        BroadcastItem
     },
 
     computed: {
@@ -73,27 +71,8 @@ export default {
     },
 
     methods: {
-        getLinkText(broadcast) {
-            if (broadcast.description) {
-                return broadcast.description;
-            } else {
-                return broadcast.url;
-            }
-        },
-
         isPast(start) {
             return (Math.round(this.loadTime.getTime() / 1000) > start)
-        },
-
-        mediaIcon(broadcast) {
-            switch (broadcast.type_) {
-                case "Facebook":
-                    return require("../assets/facebook.png")
-                case "YouTube":
-                    return require("../assets/youtube.png")
-                default:
-                    return require("../assets/other.png")
-            }
         },
 
         // The content will be pushed to the left out of alignment with the headers if there is a scrollbar.
@@ -169,10 +148,6 @@ export default {
 
 
 <style scoped>
-
-a {
-    color: #91bfe6;
-}
 
 .event-table {
     cursor: default;
