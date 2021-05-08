@@ -6,8 +6,13 @@
             <span :title="symbol.title" v-html="symbol.htmlCode"/>
         </span>
 
-        <span v-if="hasValidUrl()"><a :href="broadcast.url" target="_blank">{{ linkText() }}</a></span>
-        <span v-else>{{ linkText() }}</span>
+        <span>
+            <span v-if="hasValidUrl()"><a :href="broadcast.url" target="_blank">{{ linkText() }}</a></span>
+            <span v-else>{{ linkText() }}</span>
+            <span v-for="lang in langs()" v-bind:key="lang" class="lang-list">
+                <span :title="lang.id" v-html="lang.html_code"/>
+            </span>
+        </span>
     </div>
 </template>
 
@@ -30,6 +35,20 @@ export default {
     methods: {
         hasValidUrl() {
             return this.broadcast.url && this.broadcast.url.match('^https?://');
+        },
+
+        langs() {
+            const ret = []
+
+            for (let i = 0; i < this.broadcast.lang_ids.length; i++) {
+                for (let j = 0; j < this.$store.state.langs.length; j++) {
+                    if (this.broadcast.lang_ids[i] === this.$store.state.langs[j].id) {
+                        ret.push(this.$store.state.langs[j])
+                    }
+                }
+            }
+
+            return ret
         },
 
         linkText() {
@@ -102,6 +121,10 @@ a {
     display: grid;
     grid-template-columns: 40px 30px 30px auto;
     align-items: center;
+}
+
+.lang-list {
+    margin-left: 10px;
 }
 
 </style>

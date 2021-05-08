@@ -5,7 +5,8 @@ import { createStore } from "vuex"
 export default createStore({
     state: {
         date: null,
-        events: []
+        events: [],
+        langs: []
     },
 
     getters: {
@@ -19,6 +20,10 @@ export default createStore({
 
         updateEvents(state, events) {
             state.events = events
+        },
+
+        updateLangs(state, langs) {
+            state.langs = langs
         }
     },
 
@@ -43,10 +48,14 @@ export default createStore({
                 "window_start=" + Math.round(d.getTime() / 1000) +
                 "&time_zone=" + Intl.DateTimeFormat().resolvedOptions().timeZone
             ).then(
-                function(response) {
+                (response) => {
                     context.commit("updateEvents", response.data)
                 }
             )
+        },
+
+        updateLangs(context, langs) {
+            context.commit("updateLangs", langs)
         }
     }
 })
