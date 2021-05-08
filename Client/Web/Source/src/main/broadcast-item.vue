@@ -3,7 +3,7 @@
         <img :src="mediaIcon()" :title="broadcast.type_" />
 
         <span v-for="symbol in symbols" v-bind:key="symbol">
-            <span :title="symbol.title" v-html="symbol.charEntity"/>
+            <span :title="symbol.title" v-html="symbol.htmlCode"/>
         </span>
 
         <span v-if="hasValidUrl()"><a :href="broadcast.url" target="_blank">{{ linkText() }}</a></span>
@@ -55,35 +55,35 @@ export default {
     mounted() {
         if (this.broadcast.paid === true) {
             this.symbols.push({
-                charEntity: "&#128178;",
-                title:      "Requires Account"
+                htmlCode: "&#128178;",
+                title:    "Requires Account"
             });
         } else if (this.broadcast.paid === false) {
             this.symbols.push({
-                charEntity: "&#128275;",
-                title:      "Free"
+                htmlCode: "&#128275;",
+                title:    "Free"
             });
         } else {
             this.symbols.push({
-                charEntity: "",
-                title:      ""
+                htmlCode: "",
+                title:    ""
             });
         }
 
         if (this.broadcast.geoblocked === true) {
             this.symbols.push({
-                charEntity: "&#128683;",
-                title:      "Geoblocked"
+                htmlCode: "&#128683;",
+                title:    "Geoblocked"
             });
         } else if (this.broadcast.geoblocked === false) {
             this.symbols.push({
-                charEntity: "&#128275;",
-                title:      "Unrestricted"
+                htmlCode: "&#128275;",
+                title:    "Unrestricted"
             });
         } else {
             this.symbols.push({
-                charEntity: "",
-                title:      ""
+                htmlCode: "",
+                title:    ""
             });
         }
     }
