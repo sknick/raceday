@@ -33,6 +33,10 @@
                     </template>
                 </div>
 
+                <div v-if="events.length === 0">
+                    <p class="no-events">There are no events on this date :-(</p>
+                </div>
+
             </div>
 
         </div>
@@ -162,6 +166,11 @@ export default {
     width: 100%;
     overflow: hidden;
     position: relative;
+}
+
+.no-events {
+    margin: 3em;
+    text-align: center;
 }
 
 .offset-for-scrollbar {
