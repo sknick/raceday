@@ -1,6 +1,6 @@
 <template>
     <div class="grid-container">
-        <img :src="mediaIcon()" :title="broadcast.type_" />
+        <img :src="mediaIcon()" :title="mediaTypeText()" />
 
         <span v-for="symbol in symbols" v-bind:key="symbol">
             <span :title="symbol.title" v-html="symbol.htmlCode"/>
@@ -61,12 +61,29 @@ export default {
 
         mediaIcon() {
             switch (this.broadcast.type_) {
+                case "Cable":
+                    return require('../assets/cable.png')
                 case "Facebook":
                     return require("../assets/facebook.png")
+                case "F1_TV":
+                    return require("../assets/f1tv.png")
+                case "Motorsport_tv":
+                    return require("../assets/motorsporttv.png")
                 case "YouTube":
                     return require("../assets/youtube.png")
                 default:
                     return require("../assets/other.png")
+            }
+        },
+
+        mediaTypeText() {
+            switch (this.broadcast.type_) {
+                case "F1_TV":
+                    return "F1 TV"
+                case "Motorsport_tv":
+                    return "Motorsport.tv"
+                default:
+                    return this.broadcast.type_
             }
         }
     },

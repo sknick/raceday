@@ -46,11 +46,19 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
 
         __broadcastToString(broadcast) {
             let ret = broadcast.type_.toString();
+
+            if (ret === "Motorsport_tv") {
+                ret = "Motorsport.tv";
+            } else if (ret === "F1_TV") {
+                ret = "F1 TV";
+            }
+
             if (broadcast.description) {
                 ret += ": " + broadcast.description;
             } else if (broadcast.url) {
                 ret += ": " + broadcast.url;
             }
+
             return ret;
         },
 

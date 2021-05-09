@@ -12,9 +12,16 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         this.__typeField.setWidth(400);
 
         for (let i = 0; i < raceday.api.model.BroadcastType.VALUES.length; i++) {
+            let typeStr = raceday.api.model.BroadcastType.VALUES[i].toString();
+            if (typeStr === "Motorsport_tv") {
+                typeStr = "Motorsport.tv";
+            } else if (typeStr === "F1_TV") {
+                typeStr = "F1 TV";
+            }
+
             this.__typeField.add(
                 new qx.ui.form.ListItem(
-                    raceday.api.model.BroadcastType.VALUES[i].toString(),
+                    typeStr,
                     null,
                     raceday.api.model.BroadcastType.VALUES[i]
                 )
@@ -26,7 +33,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         let selectedItem = typeItems[0];
         if (this.__broadcast.type_) {
             for (let i = 0; i < typeItems.length; i++) {
-                if (typeItems[i].getLabel() === this.__broadcast.type_.toString()) {
+                if (typeItems[i].getModel() === this.__broadcast.type_) {
                     selectedItem = typeItems[i];
                     break;
                 }

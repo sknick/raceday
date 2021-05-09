@@ -659,6 +659,8 @@ components:
           enum:
             - Cable
             - Facebook
+            - F1_TV
+            - Motorsport_tv
             - MotorTrend
             - Other
             - YouTube
@@ -694,6 +696,8 @@ components:
       enum:
         - Cable
         - Facebook
+        - F1_TV
+        - Motorsport_tv
         - MotorTrend
         - Other
         - YouTube
@@ -821,6 +825,8 @@ components:
           enum:
             - Cable
             - Facebook
+            - F1_TV
+            - Motorsport_tv
             - MotorTrend
             - Other
             - YouTube
