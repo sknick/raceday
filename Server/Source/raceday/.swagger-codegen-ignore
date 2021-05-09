@@ -24,7 +24,8 @@
 
 main.go
 api/swagger.yaml
-go/api_default.go
+go/api_protected.go
+go/api_query.go
 go/logger.go
 go/README.md
 go/routers.go

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type BroadcastRetrievalCriteria struct {
@@ -16,7 +17,7 @@ type BroadcastRetrievalCriteria struct {
 	IncludeAllAfter bool
 }
 
-func (dh DatastoreHandle) CreateBroadcast(type_ model.BroadcastType, eventId string, url string) (string, error) {
+func (dh DatastoreHandle) CreateBroadcast(type_ model.BroadcastType, eventId string, langIds []string, description, url *string, geoblocked, paid *bool) (string, error) {
 	rows, err := dh.db.Query(
 		`SELECT COUNT(id) AS num
            FROM event
@@ -46,16 +47,20 @@ func (dh DatastoreHandle) CreateBroadcast(type_ model.BroadcastType, eventId str
 
 	broadcastId, err := uuid.NewRandom()
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	_, err = dh.db.Exec(
-		`INSERT INTO broadcast
-		 VALUES ($1, $2, $3, $4)`,
+		`INSERT INTO broadcast (id, type, event_id, lang_ids, description, url, geoblocked, paid)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
 		broadcastId,
 		type_,
 		eventId,
-		url,
+		pq.Array(langIds),
+		dh.getNullString(description),
+		dh.getNullString(url),
+		dh.getNullBool(geoblocked),
+		dh.getNullBool(paid),
 	)
 	if err != nil {
 		return "", err
@@ -129,7 +134,11 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 		fmt.Sprintf(
 			`SELECT broadcast_id,
 					broadcast_type,
+					broadcast_description,
 					broadcast_url,
+					broadcast_lang_ids,
+					broadcast_geoblocked,
+					broadcast_paid,
 					event_id,
 					event_name,
 					event_start,
@@ -154,25 +163,33 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 
 	for rows.Next() {
 		var (
-			broadcastIdVal         string
-			broadcastTypeVal       string
-			broadcastUrlVal        sql.NullString
-			eventIdVal             string
-			eventNameVal           string
-			eventStartVal          time.Time
-			eventDescriptionVal    sql.NullString
-			locationIdVal          sql.NullString
-			locationNameVal        sql.NullString
-			locationDescriptionVal sql.NullString
-			seriesIdVal            sql.NullString
-			seriesNameVal          sql.NullString
-			seriesDescriptionVal   sql.NullString
+			broadcastIdVal          string
+			broadcastTypeVal        string
+			broadcastDescriptionVal sql.NullString
+			broadcastUrlVal         sql.NullString
+			broadcastLangIdsVal     []string
+			broadcastGeoBlockedVal  sql.NullBool
+			broadcastPaidVal        sql.NullBool
+			eventIdVal              string
+			eventNameVal            string
+			eventStartVal           time.Time
+			eventDescriptionVal     sql.NullString
+			locationIdVal           sql.NullString
+			locationNameVal         sql.NullString
+			locationDescriptionVal  sql.NullString
+			seriesIdVal             sql.NullString
+			seriesNameVal           sql.NullString
+			seriesDescriptionVal    sql.NullString
 		)
 
 		err = rows.Scan(
 			&broadcastIdVal,
 			&broadcastTypeVal,
+			&broadcastDescriptionVal,
 			&broadcastUrlVal,
+			pq.Array(&broadcastLangIdsVal),
+			&broadcastGeoBlockedVal,
+			&broadcastPaidVal,
 			&eventIdVal,
 			&eventNameVal,
 			&eventStartVal,
@@ -195,7 +212,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 				Name: locationNameVal.String,
 			}
 			if locationDescriptionVal.Valid {
-				thisLocation.Description = locationDescriptionVal.String
+				thisLocation.Description = &locationDescriptionVal.String
 			}
 		}
 
@@ -206,7 +223,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 				Name: seriesNameVal.String,
 			}
 			if seriesDescriptionVal.Valid {
-				thisSeries.Description = seriesDescriptionVal.String
+				thisSeries.Description = &seriesDescriptionVal.String
 			}
 		}
 
@@ -214,20 +231,30 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 			Id:       eventIdVal,
 			Name:     eventNameVal,
 			Start:    float64(eventStartVal.Unix()),
-			Location: thisLocation,
-			Series:   thisSeries,
+			Location: &thisLocation,
+			Series:   &thisSeries,
 		}
 		if eventDescriptionVal.Valid {
-			thisEvent.Description = eventDescriptionVal.String
+			thisEvent.Description = &eventDescriptionVal.String
 		}
 
 		thisBroadcast := model.Broadcast{
-			Id:    broadcastIdVal,
-			Type_: model.BroadcastTypeFromString(broadcastTypeVal),
-			Event: thisEvent,
+			Id:      broadcastIdVal,
+			Type_:   broadcastTypeVal,
+			Event:   thisEvent,
+			LangIds: broadcastLangIdsVal,
+		}
+		if broadcastDescriptionVal.Valid {
+			thisBroadcast.Description = &broadcastDescriptionVal.String
 		}
 		if broadcastUrlVal.Valid {
-			thisBroadcast.Url = broadcastUrlVal.String
+			thisBroadcast.Url = &broadcastUrlVal.String
+		}
+		if broadcastGeoBlockedVal.Valid {
+			thisBroadcast.Geoblocked = &broadcastGeoBlockedVal.Bool
+		}
+		if broadcastPaidVal.Valid {
+			thisBroadcast.Paid = &broadcastPaidVal.Bool
 		}
 
 		ret = append(ret, thisBroadcast)
@@ -236,7 +263,7 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 	return ret, nil
 }
 
-func (dh DatastoreHandle) UpdateBroadcast(id string, type_ model.BroadcastType, eventId string, url *string) error {
+func (dh DatastoreHandle) UpdateBroadcast(id string, type_ model.BroadcastType, eventId string, langIds []string, description, url *string, geoblocked, paid *bool) error {
 	rows, err := dh.db.Query(
 		`SELECT COUNT(id) AS num
            FROM event
@@ -268,11 +295,19 @@ func (dh DatastoreHandle) UpdateBroadcast(id string, type_ model.BroadcastType, 
 		`UPDATE broadcast
             SET type = $1,
                 event_id = $2,
-                url = $3
-          WHERE id = $4`,
+				lang_ids = $3,
+				description = $4,
+                url = $5,
+				geoblocked = $6,
+				paid = $7
+          WHERE id = $8`,
 		type_,
 		eventId,
-		url,
+		pq.Array(langIds),
+		dh.getNullString(description),
+		dh.getNullString(url),
+		dh.getNullBool(geoblocked),
+		dh.getNullBool(paid),
 		id,
 	)
 	if err != nil {

@@ -11,7 +11,7 @@ qx.Class.define("admin.ui.LoadingDialog", {
     /**
      * Constructor.
      */
-    construct: function() {
+    construct() {
         this.base(arguments);
 
         this.setModal(false);
@@ -38,12 +38,12 @@ qx.Class.define("admin.ui.LoadingDialog", {
     },
 
     members: {
-        open: function() {
+        open() {
             this.__place();
             arguments.callee.base.apply(this, arguments);
         },
 
-        __place : function() {
+        __place() {
             const parent = this.getLayoutParent();
             if (parent) {
                 const bounds = parent.getBounds();

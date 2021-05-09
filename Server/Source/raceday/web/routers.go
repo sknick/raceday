@@ -34,6 +34,7 @@ var routes = []route{
 	newUnguardedRoute("EventsGet", "GET", "/events", EventsGet),
 	newUnguardedRoute("ExportGet", "GET", "/export", ExportGet),
 	newUnguardedRoute("ExportTypesGet", "GET", "/export_types", ExportTypesGet),
+	newUnguardedRoute("LangsGet", "GET", "/langs", LangsGet),
 	newGuardedRoute("LocationPost", "POST", "/location", LocationPost),
 	newGuardedRoute("LocationPut", "PUT", "/location", LocationPut),
 	newUnguardedRoute("LocationsGet", "GET", "/locations", LocationsGet),

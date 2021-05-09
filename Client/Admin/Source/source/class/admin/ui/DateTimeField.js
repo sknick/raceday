@@ -23,7 +23,7 @@ qx.Class.define("admin.ui.DateTimeField", {
      *
      * @param {number} [timestamp] UNIX timestamp in seconds.
      */
-    construct: function(timestamp) {
+    construct(timestamp) {
         this.base(arguments, new qx.ui.layout.HBox(10));
 
         this.__baseDate = timestamp ? new Date(timestamp * 1000) : new Date();
@@ -136,7 +136,7 @@ qx.Class.define("admin.ui.DateTimeField", {
     },
 
     members: {
-        getTime: function() {
+        getTime() {
             const d = new Date(
                 this.__yearField.getSelection()[0].getModel(),
                 this.__monthField.getSelection()[0].getModel(),
@@ -148,7 +148,7 @@ qx.Class.define("admin.ui.DateTimeField", {
             return Math.round(d.getTime() / 1000);
         },
 
-        __initializeDayField: function(dayToSelect) {
+        __initializeDayField(dayToSelect) {
             const daysInMonth = new Date(
                 this.__baseDate.getFullYear() + this.__yearField.indexOf(
                     this.__yearField.getSelection()[0]
@@ -178,11 +178,11 @@ qx.Class.define("admin.ui.DateTimeField", {
             }
         },
 
-        __onYearChanged: function(e) {
+        __onYearChanged(e) {
             this.__initializeDayField();
         },
 
-        __onMonthChanged: function(e) {
+        __onMonthChanged(e) {
             this.__initializeDayField();
         }
     }

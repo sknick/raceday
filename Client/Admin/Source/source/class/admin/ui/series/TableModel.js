@@ -7,7 +7,7 @@ qx.Class.define("admin.ui.series.TableModel", {
         NUM_COLUMNS:        2
     },
 
-    construct: function() {
+    construct() {
         this.base(arguments, admin.ui.series.TableModel.NAME_COLUMN, true);
 
         for (let i = 0; i < admin.ui.series.TableModel.NUM_COLUMNS; i++) {
@@ -18,37 +18,30 @@ qx.Class.define("admin.ui.series.TableModel", {
     },
 
     members: {
-        getSeries: function(rowIndex) {
+        getSeries(rowIndex) {
             return this.getRowData(rowIndex).series;
         },
 
-        refresh: function() {
+        async refresh() {
             if (this.getReady()) {
-                admin.RequestManager.getInstance().getSeries(
-                    this
-                ).then(
-                    function(e) {
-                        const response = e.getResponse();
+                try {
+                    const series = await admin.RequestManager.getInstance().getSeries();
 
-                        const data = [];
-                        for (let i = 0; i < response.length; i++) {
-                            const series = new raceday.api.model.Series(response[i]);
-                            data.push(
-                                {
-                                    name:        series.name,
-                                    description: series.description,
-                                    series:      series
-                                }
-                            );
-                        }
-
-                        this.context.setDataAsMapArray(data, true, false);
-                    },
-
-                    function(e) {
-                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                    const data = [];
+                    for (let i = 0; i < series.length; i++) {
+                        data.push(
+                            {
+                                name:        series[i].name,
+                                description: series[i].description,
+                                series:      series[i]
+                            }
+                        );
                     }
-                )
+
+                    this.setDataAsMapArray(data, true, false);
+                } catch (ex) {
+                    admin.ui.MainWindow.handleError(ex);
+                }
             }
         }
     }

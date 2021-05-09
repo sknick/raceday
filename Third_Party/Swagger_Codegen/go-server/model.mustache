@@ -17,11 +17,11 @@ const (
 ){{/isEnum}}{{^isEnum}}{{#description}}
 // {{{description}}}{{/description}}
 type {{classname}} struct { {{#vars}}
-	{{name}} {{{datatype}}} `json:"{{baseName}}{{^required}},omitempty{{/required}}"`{{/vars}}
+	{{name}} {{^required}}*{{/required}}{{{datatype}}} `json:"{{baseName}}{{^required}},omitempty{{/required}}"`{{/vars}}
 }{{/isEnum}}
 {{^isEnum}}
 
-func New{{classname}}({{#vars}}{{baseName}} {{{datatype}}}{{#hasMore}}, {{/hasMore}}{{/vars}}) {{classname}} {
+func New{{classname}}({{#vars}}{{baseName}} {{^required}}*{{/required}}{{{datatype}}}{{#hasMore}}, {{/hasMore}}{{/vars}}) {{classname}} {
     return {{classname}}{
 {{#vars}}
         {{name}}: {{baseName}},

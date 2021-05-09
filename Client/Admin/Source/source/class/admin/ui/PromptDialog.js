@@ -15,7 +15,7 @@ qx.Class.define("admin.ui.PromptDialog", {
      * @param {RegExp} [regexCheck]
      * @param {*} [context]
      */
-    construct: function(title, message, value, okButtonText, cancelButtonText, regexCheck, context) {
+    construct(title, message, value, okButtonText, cancelButtonText, regexCheck, context) {
         this.__regexCheck = regexCheck;
         this.__context = context;
 
@@ -54,7 +54,7 @@ qx.Class.define("admin.ui.PromptDialog", {
     },
 
     members: {
-        __onOK: function() {
+        __onOK() {
             const text = this.__entryField.getValue() ? this.__entryField.getValue().trim() : "";
             if (text) {
                 if (!this.__regexCheck || this.__regexCheck.test(text)) {
@@ -67,7 +67,7 @@ qx.Class.define("admin.ui.PromptDialog", {
             }
         },
 
-        __onCancel: function(e) {
+        __onCancel(e) {
             this.close();
             this.fireDataEvent("canceled", { context: this.__context });
         }

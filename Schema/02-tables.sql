@@ -1,3 +1,11 @@
+CREATE TABLE lang (
+    id                          varchar                             NOT NULL,
+    html_code                   varchar                             NOT NULL DEFAULT '&#127479;&#127466;',
+    priority_listing            boolean                             NOT NULL DEFAULT FALSE,
+
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE system_user (
     id                          varchar                             NOT NULL,
     password_hash               varchar                             NOT NULL,
@@ -47,7 +55,11 @@ CREATE TABLE broadcast (
     id                          uuid                                NOT NULL,
     type                        broadcast_type                      NOT NULL,
     event_id                    uuid                                NOT NULL,
+    lang_ids                    varchar[]                           NOT NULL DEFAULT array[]::varchar[],
+    description                 varchar,
     url                         varchar,
+    geoblocked                  boolean,
+    paid                        boolean,
 
     PRIMARY KEY (id),
     FOREIGN KEY (event_id)      REFERENCES event(id)

@@ -20,62 +20,47 @@ qx.Class.define("admin.RequestManager", {
     /**
      * Constructor.
      */
-    construct: function() {
+    construct() {
         this.base(arguments);
     },
 
     members: {
-        deleteBroadcast: function(context, id, quiet) {
+        async deleteBroadcast(id, quiet) {
             const params = {
                 "id": id
             };
 
             const req = this.__prepareRequestWithParams("broadcast", params, quiet);
             req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            await req.sendWithPromise();
         },
 
-        deleteBroadcasts: function(context, ids, quiet) {
+        async deleteBroadcasts(ids, quiet) {
             const params = {
                 "ids": ids
             };
 
             const req = this.__prepareRequestWithParams("broadcasts", params, quiet);
             req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
+
+            await req.sendWithPromise();
         },
 
-        deleteEvent: function(context, id, quiet) {
+        async deleteEvent(id, quiet) {
             const params = {
                 "id": id
             };
 
             const req = this.__prepareRequestWithParams("event", params, quiet);
             req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
+
+            await req.sendWithPromise();
         },
 
-        deleteLocation: function(context, id, quiet) {
-            const params = {
-                "id": id
-            };
+        async getBroadcasts(eventId, eventStart, includeAllAfter, quiet) {
+            const ret = [];
 
-            const req = this.__prepareRequestWithParams("location", params, quiet);
-            req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        deleteSeries: function(context, id, quiet) {
-            const params = {
-                "id": id
-            };
-
-            const req = this.__prepareRequestWithParams("series", params, quiet);
-            req.setMethod("DELETE");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        getBroadcasts: function(context, eventId, eventStart, includeAllAfter, quiet) {
             const params = {};
             if (eventId) {
                 params["event_id"] = eventId;
@@ -88,10 +73,19 @@ qx.Class.define("admin.RequestManager", {
             }
 
             const req = this.__prepareRequestWithParams("broadcasts", params, quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Broadcast(response[i]));
+            }
+
+            return ret;
         },
 
-        getEvents: function(context, windowStart, windowEnd, timeZone, quiet) {
+        async getEvents(windowStart, windowEnd, timeZone, quiet) {
+            const ret = [];
+
             const params = {
                 "window_start": windowStart
             };
@@ -105,42 +99,79 @@ qx.Class.define("admin.RequestManager", {
             }
 
             const req = this.__prepareRequestWithParams("events", params, quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Event(response[i]));
+            }
+
+            return ret;
         },
 
-        getLocations: function(context, quiet) {
+        async getLangs(quiet) {
+            const ret = [];
+
+            const req = this.__prepareRequest("langs", quiet, true);
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Lang(response[i]));
+            }
+
+            return ret;
+        },
+
+        async getLocations(quiet) {
+            const ret = [];
+
             const req = this.__prepareRequest("locations", quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
+            const result = await req.sendWithPromise();
+
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Location(response[i]));
+            }
+
+            return ret;
         },
 
-        getNewAccessToken: function(context, username, password, quiet) {
+        async getNewAccessToken(username, password, quiet) {
             const req = this.__prepareRequest("access_token", quiet, true);
             req.setRequestHeader("Username", username);
             req.setRequestHeader("Password", password);
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
         },
 
-        getSeries: function(context, quiet) {
+        async getSeries(quiet) {
+            const ret = [];
+
             const req = this.__prepareRequest("series", quiet, true);
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
+            const result = await req.sendWithPromise();
 
-        postBroadcast: function(context, type, eventId, url, quiet) {
-            const params = {
-                "type":     type,
-                "event_id": eventId
-            };
-            if (url) {
-                params["url"] = url;
+            const response = result.getResponse();
+            for (let i = 0; i < response.length; i++) {
+                ret.push(new raceday.api.model.Series(response[i]));
             }
 
-            const req = this.__prepareRequestWithParams("broadcast", params, quiet);
-            req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
+            return ret;
         },
 
-        postBroadcasts: function(context, unsavedBroadcasts, quiet) {
-            let data = [];
+        async postBroadcast(unsavedBroadcast, quiet) {
+            const req = this.__prepareRequest("broadcast", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedBroadcast.toSimpleObject());
+
+            const result = await req.sendWithPromise();
+            return result.getResponse();
+        },
+
+        async postBroadcasts(unsavedBroadcasts, quiet) {
+            const data = [];
             for (let i = 0; i < unsavedBroadcasts.length; i++) {
                 data.push(unsavedBroadcasts[i].toSimpleObject());
             }
@@ -149,11 +180,52 @@ qx.Class.define("admin.RequestManager", {
             req.setMethod("POST");
             req.setRequestHeader("Content-Type", "application/json");
             req.setRequestData(data);
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
         },
 
-        putBroadcasts: function(context, broadcasts, quiet) {
-            let data = [];
+        async postEvent(unsavedEvent, quiet) {
+            const req = this.__prepareRequest("event", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedEvent.toSimpleObject());
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
+        },
+
+        async postLocation(unsavedLocation, quiet) {
+            const req = this.__prepareRequest("location", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedLocation.toSimpleObject());
+
+            const result = await req.sendWithPromise();
+            return result.getResponse();
+        },
+
+        async postSeries(unsavedSeries, quiet) {
+            const req = this.__prepareRequest("series", quiet);
+            req.setMethod("POST");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(unsavedSeries.toSimpleObject());
+            
+            const result = await req.sendWithPromise();
+            return result.getResponse();
+        },
+
+        async putBroadcast(broadcast, quiet) {
+            const req = this.__prepareRequest("broadcast", quiet);
+            req.setMethod("PUT");
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(broadcast.toSimpleObject());
+            
+            await req.sendWithPromise();
+        },
+
+        async putBroadcasts(broadcasts, quiet) {
+            const data = [];
             for (let i = 0; i < broadcasts.length; i++) {
                 data.push(broadcasts[i].toSimpleObject());
             }
@@ -162,119 +234,38 @@ qx.Class.define("admin.RequestManager", {
             req.setMethod("PUT");
             req.setRequestHeader("Content-Type", "application/json");
             req.setRequestData(data);
-            return req.sendWithPromise(this.__createContext(context, req));
+            
+            await req.sendWithPromise();
         },
 
-        postEvent: function(context, name, start, description, locationId, seriesId, quiet) {
-            const params = {
-                "name":  name,
-                "start": start
-            };
-            if (description) {
-                params["description"] = description;
-            }
-            if (locationId) {
-                params["location_id"] = locationId;
-            }
-            if (seriesId) {
-                params["series_id"] = seriesId;
-            }
-
-            const req = this.__prepareRequestWithParams("event", params, quiet);
-            req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        postLocation: function(context, name, description, quiet) {
-            const params = {
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("location", params, quiet);
-            req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        putBroadcast: function(context, id, type, eventId, url, quiet) {
-            const params = {
-                "id":       id,
-                "type":     type,
-                "event_id": eventId
-            };
-            if (url) {
-                params["url"] = url;
-            }
-
-            const req = this.__prepareRequestWithParams("broadcast", params, quiet);
+        async putEvent(event, quiet) {
+            const req = this.__prepareRequest("event", quiet);
             req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(event.toSimpleObject());
+            
+            await req.sendWithPromise();
         },
 
-        putEvent: function(context, id, name, start, description, locationId, seriesId, quiet) {
-            const params = {
-                "id":    id,
-                "name":  name,
-                "start": start
-            };
-            if (description) {
-                params["description"] = description;
-            }
-            if (locationId) {
-                params["location_id"] = locationId;
-            }
-            if (seriesId) {
-                params["series_id"] = seriesId;
-            }
-
-            const req = this.__prepareRequestWithParams("event", params, quiet);
+        async putLocation(location, quiet) {
+            const req = this.__prepareRequest("location", quiet);
             req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(location.toSimpleObject());
+            
+            await req.sendWithPromise();
         },
 
-        putLocation: function(context, id, name, description, quiet) {
-            const params = {
-                "id":          id,
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("location", params, quiet);
+        async putSeries(series, quiet) {
+            const req = this.__prepareRequest("series", quiet);
             req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
+            req.setRequestHeader("Content-Type", "application/json");
+            req.setRequestData(series.toSimpleObject());
+            
+            await req.sendWithPromise();
         },
 
-        postSeries: function(context, name, description, quiet) {
-            const params = {
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("series", params, quiet);
-            req.setMethod("POST");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        putSeries: function(context, id, name, description, quiet) {
-            const params = {
-                "id":          id,
-                "name":        name,
-                "description": description
-            };
-
-            const req = this.__prepareRequestWithParams("series", params, quiet);
-            req.setMethod("PUT");
-            return req.sendWithPromise(this.__createContext(context, req));
-        },
-
-        __createContext: function(context, request) {
-            return {
-                context: context,
-                request: request
-            };
-        },
-
-        __prepareRequest: function(resource, quiet, accessTokenNotNecessary) {
+        __prepareRequest(resource, quiet, accessTokenNotNecessary) {
             if (!accessTokenNotNecessary && (this.getAccessToken() === null)) {
                 throw "No access token specified.";
             }
@@ -288,7 +279,7 @@ qx.Class.define("admin.RequestManager", {
             return req;
         },
 
-        __prepareRequestWithParams: function(resource, params, quiet) {
+        __prepareRequestWithParams(resource, params, quiet) {
             let queryString = "";
             for (let key in params) {
                 if (queryString !== "") queryString += "&";

@@ -6,7 +6,7 @@
 qx.Class.define("admin.ui.events.BroadcastsField", {
     extend: qx.ui.container.Composite,
 
-    construct: function(broadcasts) {
+    construct(broadcasts) {
         this.base(arguments, new qx.ui.layout.Dock(5));
 
         this.__broadcasts = broadcasts ? broadcasts : [];
@@ -40,19 +40,39 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
     },
 
     members: {
-        getBroadcasts: function() {
+        getBroadcasts() {
             return this.__broadcasts;
         },
 
-        __broadcastToString: function(broadcast) {
-            let ret = broadcast.type_;
-            if (broadcast.url) {
+        __broadcastToString(broadcast) {
+            let ret = broadcast.type_.toString();
+
+            if (ret === "Motorsport_tv") {
+                ret = "Motorsport.tv";
+            } else if (ret === "F1_TV") {
+                ret = "F1 TV";
+            }
+
+            if (broadcast.description) {
+                ret += ": " + broadcast.description;
+            } else if (broadcast.url) {
                 ret += ": " + broadcast.url;
             }
+
             return ret;
         },
 
-        __updateList: function() {
+        __editBroadcast() {
+            const selectedItems = this.__list.getSelection();
+            if (selectedItems.length > 0) {
+                const dlg = new admin.ui.events.EditBroadcastDialog(selectedItems[0].getModel());
+                dlg.addListener("confirmed", this.__onEditBroadcastContinue, this);
+
+                dlg.show();
+            }
+        },
+
+        __updateList() {
             const self = this;
             this.__broadcasts.sort(function(a, b) {
                 if (self.__broadcastToString(a) < self.__broadcastToString(b)) {
@@ -66,34 +86,35 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             this.__list.removeAll();
 
             for (let i = 0; i < this.__broadcasts.length; i++) {
-                this.__list.add(new qx.ui.form.ListItem(this.__broadcastToString(this.__broadcasts[i]), null,
-                    this.__broadcasts[i]));
+                const thisItem = new qx.ui.form.ListItem(this.__broadcastToString(this.__broadcasts[i]), null,
+                    this.__broadcasts[i]);
+                this.__list.add(thisItem);
+
+                thisItem.addListener("dblclick", this.__onBroadcastDoubleClicked, this);
             }
         },
 
-        __onAddBroadcast: function(e) {
+        __onAddBroadcast(e) {
             const dlg = new admin.ui.events.EditBroadcastDialog();
             dlg.addListener("confirmed", this.__onAddBroadcastContinue, this);
 
             dlg.show();
         },
 
-        __onAddBroadcastContinue: function(e) {
+        __onAddBroadcastContinue(e) {
             this.__broadcasts.push(e.getData());
             this.__updateList();
         },
 
-        __onEditBroadcast: function(e) {
-            const selectedItems = this.__list.getSelection();
-            if (selectedItems.length > 0) {
-                const dlg = new admin.ui.events.EditBroadcastDialog(selectedItems[0].getModel());
-                dlg.addListener("confirmed", this.__onEditBroadcastContinue, this);
-
-                dlg.show();
-            }
+        __onBroadcastDoubleClicked(e) {
+            this.__editBroadcast();
         },
 
-        __onEditBroadcastContinue: function(e) {
+        __onEditBroadcast(e) {
+            this.__editBroadcast();
+        },
+
+        __onEditBroadcastContinue(e) {
             const broadcast = e.getData();
             const selectedItem = this.__list.getSelection()[0];
 
@@ -101,7 +122,7 @@ qx.Class.define("admin.ui.events.BroadcastsField", {
             selectedItem.setModel(broadcast);
         },
 
-        __onRemoveBroadcast: function(e) {
+        __onRemoveBroadcast(e) {
             const selectedItems = this.__list.getSelection();
             if (selectedItems.length > 0) {
                 for (let i = 0; i < selectedItems.length; i++) {

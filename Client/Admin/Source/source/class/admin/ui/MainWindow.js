@@ -7,24 +7,19 @@ qx.Class.define("admin.ui.MainWindow", {
     implement: [admin.IRequestNotifier],
 
     statics: {
+        LANGS: [],
+
         __ACCESS_TOKEN_KEY: "access_token",
         __instance:         null,
-
-        /**
-         * Handles a request error that came back from the server. If the status code is a 403, then the user will be
-         * notified that they need to login again, and the application window will reload.
-         *
-         * @param {number} statusCode
-         * @param {*} error
-         */
-        handleRequestError: function(statusCode, error) {
+        
+        handleError(error) {
             let errorMessage = null;
-
-            if (error instanceof qx.type.BaseError) {
-                if (statusCode === 403) {
+        
+            if (error instanceof admin.RequestError) {
+                if (error.getStatusCode() === 403) {
                     admin.ui.MainWindow.__instance.__handleUnauthorized();
                 } else {
-                    errorMessage = error.toString();
+                    errorMessage = "An error has occurred while communicating with the server: " + error.toString();
                 }
             } else if (error instanceof qx.core.Object) {
                 errorMessage = error.toString();
@@ -34,7 +29,7 @@ qx.Class.define("admin.ui.MainWindow", {
                 console.error(error);
                 errorMessage = "An unknown error has occurred.";
             }
-
+        
             if (errorMessage) {
                 const dlg = new admin.ui.MessageDialog(admin.Application.APP_TITLE, errorMessage);
                 dlg.open();
@@ -42,7 +37,7 @@ qx.Class.define("admin.ui.MainWindow", {
         }
     },
 
-    construct: function(root) {
+    construct(root) {
         this.base(arguments);
 
         admin.ui.MainWindow.__instance = this;
@@ -64,15 +59,15 @@ qx.Class.define("admin.ui.MainWindow", {
     },
 
     members: {
-        onRequest: function () {
+        onRequest() {
             this.__loadingDlg.open();
         },
 
-        onReturn: function () {
+        onReturn() {
             this.__loadingDlg.close();
         },
 
-        __handleUnauthorized: function () {
+        __handleUnauthorized() {
             // The window.location.reload() call below apparently doesn't happen synchronously, so we're forced to make
             // sure this call to onUnauthorized() isn't a redundant one from another part of the application having
             // attempted a request.
@@ -87,48 +82,54 @@ qx.Class.define("admin.ui.MainWindow", {
             return false;
         },
 
-        __onUnauthorizedContinue: function(context) {
+        __onUnauthorizedContinue(context) {
             window.location.reload();
             this.__unauthorizedHandled = true;
         },
 
-        __onLogin: function(e) {
+        async __onLogin(e) {
             const data = e.getData();
-            admin.RequestManager.getInstance().getNewAccessToken(this, data.username, data.password, true).then(
-                function(e) {
-                    this.context.__onLoginContinued(e.getResponse());
-                },
-                function(e) {
-                    if (this.request.getStatus() === 401) {
-                        this.context.__loginDlg.notifyOfBadLogin();
-                    } else {
-                        this.context.__loginDlg.notifyOfError(e.message);
-                    }
+
+            try {
+                const accessToken = await admin.RequestManager.getInstance().getNewAccessToken(data.username,
+                    data.password, true);
+                this.__onLoginContinued(accessToken);
+            } catch (ex) {
+                if ( (ex instanceof admin.RequestError) && (ex.getStatusCode() === 401) ) {
+                    this.__loginDlg.notifyOfBadLogin();
+                } else {
+                    this.__loginDlg.notifyOfError(ex);
                 }
-            )
+            }
         },
 
-        __onLoginContinued: function(accessToken) {
+        async __onLoginContinued(accessToken) {
             admin.RequestManager.getInstance().setAccessToken(accessToken);
             qx.bom.storage.Web.getSession().setItem(admin.ui.MainWindow.__ACCESS_TOKEN_KEY, accessToken);
 
-            if (this.__loginDlg) {
-                this.__root.remove(this.__loginDlg);
+            try {
+                admin.ui.MainWindow.LANGS = await admin.RequestManager.getInstance().getLangs();
+
+                if (this.__loginDlg) {
+                    this.__root.remove(this.__loginDlg);
+                }
+
+                const tabView = new qx.ui.tabview.TabView("top");
+                tabView.setContentPadding(0, 0, 0, 0);
+
+                tabView.add(new admin.ui.events.Page());
+                tabView.add(new admin.ui.series.Page());
+                tabView.add(new admin.ui.locations.Page());
+
+                this.__root.add(tabView, {
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%"
+                });
+            } catch (ex) {
+                this.__loginDlg.notifyOfError(ex);
             }
-
-            const tabView = new qx.ui.tabview.TabView("top");
-            tabView.setContentPadding(0, 0, 0, 0);
-
-            tabView.add(new admin.ui.events.Page());
-            tabView.add(new admin.ui.series.Page());
-            tabView.add(new admin.ui.locations.Page());
-
-            this.__root.add(tabView, {
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%"
-            });
         },
 
         __loadingDlg: null

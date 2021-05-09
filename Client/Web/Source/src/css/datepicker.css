@@ -6,6 +6,10 @@
     --dp-border-radius-sm: 2px;
 }
 
+.datepicker {
+    margin-left: 6px;
+}
+
 .datepicker > button {
     border-radius: var(--dp-border-radius-md) !important;
     border-color: transparent !important;

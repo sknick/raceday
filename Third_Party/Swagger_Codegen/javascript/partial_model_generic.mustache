@@ -1,36 +1,83 @@
 qx.Class.define("raceday.api.model.{{classname}}", {
     extend: qx.core.Object,
 
-    construct: function(data) {
+    construct(data) {
         this.base(arguments);
 
-{{#vars}}        if (data.hasOwnProperty("{{baseName}}")) {
-{{#isPrimitiveType}}            this.{{name}} = data["{{baseName}}"];
+{{#vars}}
+        if (data.hasOwnProperty("{{baseName}}")) {
+{{#isPrimitiveType}}
+            this.{{name}} = data["{{baseName}}"];
 {{/isPrimitiveType}}
 {{^isPrimitiveType}}
-{{#vendorExtensions.x-is-object}}            this.{{name}} = new raceday.api.model.{{datatype}}(data["{{baseName}}"]);
-{{/vendorExtensions.x-is-object}}
-{{^vendorExtensions.x-is-object}}            this.{{name}} = data["{{baseName}}"];
-{{/vendorExtensions.x-is-object}}
+{{#isContainer}}
+            this.{{name}} = [];
+            for (let i = 0; i < data["{{baseName}}"].length; i++) {
+{{#items.complexType}}
+{{^isEnum}}
+                this.{{name}}.push(new raceday.api.model.{{items.complexType}}(data["{{baseName}}"][i]));
+{{/isEnum}}
+{{#isEnum}}
+                this.{{name}}.push(data["{{baseName}}"]);
+{{/isEnum}}
+{{/items.complexType}}
+{{^items.complexType}}
+                this.{{name}}.push(data["{{baseName}}"][i]);
+{{/items.complexType}}
+            }
+{{/isContainer}}
+{{^isContainer}}
+{{^isEnum}}
+            this.{{name}} = new raceday.api.model.{{complexType}}(data["{{baseName}}"]);
+{{/isEnum}}
+{{#isEnum}}
+            this.{{name}} = data["{{baseName}}"];
+{{/isEnum}}
+{{/isContainer}}
 {{/isPrimitiveType}}
         }
 {{/vars}}
     },
 
     members: {
-        toSimpleObject: function() {
-            return {
+        isEnum() {
+            return false;
+        },
+
+        toSimpleObject() {
+            const ret = {};
+
 {{#vars}}
-{{#isPrimitiveType}}                "{{baseName}}": this.{{name}},
+            if (this.hasOwnProperty("{{name}}")) {
+{{#isPrimitiveType}}                ret["{{baseName}}"] = this.{{name}};
 {{/isPrimitiveType}}
 {{^isPrimitiveType}}
-{{#vendorExtensions.x-is-object}}                "{{baseName}}": this.{{name}}.toSimpleObject(),
-{{/vendorExtensions.x-is-object}}
-{{^vendorExtensions.x-is-object}}                "{{baseName}}": this.{{name}},
-{{/vendorExtensions.x-is-object}}
+{{#isContainer}}                ret["{{baseName}}"] = [];
+                for (let i = 0; i < this.{{name}}.length; i++) {
+{{#items.complexType}}
+                    ret["{{baseName}}"].push(this.{{name}}[i].toSimpleObject());
+{{/items.complexType}}
+{{^items.complexType}}
+                    ret["{{baseName}}"].push(this.{{name}}[i]);
+{{/items.complexType}}
+                }
+{{/isContainer}}
+{{^isContainer}}
+                if (typeof this.{{name}} === "object") {
+                    if (this.{{name}} !== null) {
+                        ret["{{baseName}}"] = this.{{name}}.toSimpleObject();
+                    } else {
+                        ret["{{baseName}}"] = null;
+                    }
+                } else {
+                    ret["{{baseName}}"] = this.{{name}};
+                }
+{{/isContainer}}
 {{/isPrimitiveType}}
+            }
 {{/vars}}
-            };
+
+            return ret;
         }
     }
 });

@@ -1,7 +1,7 @@
 qx.Class.define("admin.ui.series.EditDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(series) {
+    construct(series) {
         this.__series = series;
 
         const nameLabel = new qx.ui.basic.Label("Name:");
@@ -36,7 +36,7 @@ qx.Class.define("admin.ui.series.EditDialog", {
     },
 
     members: {
-        __onOK: function(e) {
+        __onOK(e) {
             const name = this.__nameField.getValue().trim();
             if (name === "") {
                 this.__nameField.setBackgroundColor("#ed8877");
@@ -56,7 +56,7 @@ qx.Class.define("admin.ui.series.EditDialog", {
             this.fireDataEvent("confirmed", this.__series);
         },
 
-        __onCancel: function(e) {
+        __onCancel(e) {
             this.hide();
         }
     },

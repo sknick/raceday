@@ -96,6 +96,9 @@ func (dh DatastoreHandle) GetAccessToken(id string) (*AccessToken, error) {
 
 	if rows.Next() {
 		err = rows.Scan(&id, &whenCreated, &userId, &inet)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		return nil, nil
 	}
@@ -104,13 +107,45 @@ func (dh DatastoreHandle) GetAccessToken(id string) (*AccessToken, error) {
 	return &ret, nil
 }
 
+func (dh DatastoreHandle) GetLangs() ([]model.Lang, error) {
+	ret := make([]model.Lang, 0)
+
+	var id string
+	var htmlCode string
+	var priorityListing bool
+
+	rows, err := dh.db.Query(
+		`SELECT id,
+				html_code,
+				priority_listing
+		   FROM lang
+		  ORDER BY id ASC`,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err = rows.Scan(&id, &htmlCode, &priorityListing)
+		if err != nil {
+			return nil, err
+		}
+
+		ret = append(ret, model.NewLang(id, htmlCode, priorityListing))
+	}
+
+	return ret, nil
+}
+
 func (dh DatastoreHandle) GetSystemUser(id string) (*model.SystemUser, error) {
 	var firstNameVal *string
 	var lastNameVal *string
 	var emailVal *string
 	var whenCreatedVal int
 	var whoCreatedVal *string
-	var whenUpdatedVal *int
+	var whenUpdatedVal *int32
 	var whoUpdatedVal *string
 	var enabledVal bool
 
@@ -140,37 +175,7 @@ func (dh DatastoreHandle) GetSystemUser(id string) (*model.SystemUser, error) {
 		}
 	}
 
-	firstName := ""
-	if firstNameVal != nil {
-		firstName = *firstNameVal
-	}
-
-	lastName := ""
-	if lastNameVal != nil {
-		lastName = *lastNameVal
-	}
-
-	email := ""
-	if emailVal != nil {
-		email = *emailVal
-	}
-
-	whoCreated := ""
-	if whoCreatedVal != nil {
-		whoCreated = *whoCreatedVal
-	}
-
-	whenUpdated := -1
-	if whenUpdatedVal != nil {
-		whenUpdated = *whenUpdatedVal
-	}
-
-	whoUpdated := ""
-	if whoUpdatedVal != nil {
-		whoUpdated = *whoUpdatedVal
-	}
-
-	ret := model.NewSystemUser(id, firstName, lastName, email, int32(whenCreatedVal), whoCreated, int32(whenUpdated), whoUpdated, enabledVal)
+	ret := model.NewSystemUser(id, firstNameVal, lastNameVal, emailVal, int32(whenCreatedVal), whoCreatedVal, whenUpdatedVal, whoUpdatedVal, enabledVal)
 	return &ret, nil
 }
 
@@ -268,4 +273,28 @@ func (dh DatastoreHandle) auditAction(userId, tableName, itemDescription, action
 		log.Print(err)
 		return
 	}
+}
+
+func (dh DatastoreHandle) getNullBool(value *bool) sql.NullBool {
+	ret := sql.NullBool{
+		Valid: false,
+	}
+	if value != nil {
+		ret.Valid = true
+		ret.Bool = *value
+	}
+
+	return ret
+}
+
+func (dh DatastoreHandle) getNullString(value *string) sql.NullString {
+	ret := sql.NullString{
+		Valid: false,
+	}
+	if value != nil {
+		ret.Valid = true
+		ret.String = *value
+	}
+
+	return ret
 }

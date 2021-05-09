@@ -1,7 +1,7 @@
 qx.Class.define("admin.ui.events.EditDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(locations, series, event, eventBroadcasts, duplicating) {
+    construct(locations, series, event, eventBroadcasts, duplicating) {
         this.__event = event;
 
         if (!duplicating) {
@@ -9,7 +9,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
         } else {
             this.__broadcasts = [];
             for (let i = 0; i < eventBroadcasts.length; i++) {
-                this.__broadcasts.push(new raceday.api.model.UnsavedBroadcast(eventBroadcasts[i]));
+                this.__broadcasts.push(new raceday.api.model.UnsavedBroadcast(eventBroadcasts[i].toSimpleObject()));
             }
         }
 
@@ -25,10 +25,9 @@ qx.Class.define("admin.ui.events.EditDialog", {
         const startLabel = new qx.ui.basic.Label("Start (" + dateStr + "):");
         startLabel.setAlignY("middle");
 
-        this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ?
-            this.__event.start : null);
+        this.__startField = new admin.ui.DateTimeField((this.__event && this.__event.start) ? this.__event.start : null);
 
-            const locationLabel = new qx.ui.basic.Label("Location:");
+        const locationLabel = new qx.ui.basic.Label("Location:");
         locationLabel.setAlignY("middle");
 
 
@@ -115,7 +114,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
     },
 
     members: {
-        __onOK: function(e) {
+        __onOK(e) {
             const name = this.__nameField.getValue().trim();
             if (name === "") {
                 this.__nameField.setBackgroundColor("#ed8877");
@@ -159,7 +158,7 @@ qx.Class.define("admin.ui.events.EditDialog", {
             });
         },
 
-        __onCancel: function(e) {
+        __onCancel(e) {
             this.hide();
         }
     },

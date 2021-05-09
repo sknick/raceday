@@ -5,7 +5,7 @@
 qx.Class.define("admin.ui.locations.Page", {
     extend: qx.ui.tabview.Page,
 
-    construct: function() {
+    construct() {
         this.base(arguments, "Locations");
         this.setLayout(new qx.ui.layout.Canvas());
 
@@ -21,7 +21,7 @@ qx.Class.define("admin.ui.locations.Page", {
         this.__table = new qx.ui.table.Table(
             new admin.ui.locations.TableModel(),
             {
-                tableColumnModel: function(obj) {
+                tableColumnModel(obj) {
                     return new qx.ui.table.columnmodel.Resize(obj);
                 }
             }
@@ -53,31 +53,25 @@ qx.Class.define("admin.ui.locations.Page", {
     },
 
     members: {
-        __onAdd: function(e) {
+        __onAdd(e) {
             const dlg = new admin.ui.locations.EditDialog();
             dlg.addListener("confirmed", this.__onAddConfirmed, this);
 
             dlg.show();
         },
 
-        __onAddConfirmed: function(e) {
+        async __onAddConfirmed(e) {
             const location = e.getData();
-            admin.RequestManager.getInstance().postLocation(
-                this,
-                location.name,
-                location.description
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().refresh();
-                },
-
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
+            
+            try {
+                await admin.RequestManager.getInstance().postLocation(location);
+                this.__table.getTableModel().refresh();
+            } catch (ex) {
+                admin.ui.MainWindow.handleError(ex);
+            }
         },
 
-        __onEdit: function(e) {
+        __onEdit(e) {
             const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 const dlg = new admin.ui.locations.EditDialog(this.__table.getTableModel().getLocation(selectedRows[0].minIndex));
@@ -87,22 +81,15 @@ qx.Class.define("admin.ui.locations.Page", {
             }
         },
 
-        __onEditConfirmed: function(e) {
+        async __onEditConfirmed(e) {
             const location = e.getData();
-            admin.RequestManager.getInstance().putLocation(
-                this,
-                location.id,
-                location.name,
-                location.description
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().refresh();
-                },
 
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            );
+            try {
+                await admin.RequestManager.getInstance().putLocation(location);
+                this.__table.getTableModel().refresh();
+            } catch (ex) {
+                admin.ui.MainWindow.handleError(ex);
+            }
         }
     }
 });

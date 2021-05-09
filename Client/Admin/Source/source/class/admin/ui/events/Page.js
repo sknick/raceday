@@ -7,7 +7,7 @@
 qx.Class.define("admin.ui.events.Page", {
     extend: qx.ui.tabview.Page,
 
-    construct: function() {
+    construct() {
         this.base(arguments, "Events");
         this.setLayout(new qx.ui.layout.Canvas());
 
@@ -27,7 +27,7 @@ qx.Class.define("admin.ui.events.Page", {
         this.__table = new qx.ui.table.Table(
             new admin.ui.events.TableModel(),
             {
-                tableColumnModel: function(obj) {
+                tableColumnModel(obj) {
                     return new qx.ui.table.columnmodel.Resize(obj);
                 }
             }
@@ -63,87 +63,43 @@ qx.Class.define("admin.ui.events.Page", {
     },
 
     members: {
-        __onAdd: function(e) {
-            admin.RequestManager.getInstance().getLocations(
-                this
-            ).then(
-                function(e) {
-                    let response = e.getResponse();
+        async __onAdd(e) {
+            try {
+                const locations = await admin.RequestManager.getInstance().getLocations();
+                const series = await admin.RequestManager.getInstance().getSeries();
 
-                    const locations = [];
-                    for (let i = 0; i < response.length; i++) {
-                        locations.push(new raceday.api.model.Location(response[i]));
-                    }
+                const dlg = new admin.ui.events.EditDialog(locations, series);
+                dlg.addListener("confirmed", this.__onAddConfirmed, this);
 
-                    admin.RequestManager.getInstance().getSeries(
-                        this.context
-                    ).then(
-                        function(e) {
-                            response = e.getResponse();
-
-                            const series = [];
-                            for (let i = 0; i < response.length; i++) {
-                                series.push(new raceday.api.model.Series(response[i]));
-                            }
-
-                            const dlg = new admin.ui.events.EditDialog(locations, series);
-                            dlg.addListener("confirmed", this.context.__onAddConfirmed, this.context);
-
-                            dlg.show();
-                        },
-
-                        function(e) {
-                            admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                        }
-                    );
-                },
-
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                }
-            )
+                dlg.show();
+            } catch (ex) {
+                admin.ui.MainWindow.handleError(ex);
+            }
         },
 
-        __onAddConfirmed: function(e) {
+        async __onAddConfirmed(e) {
             const data = e.getData();
-            admin.RequestManager.getInstance().postEvent(
-                this,
-                data.event.name,
-                data.event.start,
-                data.event.description,
-                data.event.location ? data.event.location.id : null,
-                data.event.series ? data.event.series.id : null
-            ).then(
-                function(e) {
-                    if (data.broadcasts.length === 0) {
-                        this.context.__table.getTableModel().refresh();
-                    } else {
-                        for (let i = 0; i < data.broadcasts.length; i++) {
-                            data.broadcasts[i].eventId = e.getResponse();
-                        }
 
-                        admin.RequestManager.getInstance().postBroadcasts(
-                            this.context,
-                            data.broadcasts
-                        ).then(
-                            function (e) {
-                                this.context.__table.getTableModel().refresh();
-                            },
+            try {
+                const eventId = await admin.RequestManager.getInstance().postEvent(data.event);
 
-                            function (e) {
-                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                            }
-                        );
+                if (data.broadcasts.length === 0) {
+                    this.__table.getTableModel().refresh();
+                } else {
+                    for (let i = 0; i < data.broadcasts.length; i++) {
+                        data.broadcasts[i].eventId = eventId;
                     }
-                },
 
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+                    await admin.RequestManager.getInstance().postBroadcasts(data.broadcasts);
+
+                    this.__table.getTableModel().refresh();
                 }
-            );
+            } catch (ex) {
+                admin.ui.MainWindow.handleError(ex);
+            }
         },
 
-        __onDelete: function(e) {
+        __onDelete(e) {
             const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
                 const dlg = new admin.ui.ConfirmationDialog(
@@ -157,231 +113,95 @@ qx.Class.define("admin.ui.events.Page", {
             }
         },
 
-        __onDeleteContinue: function(e) {
+        async __onDeleteContinue(e) {
             const event = e.getData();
-            admin.RequestManager.getInstance().deleteEvent(
-                this,
-                event.id
-            ).then(
-                function(e) {
-                    this.context.__table.getTableModel().refresh();
-                    this.context.__table.getSelectionModel().resetSelection();
-                },
 
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
+            try {
+                await admin.RequestManager.getInstance().deleteEvent(event.id);
+
+                this.__table.getTableModel().refresh();
+                this.__table.getSelectionModel().resetSelection();
+            } catch (ex) {
+                admin.ui.MainWindow.handleError(ex);
+            }
+        },
+
+        async __onDuplicate(e) {
+            const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
+            if (selectedRows.length > 0) {
+                try {
+                    const locations = await admin.RequestManager.getInstance().getLocations();
+                    const series = await admin.RequestManager.getInstance().getSeries();
+                    const event = this.__table.getTableModel().getEvent(selectedRows[0].minIndex);
+                    const broadcasts = await admin.RequestManager.getInstance().getBroadcasts(event.id, null, null, false);
+
+                    const dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts, true);
+                    dlg.addListener("confirmed", this.__onAddConfirmed, this);
+
+                    dlg.show();
+                } catch (ex) {
+                    admin.ui.MainWindow.handleError(ex);
                 }
-            );
-        },
-
-        __onDuplicate: function(e) {
-            const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
-            if (selectedRows.length > 0) {
-                admin.RequestManager.getInstance().getLocations(
-                    this
-                ).then(
-                    function(e) {
-                        let response = e.getResponse();
-
-                        const locations = [];
-                        for (let i = 0; i < response.length; i++) {
-                            locations.push(new raceday.api.model.Location(response[i]));
-                        }
-
-                        admin.RequestManager.getInstance().getSeries(
-                            this.context
-                        ).then(
-                            function(e) {
-                                response = e.getResponse();
-
-                                const series = [];
-                                for (let i = 0; i < response.length; i++) {
-                                    series.push(new raceday.api.model.Series(response[i]));
-                                }
-
-                                const event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
-
-                                admin.RequestManager.getInstance().getBroadcasts(
-                                    this.context,
-                                    event.id,
-                                    null,
-                                    null,
-                                    false
-                                ).then(
-                                    function(e) {
-                                        response = e.getResponse();
-
-                                        const broadcasts = [];
-                                        for (let i = 0; i < response.length; i++) {
-                                            broadcasts.push(new raceday.api.model.Broadcast(response[i]));
-                                        }
-
-                                        const dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts,
-                                            true);
-                                        dlg.addListener("confirmed", this.context.__onAddConfirmed, this.context);
-
-                                        dlg.show();
-                                    },
-
-                                    function(e) {
-                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                                    }
-                                );
-                            },
-
-                            function(e) {
-                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                            }
-                        )
-                    },
-
-                    function(e) {
-                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                    }
-                );
             }
         },
 
-        __onEdit: function(e) {
+        async __onEdit(e) {
             const selectedRows = this.__table.getSelectionModel().getSelectedRanges();
             if (selectedRows.length > 0) {
-                admin.RequestManager.getInstance().getLocations(
-                    this
-                ).then(
-                    function(e) {
-                        let response = e.getResponse();
+                try {
+                    const locations = await admin.RequestManager.getInstance().getLocations();
+                    const series = await admin.RequestManager.getInstance().getSeries();
+                    const event = this.__table.getTableModel().getEvent(selectedRows[0].minIndex);
+                    const broadcasts = await admin.RequestManager.getInstance().getBroadcasts(event.id, null, null, false);
 
-                        const locations = [];
-                        for (let i = 0; i < response.length; i++) {
-                            locations.push(new raceday.api.model.Location(response[i]));
-                        }
+                    const dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts);
+                    dlg.addListener("confirmed", this.__onEditConfirmed, this);
 
-                        admin.RequestManager.getInstance().getSeries(
-                            this.context
-                        ).then(
-                            function(e) {
-                                response = e.getResponse();
-
-                                const series = [];
-                                for (let i = 0; i < response.length; i++) {
-                                    series.push(new raceday.api.model.Series(response[i]));
-                                }
-
-                                const event = this.context.__table.getTableModel().getEvent(selectedRows[0].minIndex);
-
-                                admin.RequestManager.getInstance().getBroadcasts(
-                                    this.context,
-                                    event.id,
-                                    null,
-                                    null,
-                                    false
-                                ).then(
-                                    function(e) {
-                                        response = e.getResponse();
-
-                                        const broadcasts = [];
-                                        for (let i = 0; i < response.length; i++) {
-                                            broadcasts.push(new raceday.api.model.Broadcast(response[i]));
-                                        }
-
-                                        const dlg = new admin.ui.events.EditDialog(locations, series, event, broadcasts);
-                                        dlg.addListener("confirmed", this.context.__onEditConfirmed, this.context);
-
-                                        dlg.show();
-                                    },
-
-                                    function(e) {
-                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                                    }
-                                );
-                            },
-
-                            function(e) {
-                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                            }
-                        )
-                    },
-
-                    function(e) {
-                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                    }
-                );
+                    dlg.show();
+                } catch (ex) {
+                    admin.ui.MainWindow.handleError(ex);
+                }
             }
         },
 
-        __onEditConfirmed: function(e) {
+        async __onEditConfirmed(e) {
             const data = e.getData();
 
-            admin.RequestManager.getInstance().putEvent(
-                this,
-                data.event.id,
-                data.event.name,
-                data.event.start,
-                data.event.description,
-                data.event.location ? data.event.location.id : null,
-                data.event.series ? data.event.series.id : null
-            ).then(
-                function(e) {
-                    if (data.broadcasts.length === 0) {
-                        this.context.__table.getTableModel().refresh();
-                    } else {
-                        const broadcasts = [];
-                        const unsavedBroadcasts = [];
+            try {
+                await admin.RequestManager.getInstance().putEvent(data.event);
+                
+                if (data.broadcasts.length === 0) {
+                    this.__table.getTableModel().refresh();
+                } else {
+                    const broadcasts = [];
+                    const unsavedBroadcasts = [];
 
-                        for (let i = 0; i < data.broadcasts.length; i++) {
-                            if (data.broadcasts[i] instanceof raceday.api.model.Broadcast) {
-                                broadcasts.push(data.broadcasts[i]);
-                            } else {
-                                data.broadcasts[i].eventId = data.event.id;
-                                unsavedBroadcasts.push(data.broadcasts[i]);
-                            }
-                        }
-
-                        if (broadcasts.length === 0) {
-                            if (unsavedBroadcasts.length > 0) {
-                                admin.RequestManager.getInstance().postBroadcasts(
-                                    this.context,
-                                    unsavedBroadcasts
-                                ).then(
-                                    function (e) {
-                                        this.context.__table.getTableModel().refresh();
-                                    },
-
-                                    function (e) {
-                                        admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                                    }
-                                );
-                            } else {
-                                this.context.__table.getTableModel().refresh();
-                            }
+                    for (let i = 0; i < data.broadcasts.length; i++) {
+                        if (data.broadcasts[i] instanceof raceday.api.model.Broadcast) {
+                            broadcasts.push(data.broadcasts[i]);
                         } else {
-                            admin.RequestManager.getInstance().putBroadcasts(
-                                this.context,
-                                broadcasts
-                            ).then(
-                                function(e) {
-                                    if (unsavedBroadcasts.length > 0) {
-                                        admin.RequestManager.getInstance().postBroadcasts(
-                                            this.context,
-                                            unsavedBroadcasts
-                                        ).then(
-                                            function (e) {
-                                                this.context.__table.getTableModel().refresh();
-                                            },
+                            data.broadcasts[i].eventId = data.event.id;
+                            unsavedBroadcasts.push(data.broadcasts[i]);
+                        }
+                    }
 
-                                            function (e) {
-                                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                                            }
-                                        );
-                                    } else {
-                                        this.context.__table.getTableModel().refresh();
-                                    }
-                                },
+                    if (broadcasts.length === 0) {
+                        if (unsavedBroadcasts.length > 0) {
+                            await admin.RequestManager.getInstance().postBroadcasts(unsavedBroadcasts);
 
-                                function(e) {
-                                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                                }
-                            );
+                            this.__table.getTableModel().refresh();
+                        } else {
+                            this.__table.getTableModel().refresh();
+                        }
+                    } else {
+                        await admin.RequestManager.getInstance().putBroadcasts(broadcasts);
+
+                        if (unsavedBroadcasts.length > 0) {
+                            await admin.RequestManager.getInstance().postBroadcasts(unsavedBroadcasts);
+
+                            this.__table.getTableModel().refresh();
+                        } else {
+                            this.__table.getTableModel().refresh();
                         }
                     }
 
@@ -391,25 +211,12 @@ qx.Class.define("admin.ui.events.Page", {
                             ids.push(data.deletedBroadcasts[i].id);
                         }
 
-                        admin.RequestManager.getInstance().deleteBroadcasts(
-                            this.context,
-                            ids
-                        ).then(
-                            function(e) {
-                                // Do nothing
-                            },
-
-                            function (e) {
-                                admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
-                            }
-                        )
+                        await admin.RequestManager.getInstance().deleteBroadcasts(ids);
                     }
-                },
-
-                function(e) {
-                    admin.ui.MainWindow.handleRequestError(this.request.getStatus(), e);
                 }
-            );
+            } catch (ex) {
+                admin.ui.MainWindow.handleError(ex);
+            }
         }
     }
 });

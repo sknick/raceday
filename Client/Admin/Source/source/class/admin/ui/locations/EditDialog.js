@@ -1,7 +1,7 @@
 qx.Class.define("admin.ui.locations.EditDialog", {
     extend: admin.ui.DialogBase,
 
-    construct: function(location) {
+    construct(location) {
         this.__location = location;
 
         const nameLabel = new qx.ui.basic.Label("Name:");
@@ -37,7 +37,7 @@ qx.Class.define("admin.ui.locations.EditDialog", {
     },
 
     members: {
-        __onOK: function(e) {
+        __onOK(e) {
             const name = this.__nameField.getValue().trim();
             if (name === "") {
                 this.__nameField.setBackgroundColor("#ed8877");
@@ -57,7 +57,7 @@ qx.Class.define("admin.ui.locations.EditDialog", {
             this.fireDataEvent("confirmed", this.__location);
         },
 
-        __onCancel: function(e) {
+        __onCancel(e) {
             this.hide();
         }
     },

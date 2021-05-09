@@ -100,7 +100,7 @@ func newSeriesFromRow(rows *sql.Rows) (*model.Series, error) {
 		Name: nameVal,
 	}
 	if descriptionVal.Valid {
-		ret.Description = descriptionVal.String
+		ret.Description = &descriptionVal.String
 	}
 
 	return &ret, nil

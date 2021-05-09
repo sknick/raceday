@@ -7,7 +7,7 @@ qx.Class.define("admin.ui.LoginScreen", {
     /**
      * Constructor.
      */
-    construct: function() {
+    construct() {
         this.base(arguments);
 
         this.__usernameField = new qx.ui.form.TextField().set({
@@ -51,24 +51,24 @@ qx.Class.define("admin.ui.LoginScreen", {
     },
 
     members: {
-        notifyOfBadLogin: function() {
+        notifyOfBadLogin() {
             this.__messageLabel.setTextColor("#ff0000");
             this.__messageLabel.setValue("<i>Invalid credentials</i>");
             this.__passwordField.focus();
         },
 
-        notifyOfError: function(message) {
+        notifyOfError(message) {
             this.__messageLabel.setTextColor("#ff0000");
             this.__messageLabel.setValue("<i>" + message + "</i>");
         },
 
-        __onKeyDown: function(e) {
+        __onKeyDown(e) {
             if (e.getKeyIdentifier() === "Enter") {
                 this.__onLogin();
             }
         },
 
-        __onLogin: function(e) {
+        __onLogin(e) {
             const username = this.__usernameField.getValue();
             if (!username || (username.trim().length === 0)) {
                 this.__messageLabel.setTextColor("#ff0000");

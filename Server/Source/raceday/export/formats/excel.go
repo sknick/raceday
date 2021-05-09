@@ -26,13 +26,18 @@ type ExcelExport struct {
 }
 
 type broadcastInfo struct {
-	icon image.Image
-	url  string
+	icon        image.Image
+	description *string
+	url         *string
 }
 
 func (bi broadcastInfo) hasValidUrl() bool {
+	if bi.url == nil {
+		return false
+	}
+
 	validUrlRegex := regexp.MustCompile(`^https?\://`)
-	if validUrlRegex.MatchString(bi.url) {
+	if validUrlRegex.MatchString(*bi.url) {
 		return true
 	}
 
@@ -107,11 +112,20 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 			img := ""
 
 			switch broadcast.Type_ {
-			case model.YOU_TUBE:
-				img = "youtube.png"
+			case string(model.CABLE):
+				img = "cable.png"
 				break
-			case model.FACEBOOK:
+			case string(model.FACEBOOK):
 				img = "facebook.png"
+				break
+			case string(model.F1_TV):
+				img = "f1tv.png"
+				break
+			case string(model.MOTORSPORT_TV):
+				img = "motorsporttv.png"
+				break
+			case string(model.YOU_TUBE):
+				img = "youtube.png"
 				break
 			default:
 				img = "other.png"
@@ -131,8 +145,9 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 			// Resize the image icon down so it fits better in the spreadsheet cell
 			resizedImage := resize.Thumbnail(16, 16, imageFileObj, resize.NearestNeighbor)
 			broadcastLink := broadcastInfo{
-				icon: resizedImage,
-				url:  broadcast.Url,
+				icon:        resizedImage,
+				description: broadcast.Description,
+				url:         broadcast.Url,
 			}
 
 			broadcastLinks = append(broadcastLinks, broadcastLink)
@@ -284,7 +299,7 @@ func addRow(ss *excelize.File, rowIndex int, values []string, broadcastLinks []b
 					 "hyperlink":      "%s",
 					 "hyperlink_type": "External"
 			 	 }`,
-				broadcastLink.url,
+				*broadcastLink.url,
 			)
 		}
 
@@ -293,14 +308,25 @@ func addRow(ss *excelize.File, rowIndex int, values []string, broadcastLinks []b
 			return err
 		}
 
-		format = fmt.Sprintf(
-			`{
-				 "author": "Race Day: ",
-				 "text":   "%s"
-			 }`,
-			broadcastLink.url,
-		)
-		err = ss.AddComment(Sheet, cell, format)
+		comment := ""
+		if broadcastLink.url != nil && broadcastLink.description != nil {
+			comment = fmt.Sprintf("%s: %s", *broadcastLink.url, *broadcastLink.description)
+		} else if broadcastLink.url != nil {
+			comment = *broadcastLink.url
+		} else if broadcastLink.description != nil {
+			comment = *broadcastLink.description
+		}
+
+		if comment != "" {
+			format = fmt.Sprintf(
+				`{
+					"author": "Race Day: ",
+					"text":   "%s"
+				}`,
+				comment,
+			)
+			err = ss.AddComment(Sheet, cell, format)
+		}
 	}
 
 	return nil

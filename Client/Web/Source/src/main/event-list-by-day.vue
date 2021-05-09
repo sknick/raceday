@@ -20,8 +20,9 @@
                     <template v-if="shownEvents.includes(event.id)">
                         <template v-if="event.broadcasts && (event.broadcasts.length > 0)">
                             <div v-for="broadcast in event.broadcasts" v-bind:key="broadcast" class="row">
-                                <div class="col-12" v-if="broadcast.url"><img :src="mediaIcon(broadcast)" alt="Media icon" /> <a :href="broadcast.url" target="_blank" v-if="broadcast.url.match('^https?://')">{{ broadcast.url }}</a><span v-else>{{ broadcast.url }}</span></div>
-                                <div class="col-12" v-else><img :src="mediaIcon(broadcast)" alt="Media icon" /> {{ broadcast.type_ }}</div>
+                                <div class="col-12">
+                                    <BroadcastItem :broadcast="broadcast"/>
+                                </div>
                             </div>
                         </template>
                         <template v-else>
@@ -30,6 +31,10 @@
                             </div>
                         </template>
                     </template>
+                </div>
+
+                <div v-if="events.length === 0">
+                    <p class="no-events">There are no events on this date :-(</p>
                 </div>
 
             </div>
@@ -43,6 +48,7 @@
 <script>
 
 import Header from "./header.vue"
+import BroadcastItem from "./broadcast-item.vue"
 
 import axios from "axios"
 
@@ -51,7 +57,8 @@ export default {
     name: "EventListByDay",
 
     components: {
-        Header
+        Header,
+        BroadcastItem
     },
 
     computed: {
@@ -70,17 +77,6 @@ export default {
     methods: {
         isPast(start) {
             return (Math.round(this.loadTime.getTime() / 1000) > start)
-        },
-
-        mediaIcon(broadcast) {
-            switch (broadcast.type_) {
-                case "Facebook":
-                    return require("../assets/facebook.png")
-                case "YouTube":
-                    return require("../assets/youtube.png")
-                default:
-                    return require("../assets/other.png")
-            }
         },
 
         // The content will be pushed to the left out of alignment with the headers if there is a scrollbar.
@@ -170,6 +166,11 @@ export default {
     width: 100%;
     overflow: hidden;
     position: relative;
+}
+
+.no-events {
+    margin: 3em;
+    text-align: center;
 }
 
 .offset-for-scrollbar {

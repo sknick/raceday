@@ -100,7 +100,7 @@ func newLocationFromRow(rows *sql.Rows) (*model.Location, error) {
 		Name: nameVal,
 	}
 	if descriptionVal.Valid {
-		ret.Description = descriptionVal.String
+		ret.Description = &descriptionVal.String
 	}
 
 	return &ret, nil

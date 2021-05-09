@@ -41,6 +41,7 @@ schema:
 	psql -U postgres -h localhost -d raceday -f Schema/01-enums.sql
 	psql -U postgres -h localhost -d raceday -f Schema/02-tables.sql
 	psql -U postgres -h localhost -d raceday -f Schema/03-views.sql
+	psql -U postgres -h localhost -d raceday -f Schema/04-data.sql
 
 deployment:
 	cd Deployments/raceday.watch && docker-compose build
@@ -48,4 +49,6 @@ deployment:
 
 clean:
 	rm -rf Build
+	rm -rf Client/Admin/Source/source/class/raceday/api/model
 	rm -rf Client/API/Python/Build
+	rm -f Server/Source/raceday/model/*
