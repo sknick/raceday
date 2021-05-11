@@ -1,8 +1,8 @@
 <template>
     <div class="grid-container">
-        <img :src="mediaIcon()" :title="mediaTypeText()" />
+        <img :src="mediaIcon()" :title="mediaTypeText()"/>
 
-        <span v-for="symbol in symbols" v-bind:key="symbol" class="symbol">
+        <span v-for="symbol in symbols" v-bind:key="symbol">
             <img v-if="symbol.icon != ''" :src="symbol.icon" :title="symbol.text"/>
             <span v-else/>
         </span>
@@ -143,15 +143,10 @@ a {
 .grid-container {
     display: grid;
     grid-template-columns: 46px 26px 26px auto;
-    align-items: center;
 }
 
 .lang-list {
     margin-left: 10px;
-}
-
-.symbol {
-    align: "center"
 }
 
 </style>
