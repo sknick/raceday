@@ -1,5 +1,5 @@
 INSERT INTO lang VALUES ('Arabic',                      '&#127462;&#127466;',       'ae');
-INSERT INTO lang VALUES ('Bengali',                     '&#127463;&#127465;',       'bd',       TRUE);
+INSERT INTO lang VALUES ('Bengali',                     '&#127463;&#127465;',       'bd');
 INSERT INTO lang VALUES ('Chinese',                     '&#127464;&#127475;',       'cn');
 INSERT INTO lang VALUES ('Croatian',                    '&#127469;&#127479;',       'hr');
 INSERT INTO lang VALUES ('Czech',                       '&#127464;&#127487;',       'cz');
@@ -10,14 +10,14 @@ INSERT INTO lang VALUES ('Finnish',                     '&#127467;&#127470;',   
 INSERT INTO lang VALUES ('French',                      '&#127467;&#127479;',       'fr',       TRUE);
 INSERT INTO lang VALUES ('German',                      '&#127465;&#127466;',       'de',       TRUE);
 INSERT INTO lang VALUES ('Greek',                       '&#127468;&#127479;',       'gr');
-INSERT INTO lang VALUES ('Hindi',                       '&#127470;&#127475;',       'in',       TRUE);
+INSERT INTO lang VALUES ('Hindi',                       '&#127470;&#127475;',       'in');
 INSERT INTO lang VALUES ('Hungarian',                   '&#127469;&#127482;',       'hu');
-INSERT INTO lang VALUES ('Italian',                     '&#127470;&#127481;',       'it');
+INSERT INTO lang VALUES ('Italian',                     '&#127470;&#127481;',       'it',       TRUE);
 INSERT INTO lang VALUES ('Japanese',                    '&#127471;&#127477;',       'jp',       TRUE);
 INSERT INTO lang VALUES ('Korean',                      '&#127472;&#127479;',       'kr');
 INSERT INTO lang VALUES ('Latvian',                     '&#127473;&#127483;',       'lv');
 INSERT INTO lang VALUES ('Lithuanian',                  '&#127473;&#127481;',       'lt');
-INSERT INTO lang VALUES ('Polish',                      '&#127477;&#127473;',       'pl');
+INSERT INTO lang VALUES ('Polish',                      '&#127477;&#127473;',       'pl',       TRUE);
 INSERT INTO lang VALUES ('Portuguese',                  '&#127477;&#127481;',       'pt',       TRUE);
 INSERT INTO lang VALUES ('Russian',                     '&#127479;&#127482;',       'ru',       TRUE);
 INSERT INTO lang VALUES ('Spanish',                     '&#127466;&#127480;',       'es',       TRUE);
