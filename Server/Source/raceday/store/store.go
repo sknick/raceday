@@ -112,11 +112,13 @@ func (dh DatastoreHandle) GetLangs() ([]model.Lang, error) {
 
 	var id string
 	var htmlCode string
+	var countryCode string
 	var priorityListing bool
 
 	rows, err := dh.db.Query(
 		`SELECT id,
 				html_code,
+				country_code,
 				priority_listing
 		   FROM lang
 		  ORDER BY id ASC`,
@@ -128,12 +130,12 @@ func (dh DatastoreHandle) GetLangs() ([]model.Lang, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&id, &htmlCode, &priorityListing)
+		err = rows.Scan(&id, &htmlCode, &countryCode, &priorityListing)
 		if err != nil {
 			return nil, err
 		}
 
-		ret = append(ret, model.NewLang(id, htmlCode, priorityListing))
+		ret = append(ret, model.NewLang(id, htmlCode, countryCode, priorityListing))
 	}
 
 	return ret, nil

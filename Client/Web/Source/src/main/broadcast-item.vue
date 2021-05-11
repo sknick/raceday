@@ -12,7 +12,7 @@
             <span v-else class="broadcast-text">{{ linkText() }}</span>
 
             <span v-for="lang in langs()" v-bind:key="lang" class="lang-list">
-                <span :title="lang.id" v-html="lang.html_code"/>
+                <img :src="flag(lang.country_code)" :title="lang.id" height="18" width="18"/>
             </span>
         </span>
     </div>
@@ -35,8 +35,12 @@ export default {
     },
 
     methods: {
+        flag(countryCode) {
+            return require("../assets/flags/" + countryCode + ".svg")
+        },
+
         hasValidUrl() {
-            return this.broadcast.url && this.broadcast.url.match('^https?://');
+            return this.broadcast.url && this.broadcast.url.match('^https?://')
         },
 
         langs() {
@@ -55,9 +59,9 @@ export default {
 
         linkText() {
             if (this.broadcast.description) {
-                return this.broadcast.description;
+                return this.broadcast.description
             } else {
-                return this.broadcast.url;
+                return this.broadcast.url
             }
         },
 
@@ -94,7 +98,7 @@ export default {
         if (this.broadcast.paid === true) {
             this.symbols.push({
                 icon: require("../assets/icons/dollar.svg"),
-                text: "Requires Account"
+                text: "Paid"
             })
         } else if (this.broadcast.paid === false) {
             this.symbols.push({
@@ -138,11 +142,13 @@ a {
 
 .broadcast-text {
     margin-left: 16px;
+    margin-right: 16px;
 }
 
 .grid-container {
     display: grid;
     grid-template-columns: 46px 26px 26px auto;
+    align-items: center;
 }
 
 .lang-list {

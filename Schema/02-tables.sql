@@ -1,6 +1,7 @@
 CREATE TABLE lang (
     id                          varchar                             NOT NULL,
-    html_code                   varchar                             NOT NULL DEFAULT '&#127479;&#127466;',
+    html_code                   varchar                             NOT NULL,
+    country_code                varchar                             NOT NULL,
     priority_listing            boolean                             NOT NULL DEFAULT FALSE,
 
     PRIMARY KEY (id)

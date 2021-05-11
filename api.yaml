@@ -737,12 +737,16 @@ components:
         html_code:
           description: The HTML character entity that can be used to display the associated flag of the language.
           type: string
+        country_code:
+          description: The two-letter country code associated with this language.
+          type: string
         priority_listing:
           description: Whether or not this language should be highlighted among a list of languages.
           type: boolean
       required:
         - id
         - html_code
+        - country_code
         - priority_listing
 
     Location:
