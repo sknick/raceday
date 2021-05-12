@@ -114,13 +114,9 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         for (let i = 0; i < admin.ui.MainWindow.LANGS.length; i++) {
             if (admin.ui.MainWindow.LANGS[i].priorityListing) {
                 langItems.push(
-                    new qx.ui.form.CheckBox(
-                        admin.ui.MainWindow.LANGS[i].htmlCode + " " +
-                        admin.ui.MainWindow.LANGS[i].id
-                    ).set(
+                    new qx.ui.form.CheckBox(admin.ui.MainWindow.LANGS[i].id).set(
                         {
                             model: admin.ui.MainWindow.LANGS[i],
-                            rich:  true,
                             value: this.__isLangSelected(admin.ui.MainWindow.LANGS[i], this.__broadcast.langIds)
                         }
                     )
@@ -133,13 +129,9 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
         for (let i = 0; i < admin.ui.MainWindow.LANGS.length; i++) {
             if (!admin.ui.MainWindow.LANGS[i].priorityListing) {
                 langItems.push(
-                    new qx.ui.form.CheckBox(
-                        admin.ui.MainWindow.LANGS[i].htmlCode + " " +
-                        admin.ui.MainWindow.LANGS[i].id
-                    ).set(
+                    new qx.ui.form.CheckBox(admin.ui.MainWindow.LANGS[i].id).set(
                         {
                             model: admin.ui.MainWindow.LANGS[i],
-                            rich:  true,
                             value: this.__isLangSelected(admin.ui.MainWindow.LANGS[i], this.__broadcast.langIds)
                         }
                     )
@@ -147,7 +139,7 @@ qx.Class.define("admin.ui.events.EditBroadcastDialog", {
             }
         }
 
-        this.__langsField = new admin.ui.form.CheckBoxList(150, langItems);
+        this.__langsField = new admin.ui.form.CheckBoxList(200, langItems);
 
 
         const okButton = new qx.ui.form.Button(broadcast ? "OK" : "Add");
