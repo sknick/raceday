@@ -103,18 +103,6 @@ export default {
                                 broadcasts.push(response.data[j])
                             }
 
-                            broadcasts.sort(
-                                function(a, b) {
-                                    if (a.url < b.url) {
-                                        return -1
-                                    } else if (a.url > b.url) {
-                                        return 1
-                                    } else {
-                                        return 0
-                                    }
-                                }
-                            )
-
                             self.events[i].broadcasts = broadcasts
 
                             break

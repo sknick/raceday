@@ -150,7 +150,8 @@ func (dh DatastoreHandle) GetBroadcasts(criteria BroadcastRetrievalCriteria) ([]
 					series_name,
 					series_description
 			   FROM broadcasts
-			  WHERE %s`,
+			  WHERE %s
+			  ORDER BY broadcast_description ASC`,
 			where,
 		),
 		params...,
