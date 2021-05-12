@@ -19,8 +19,10 @@ INSERT INTO lang VALUES ('Latvian',                     '&#127473;&#127483;',   
 INSERT INTO lang VALUES ('Lithuanian',                  '&#127473;&#127481;',       'lt');
 INSERT INTO lang VALUES ('Polish',                      '&#127477;&#127473;',       'pl',       TRUE);
 INSERT INTO lang VALUES ('Portuguese',                  '&#127477;&#127481;',       'pt',       TRUE);
+INSERT INTO lang VALUES ('Romanian',                    '&#127479;&#127476;',       'ro');
 INSERT INTO lang VALUES ('Russian',                     '&#127479;&#127482;',       'ru',       TRUE);
 INSERT INTO lang VALUES ('Spanish',                     '&#127466;&#127480;',       'es',       TRUE);
+INSERT INTO lang VALUES ('Swedish',                     '&#127480;&#127466;',       'se');
 INSERT INTO lang VALUES ('Thai',                        '&#127481;&#127469;',       'th');
 INSERT INTO lang VALUES ('Turkish',                     '&#127481;&#127479;',       'tr');
 INSERT INTO lang VALUES ('Vietnamese',                  '&#127483;&#127475;',       'vn');
