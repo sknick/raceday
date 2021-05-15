@@ -149,7 +149,7 @@ export default {
 
         setTimeout(() => {
             this.scrollToFirstCurrentEvent()
-        }, 1000)
+        }, 250)
     },
 
     watch: {
