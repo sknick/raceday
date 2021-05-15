@@ -96,22 +96,22 @@
 
 <script>
 
-import DatepickerLite from "vue3-datepicker-lite";
+import DatepickerLite from "vue3-datepicker-lite"
 import {
     add,
     format,
     parseISO,
     sub
-} from "date-fns";
+} from "date-fns"
 
-export const DATEPICKER_DATE_FORMAT = "yyyy/MM/dd";
-export const URL_DATE_FORMAT = "yyyyMMdd";
+export const DATEPICKER_DATE_FORMAT = "yyyy/MM/dd"
+export const URL_DATE_FORMAT = "yyyyMMdd"
 
 export default {
     name: "Header",
 
     beforeMount() {
-        this.setDateFromRouteQuery();
+        this.setDateFromRouteQuery()
     },
 
     components: {
@@ -156,13 +156,13 @@ export default {
         },
 
         onDateAdvanced() {
-            const res = this.formattedDate(add(new Date(this.selectedDate), {days: 1}));
-            this.$store.dispatch("updateDate", res);
+            const res = this.formattedDate(add(new Date(this.selectedDate), {days: 1}))
+            this.$store.dispatch("updateDate", res)
         },
 
         onDateRegressed() {
-            const res = this.formattedDate(sub(new Date(this.selectedDate), {days: 1}));
-            this.$store.dispatch("updateDate", res);
+            const res = this.formattedDate(sub(new Date(this.selectedDate), {days: 1}))
+            this.$store.dispatch("updateDate", res)
         },
 
         onDateSelected(value) {
@@ -196,13 +196,13 @@ export default {
         setDateFromRouteQuery() {
             let date;
             if (this.$route.query.date) {
-                date = this.formattedDate(parseISO(this.$route.query.date.toString()));
+                date = this.formattedDate(parseISO(this.$route.query.date.toString()))
             } else {
-                date = this.formattedDate(new Date());
-                this.setDateInRoute(new Date());
+                date = this.formattedDate(new Date())
+                this.setDateInRoute(new Date())
             }
-            this.$store.dispatch("updateDate", date);
-            this.pickerDate = date;
+            this.$store.dispatch("updateDate", date)
+            this.pickerDate = date
         },
 
         setDateInRoute(date) {
@@ -238,8 +238,8 @@ export default {
     watch: {
         selectedDate(newVal) {
             if (newVal) {
-                this.pickerDate = newVal;
-                this.setDateInRoute(new Date(newVal));
+                this.pickerDate = newVal
+                this.setDateInRoute(new Date(newVal))
             }
         }
     },

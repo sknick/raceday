@@ -10,7 +10,7 @@
             <div class="event-table" ref="eventsScroller">
 
                 <div v-for="event in events" v-bind:key="event">
-                    <div :class="{'text-muted': isPast(event.start), 'offset-for-scrollbar': needsOffsetForScrollbar()}" @click="toggleEvent(event.id)" class="row">
+                    <div :id="event.id" :class="{'text-muted': isPast(event.start), 'offset-for-scrollbar': needsOffsetForScrollbar()}" @click="toggleEvent(event.id)" class="row">
                         <div class="col-2">{{ timestampToString(event.start) }}</div>
                         <div class="col-4">{{ event.series ? event.series.name : "" }}</div>
                         <div class="col-3">{{ event.name }}</div>
@@ -53,7 +53,6 @@ import BroadcastItem from "./broadcast-item.vue"
 import axios from "axios"
 
 export default {
-
     name: "EventListByDay",
 
     components: {
@@ -81,8 +80,22 @@ export default {
 
         // The content will be pushed to the left out of alignment with the headers if there is a scrollbar.
         needsOffsetForScrollbar() {
-            const ref = this.$refs.eventsScroller;
-            return (this.events.length * 50) > ref.getBoundingClientRect().height;
+            const ref = this.$refs.eventsScroller
+            return (this.events.length * 50) > ref.getBoundingClientRect().height
+        },
+
+        scrollToFirstCurrentEvent() {
+            const firstCurrent = this.events.find(e => {
+                return !this.isPast(e.start)
+            })
+
+            if (firstCurrent) {
+                const el = document.getElementById(firstCurrent.id)
+                el && el.scrollIntoView(false)
+            } else if (this.events.length > 0) {
+                const el = document.getElementById(this.events[0].id)
+                el && el.scrollIntoView(false)
+            }
         },
 
         timestampToString(timestamp) {
@@ -132,7 +145,17 @@ export default {
     },
 
     mounted() {
-        this.loadTime = new Date();
+        this.loadTime = new Date()
+
+        setTimeout(() => {
+            this.scrollToFirstCurrentEvent()
+        }, 1000)
+    },
+
+    watch: {
+        events() {
+            this.scrollToFirstCurrentEvent()
+        }
     }
 }
 
