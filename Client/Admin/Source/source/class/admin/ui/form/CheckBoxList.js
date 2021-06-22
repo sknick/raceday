@@ -2,7 +2,6 @@ qx.Class.define("admin.ui.form.CheckBoxList", {
     extend: qx.ui.container.Scroll,
 
     /**
-     * 
      * @param {integer} height 
      * @param {Array<qx.ui.form.CheckBox|null} checkBoxes If an array element is null, a horizontal line will be
      * inserted at that point in the list.
