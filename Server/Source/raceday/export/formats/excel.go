@@ -132,7 +132,7 @@ func (ee ExcelExport) Export(criteria store.EventRetrievalCriteria, w http.Respo
 				break
 			}
 
-			imageFile, err := ioutil.ReadFile(path.Join(ee.ImagesDir, img))
+			imageFile, err := ioutil.ReadFile(path.Join(ee.ImagesDir, "media", img))
 			if err != nil {
 				return err
 			}
