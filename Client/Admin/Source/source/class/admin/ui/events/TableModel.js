@@ -40,7 +40,7 @@ qx.Class.define("admin.ui.events.TableModel", {
                 const nowTimestamp = Math.round(Date.now() / 1000);
 
                 try {
-                    const events = await admin.RequestManager.getInstance().getEvents(nowTimestamp - (86400 * 14),
+                    const events = await admin.RequestManager.getInstance().getEvents(nowTimestamp - (86400 * 60),
                         -1, Intl.DateTimeFormat().resolvedOptions().timeZone);
                     
                     const data = [];
