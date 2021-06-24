@@ -1,5 +1,6 @@
 INSERT INTO lang VALUES ('Arabic',                      '&#127462;&#127466;',       'ae');
 INSERT INTO lang VALUES ('Bengali',                     '&#127463;&#127465;',       'bd');
+INSERT INTO lang VALUES ('Catalan',                     '&#127462;&#127465;',       'es-ct');
 INSERT INTO lang VALUES ('Chinese',                     '&#127464;&#127475;',       'cn');
 INSERT INTO lang VALUES ('Croatian',                    '&#127469;&#127479;',       'hr');
 INSERT INTO lang VALUES ('Czech',                       '&#127464;&#127487;',       'cz');
