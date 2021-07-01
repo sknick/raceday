@@ -18,6 +18,7 @@ INSERT INTO lang VALUES ('Japanese',                    '&#127471;&#127477;',   
 INSERT INTO lang VALUES ('Korean',                      '&#127472;&#127479;',       'kr');
 INSERT INTO lang VALUES ('Latvian',                     '&#127473;&#127483;',       'lv');
 INSERT INTO lang VALUES ('Lithuanian',                  '&#127473;&#127481;',       'lt');
+INSERT INTO lang VALUES ('Norwegian',                   '&#127475;&#127476;',       'no');
 INSERT INTO lang VALUES ('Polish',                      '&#127477;&#127473;',       'pl',       TRUE);
 INSERT INTO lang VALUES ('Portuguese',                  '&#127477;&#127481;',       'pt',       TRUE);
 INSERT INTO lang VALUES ('Romanian',                    '&#127479;&#127476;',       'ro');
